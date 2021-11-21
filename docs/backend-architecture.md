@@ -24,7 +24,7 @@ Document tables are separated by formats.
 
 Document for individual team snapshots and ranking metadata.
 
-```json
+```javascript
 {
     date: datetime,                 // mm/dd/yy
     format: str,
@@ -38,7 +38,7 @@ Document for individual team snapshots and ranking metadata.
 
 Document for individual Pokémon usage data out of all ranked teams.
 
-```json
+```javascript
 {
     date: datetime,
     format: str,
