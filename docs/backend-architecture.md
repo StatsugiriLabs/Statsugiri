@@ -43,17 +43,26 @@ Document for individual Pokémon usage data out of all ranked teams.
 {
     date: datetime,
     format: str,
-    pokemon_usage: {        // List of Pokémon usage as number of appearances
+    pokemon_usage: {            // List of Pokémon usage as number of appearances
         [
             str: int
         ]
     },
-    average_rating: {       // Denotes Pokémon's average rating between all appearances
+    pokemon_partners: {
+        [
+            str: [              // List of Pokémon recorded
+                {
+                    str: int    // Denotes Pokémon's partners as number of appearances
+                }
+            ]
+        ]
+    },
+    average_rating: {           // Denotes Pokémon's average rating between all appearances
         [
             str: float
         ]
     },
-    core_usage: {           // Denotes cores of three Pokémon as number of appearances
+    core_usage: {               // Denotes cores of three Pokémon as number of appearances
         [
             [str]: int
         ]
