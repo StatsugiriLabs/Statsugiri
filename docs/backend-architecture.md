@@ -97,15 +97,16 @@ curl /api/formats
 }
 ```
 
-## `GET /api/teams/{format}`
+## `GET /api/teams/{format}/{date}`
 
 Get most recent recorded teams for specific format.
 Defaults to recent VGC format if format not provided (eg. `gen8vgc2021`).
+Defaults to most recent if date is not given.
 
 ### Request
 
 ```console
-curl /api/teams/gen8ou
+curl /api/teams/gen8ou/2021-12-15
 ```
 
 ### Response
@@ -132,8 +133,7 @@ Get most recent teams filtered by Pokémon and date.
 ### Request
 
 ```console
-curl /api/teams/gen8vgc2021 \
-    -F 'date=2021-10-09' \
+curl /api/teams/gen8vgc2021/2021-10-09 \
     -F 'pokemon[]=incineroar' \
     -F 'pokemon[]=rillaboom'
 ```
@@ -146,12 +146,12 @@ curl /api/teams/gen8vgc2021 \
     format: gen8vgc2021,
     teams: {
         {
-            pokemon_list: ["Charizard", "Incineroar", "Gyarados", "Rillaboom", "Magnezone", "Clefairy"],
+            pokemon_list: ["charizard", "incineroar", "gyarados", "rillaboom", "magnezone", "clefairy"],
             rating: 1430,
             replay_upload_date: 12-10-19
         },
         {
-            pokemon_list: ["Incineroar", "Togekiss", "Rillaboom", "Indedee-F", "Cinderace", "Urshifu"],
+            pokemon_list: ["incineroar", "togekiss", "rillaboom", "indeedee-F", "cinderace", "urshifu"],
             rating: 1430,
             replay_upload_date: 12-10-19
         },
@@ -162,15 +162,16 @@ curl /api/teams/gen8vgc2021 \
 }
 ```
 
-## `GET /api/usage/{format}`
+## `GET /api/usage/{format}/{date}`
 
 Get most recent recorded individual Pokémon usage for specific format.
 Defaults to recent VGC format if format not provided (eg. `gen8vgc2021`).
+Defaults to most recent if date is not given.
 
 ### Request
 
 ```console
-curl /api/usage/gen8vgc2021
+curl /api/usage/gen8vgc2021/2021-12-15
 ```
 
 ### Response
@@ -190,16 +191,17 @@ curl /api/usage/gen8vgc2021
 }
 ```
 
-## `GET /api/rating-usage/{format}`
+## `GET /api/rating-usage/{format}/{date}`
 
 Get most recent recorded Pokémon rating to usage ratio for specific format.
 Filter by Pokémon using `-F pokemon[]={pokemon}`.
 Defaults to recent VGC format if format not provided (eg. `gen8vgc2021`).
+Defaults to most recent if date is not given.
 
 ### Request
 
 ```console
-curl /api/rating-usage/gen8vgc2021
+curl /api/rating-usage/gen8vgc2021/2021-12-15
 ```
 
 ### Response
@@ -218,16 +220,16 @@ curl /api/rating-usage/gen8vgc2021
 }
 ```
 
-## `GET /api/core-usage/{format}`
+## `GET /api/core-usage/{date}`
 
-Get most recent recorded Pokémon core combinations of 3 for specific format.
+Get most recent recorded Pokémon core combinations of 3. Exclusive to current VGC format.
 Filter by Pokémon using `-F pokemon[]={pokemon}`.
-Defaults to recent VGC format if format not provided (eg. `gen8vgc2021`).
+Defaults to most recent if date is not given.
 
 ### Request
 
 ```console
-curl /api/core-usage/gen8vgc2021
+curl /api/core-usage/2021-12-15
 ```
 
 ### Response
@@ -241,6 +243,36 @@ curl /api/core-usage/gen8vgc2021
             ["incineroar", "rillaboom", "regieleki"]: 11,
             ["torkoal", "venusaur", "incineroar"]: 8,
             ...
+        },
+    }
+}
+```
+
+## `GET /api/partners/{pokemon}/{date}`
+
+Get Pokémon's top 5 partners. Exclusive to current VGC format.
+Defaults to most recent if date is not given.
+
+### Request
+
+```console
+curl /api/core-usage/2021-12-15
+```
+
+### Response
+
+```console
+{
+    date: 2021-12-15,
+    format: gen8vgc2021,
+    pokemon: "togekiss",
+    partners: {
+        {
+            incineroar: 27,
+            rillaboom: 25,
+            whimsicott: 16,
+            regieleki: 15,
+            amoonguss: 11,
         },
     }
 }
