@@ -2,10 +2,6 @@
 
 The backend architecture processes the time-series usage and global ranking snapshots from Pokémon Showdown.
 
-# Table of Contents
-
-TODO
-
 # Tech Stack
 
 -   Go
@@ -13,7 +9,6 @@ TODO
 -   AWS DynamoDB
 -   AWS API Gateway
 -   AWS Cloudwatch
--   AWS Serverless Application Model
 -   AWS Virtual Private Cloud
 -   Redis
 
@@ -312,5 +307,3 @@ curl /api/timeseries-usage/gen8vgc2021/incineroar
     }
 }
 ```
-
-# Infrastructure
