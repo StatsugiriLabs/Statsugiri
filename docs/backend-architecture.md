@@ -12,32 +12,40 @@ The backend architecture processes the time-series usage and global ranking snap
 -   AWS Virtual Private Cloud
 -   Redis
 
-# Database Schema
+# Database Models
 
 Document tables are separated by formats. For instance, if there are 5 formats supported, there will be 10 tables total.
 
 ## Pokémon Team Snapshots
 
-Document for individual team snapshots and ranking metadata.
+Corresponds to `teams-[FORMAT]` table name format.
+Document for daily team snapshots and ranking metadata.
 
 ```javascript
 {
-    date: datetime,                 // mm/dd/yy
-    format: str,
-    pokemon_list: [str],
-    rating: int,
-    replay_upload_date: datetime    // mm/dd/yy
+    date: datetime,         // Primary Key: yyyy-mm-dd
+    format: str,            // Secondary Key
+    teams: {
+        [
+            {
+                pokemon_list: [str],
+                rating: int,
+                replay_upload_date: datetime //yyyy-mm-dd
+            }
+        ]
+    }
 }
 ```
 
 ## Pokémon Usage Snapshots
 
+Corresponds to `usage-[FORMAT]` table name format.
 Document for individual Pokémon usage data out of all ranked teams.
 
 ```javascript
 {
-    date: datetime,
-    format: str,
+    date: datetime,             // Primary Key: yyyy-mm-dd
+    format: str,                // Secondary Key
     pokemon_usage: {            // List of Pokémon usage as number of appearances
         [
             str: int
@@ -107,6 +115,8 @@ Get most recent recorded teams for specific format.
 Defaults to recent VGC format if format not provided (eg. `gen8vgc2021`).
 Defaults to most recent if date is not given.
 
+Add `limit` and `offset` query params for pagination.
+
 ### Request
 
 ```console
@@ -133,6 +143,8 @@ curl /api/teams/gen8ou/2021-12-15
 ```
 
 Get most recent teams filtered by Pokémon and date.
+
+Add `limit` and `offset` query params for pagination.
 
 ### Request
 
@@ -230,6 +242,8 @@ Get most recent recorded Pokémon core combinations of 3. Exclusive to current V
 Filter by Pokémon using `-F pokemon[]={pokemon}`.
 Defaults to most recent if date is not given.
 
+Add `limit` and `offset` query params for pagination.
+
 ### Request
 
 ```console
@@ -285,6 +299,8 @@ curl /api/core-usage/2021-12-15
 ## `GET /api/timeseries-usage/{format}/{pokemon}`
 
 Get Pokémon's time-series usage to present.
+
+Add `limit` and `offset` query params for pagination.
 
 ### Request
 
