@@ -21,6 +21,28 @@ jobs:
               run: |
                   "${GITHUB_WORKSPACE}"/environment_setup/setup.sh
 
-            - name: Check formatting
+            - name: Check formatting and linting
               run: |
                   ./formatting_scripts/check_formatting_ci.sh
+
+    pytest:
+        name: Pytest Tests
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                python-version: ["3.8", "3.9"]
+        steps:
+            # checks-out the repository under $GITHUB_WORKSPACE
+            - uses: actions/checkout@v2
+            - name: Set up Python ${{ matrix.python-version }}
+              uses: actions/setup-python@v2
+              with:
+                  python-version: ${{ matrix.python-version }}
+
+            - name: Environment Setup
+              run: |
+                  "${GITHUB_WORKSPACE}"/environment_setup/setup.sh
+
+            - name: Run Pytest Tests
+              run: |
+                  ./test_scripts/run_tests.sh
