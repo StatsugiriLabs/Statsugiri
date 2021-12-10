@@ -1,14 +1,14 @@
 #!/bin/bash
 
 #
-# This script is used for running all tests
+# This script is used for running data pipeline tests
 #
 
 CURR_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 SRC_DIR="$CURR_DIR/../src"
 
-function run_pytest () {
-    PYTHONDONTWRITEBYTECODE=1 python -m pytest -p no:cacheprovider $SRC_DIR &>/dev/null
+function run_data_pipeline_tests () {
+    PYTHONDONTWRITEBYTECODE=1 python -m pytest -p no:cacheprovider $SRC_DIR/data_pipeline &>/dev/null
     if [[ "$?" != 0 ]]; then
         printf "\n***Python tests failed!***\n\n"
         exit 1
@@ -16,6 +16,6 @@ function run_pytest () {
 }
 
 # Run tests
-run_pytest
+run_data_pipeline_tests
 
 exit 0

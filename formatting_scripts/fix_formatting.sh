@@ -2,7 +2,7 @@
 
 #
 # This script is used for running formatting checks in CI
-# Please read `setup.md` in `environment_setup` first
+# Please run `setup.sh` in `environment_setup` first
 # Credit to UBC Thunderbots
 # https://github.com/UBC-Thunderbots
 #
