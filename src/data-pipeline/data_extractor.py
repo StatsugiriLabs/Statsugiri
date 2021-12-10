@@ -24,7 +24,7 @@ class DataExtractor:
 
     def get_ladder_users_and_ratings(
         self, battle_format: str, num_users: int = MAX_USERS
-    ) -> list[str, int]:
+    ) -> List[str, int]:
         """Return the top X users within a given format"""
         if battle_format not in self.formats:
             raise ValueError("Format is unavailable")
