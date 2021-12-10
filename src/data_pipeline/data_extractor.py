@@ -1,5 +1,5 @@
 """ Data Extractor is responsible for reading format metadata and retrieving the replay JSON """
-from typing import List
+from typing import List, Tuple
 import requests
 from bs4 import BeautifulSoup
 from constants import MAX_USERS
@@ -24,7 +24,7 @@ class DataExtractor:
 
     def get_ladder_users_and_ratings(
         self, battle_format: str, num_users: int = MAX_USERS
-    ) -> List[str, int]:
+    ) -> List[Tuple[str, int]]:
         """Return the top X users within a given format"""
         if battle_format not in self.formats:
             raise ValueError("Format is unavailable")

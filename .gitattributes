@@ -1,0 +1,3 @@
+# Treat images as binaries
+*.svg           binary
+*.png           binary
