@@ -27,6 +27,30 @@ def fixture_sample_ladder_res_text():
     ).read()
 
 
+@pytest.fixture(name="sample_log_res_text")
+def fixture_sample_log_text():
+    """Read sample ladder log text for mocking GET request"""
+    __location__ = os.path.realpath(
+        os.path.join(os.getcwd(), os.path.dirname(__file__))
+    )
+    return open(
+        os.path.join(__location__, "assets/sample_log.txt"),
+        encoding="utf-8",
+    ).read()
+
+
+@pytest.fixture(name="sample_replays_res_text")
+def fixture_sample_replays_res_text():
+    """Read sample replays response text for mocking GET request"""
+    __location__ = os.path.realpath(
+        os.path.join(os.getcwd(), os.path.dirname(__file__))
+    )
+    return open(
+        os.path.join(__location__, "assets/sample_replays_res.txt"),
+        encoding="utf-8",
+    ).read()
+
+
 def test_get_ladder_users_and_ratings_happy_path(
     requests_mock, sample_ladder_res_text, data_extractor_under_test
 ):
@@ -56,7 +80,7 @@ def test_get_ladder_rankings_unavailable_format_should_raise_value_error(
     data_extractor_under_test,
 ):
     """Test when unsupported format is provided"""
-    with pytest.raises(ValueError, match="Format is unavailable"):
+    with pytest.raises(ValueError, match=r"Format (.+) is unavailable"):
         data_extractor_under_test.get_ladder_users_and_ratings(
             "not_a_real_format", NUM_USERS_TO_SEARCH
         )
@@ -72,3 +96,44 @@ def test_get_ladder_rankings_greater_than_max_users_should_raise_value_error(
         data_extractor_under_test.get_ladder_users_and_ratings(
             "gen8vgc2021series10", MAX_USERS + 1
         )
+
+
+def test_sanitize_user(data_extractor_under_test):
+    """Test removing non-ASCII characters and spaces"""
+    sanitized_user = data_extractor_under_test.sanitize_user("user test 中文")
+    assert sanitized_user == "usertest"
+
+
+def test_get_user_replay_ids_happy_path(
+    requests_mock, sample_replays_res_text, data_extractor_under_test
+):
+    """Test user replay ID retrieval"""
+    requests_mock.get(
+        "https://replay.pokemonshowdown.com/search/?output=html&user=SayNoToSpachet",
+        text=sample_replays_res_text,
+    )
+    replay_ids = data_extractor_under_test.get_user_replay_ids(
+        "SayNoToSpachet", "gen8vgc2021series11"
+    )
+    assert replay_ids == [
+        "gen8vgc2021series11-1468972576",
+        "gen8vgc2021series11-1468427683",
+        "gen8vgc2021series11-1466694825",
+        "gen8vgc2021series11-1466507645",
+        "gen8vgc2021series11-1466388772",
+        "gen8vgc2021series11-1465712586",
+        "gen8vgc2021series11-1463340788",
+        "gen8vgc2021series11-1463175352",
+    ]
+
+
+def test_get_replay_log(requests_mock, sample_log_res_text, data_extractor_under_test):
+    """Test retrieval for replay logs"""
+    requests_mock.get(
+        "https://replay.pokemonshowdown.com/gen8vgc2021series11-1468972576.log",
+        text=sample_log_res_text,
+    )
+    try:
+        data_extractor_under_test.get_replay_log("gen8vgc2021series11", "1468972576")
+    except:
+        raise pytest.fail(f"`get_replay_log` was unsuccessful")

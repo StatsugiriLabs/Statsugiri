@@ -1,0 +1,37 @@
+	<div class="pfx-panel"><div class="pfx-body pfx-body-padded">
+		<h1>Search replays</h1>
+		<form action="/search/" method="get" data-target="replace">
+			<p style="text-align:center">
+				<label><input type="text" name="user" class="textbox" placeholder="Username" size="24" autofocus="autofocus" value="SayNoToSpachet" /></label>
+				<button type="submit"><strong>Search</strong></button>
+			</p>
+		</form>
+		<form action="/search/" method="get" data-target="replace">
+			<p style="text-align:center">
+				<label><input type="text" name="format" class="textbox" placeholder="Format" size="24" value="" /></label>
+				<button type="submit"><strong>Search</strong></button>
+			</p>
+		</form>
+		<h1>Search results for "saynotospachet"</h1>
+		<ul class="linklist" style="max-width:480px;margin:0 auto;text-align:center">
+<h3>1 week ago</h3>		<li><a href="/gen8bdspbattlefestivaldoubles-1470016794" data-target="push"><small>[gen8bdspbattlefestivaldoubles]<br /></small> <strong>Rick Sfondat</strong> vs. <strong>SayNoToSpachet</strong></a></li>
+		<li><a href="/gen7vgc2019-1469830222" data-target="push"><small>[gen7vgc2019]<br /></small> <strong>SayNoToSpachet</strong> vs. <strong>dr loveless</strong></a></li>
+		<li><a href="/gen8vgc2021series11-1468972576" data-target="push"><small>[gen8vgc2021series11]<br /></small> <strong>SayNoToSpachet</strong> vs. <strong>tuttomio</strong></a></li>
+		<li><a href="/gen8bdspbattlefestivaldoubles-1468955929" data-target="push"><small>[gen8bdspbattlefestivaldoubles]<br /></small> <strong>gabehvgc</strong> vs. <strong>SayNoToSpachet</strong></a></li>
+		<li><a href="/gen8vgc2021series11-1468427683" data-target="push"><small>[gen8vgc2021series11]<br /></small> <strong>malveth</strong> vs. <strong>SayNoToSpachet</strong></a></li>
+		<li><a href="/gen7vgc2019-1468391821" data-target="push"><small>[gen7vgc2019]<br /></small> <strong>SayNoToSpachet</strong> vs. <strong>RoadToDafer</strong></a></li>
+<h3>2 weeks ago</h3>		<li><a href="/gen4vgc2010-1467747779" data-target="push"><small>[gen4vgc2010]<br /></small> <strong>SayNoToSpachet</strong> vs. <strong>jimmypurple3000</strong></a></li>
+		<li><a href="/gen7vgc2018-1467564395" data-target="push"><small>[gen7vgc2018]<br /></small> <strong>SayNoToSpachet</strong> vs. <strong>Turfff</strong></a></li>
+		<li><a href="/gen8randombattle-1466990620" data-target="push"><small>[gen8randombattle]<br /></small> <strong>Mihowk</strong> vs. <strong>SayNoToSpachet</strong></a></li>
+		<li><a href="/gen8bdspbattlefestivaldoubles-1466985211" data-target="push"><small>[gen8bdspbattlefestivaldoubles]<br /></small> <strong>!magnetman210</strong> vs. <strong>!SayNoToSpachet</strong></a></li>
+		<li><a href="/gen8vgc2021series11-1466694825" data-target="push"><small>[gen8vgc2021series11]<br /></small> <strong>Red from origins.</strong> vs. <strong>SayNoToSpachet</strong></a></li>
+		<li><a href="/gen8vgc2021series11-1466507645" data-target="push"><small>[gen8vgc2021series11]<br /></small> <strong>SayNoToSpachet</strong> vs. <strong>Gene10</strong></a></li>
+		<li><a href="/gen8vgc2021series11-1466388772" data-target="push"><small>[gen8vgc2021series11]<br /></small> <strong>SoleSurvivorVGC</strong> vs. <strong>SayNoToSpachet</strong></a></li>
+		<li><a href="/gen6vgc2016-1465802905" data-target="push"><small>[gen6vgc2016]<br /></small> <strong>SayNoToSpachet</strong> vs. <strong>xras talxnflamegxd</strong></a></li>
+		<li><a href="/gen8vgc2021series11-1465712586" data-target="push"><small>[gen8vgc2021series11]<br /></small> <strong>ToastNoButter</strong> vs. <strong>SayNoToSpachet</strong></a></li>
+<h3>3 weeks ago</h3>		<li><a href="/gen8vgc2021series11-1463340788" data-target="push"><small>[gen8vgc2021series11]<br /></small> <strong>TheTopKangaroo</strong> vs. <strong>SayNoToSpachet</strong></a></li>
+		<li><a href="/gen8vgc2021series11-1463175352" data-target="push"><small>[gen8vgc2021series11]<br /></small> <strong>SoleSurvivorVGC</strong> vs. <strong>SayNoToSpachet</strong></a></li>
+		</ul>
+	</div></div>
+
+
