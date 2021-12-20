@@ -1,0 +1,261 @@
+|j|☆SayNoToSpachet
+|j|☆tuttomio
+|t:|1638955082
+|gametype|doubles
+|player|p1|SayNoToSpachet|acetrainer|1561
+|player|p2|tuttomio|steven|1453
+|teamsize|p1|6
+|teamsize|p2|6
+|gen|8
+|tier|[Gen 8] VGC 2021 Series 11
+|rated|
+|rule|Species Clause: Limit one of each Pokémon
+|rule|Item Clause: Limit one of each item
+|clearpoke
+|poke|p1|Dragapult, L50, F|
+|poke|p1|Zacian-*, L50|
+|poke|p1|Torkoal, L50, F|
+|poke|p1|Charizard, L50, F|
+|poke|p1|Indeedee-F, L50, F|
+|poke|p1|Whimsicott, L50, M|
+|poke|p2|Pyukumuku, L50, M|
+|poke|p2|Sneasel, L50, F|
+|poke|p2|Urshifu-*, L50, F|
+|poke|p2|Lapras, L50, F|
+|poke|p2|Toxapex, L50, F|
+|poke|p2|Eternatus, L50|
+|teampreview|4
+|j| FvckingYveltal
+|l| FvckingYveltal
+|inactive|Battle timer is ON: inactive players will automatically lose when time's up. (requested by tuttomio)
+|
+|t:|1638955115
+|start
+|switch|p1a: Dragapult|Dragapult, L50, F|100/100
+|switch|p1b: Zacian|Zacian-Crowned, L50|100/100
+|switch|p2a: Urshifu|Urshifu, L50, F|100/100
+|switch|p2b: Lapras|Lapras, L50, F, shiny|100/100
+|-ability|p1b: Zacian|Intrepid Sword|boost
+|-boost|p1b: Zacian|atk|1
+|turn|1
+|inactive|SayNoToSpachet has 30 seconds left.
+|inactive|SayNoToSpachet has 20 seconds left.
+|j| miiiden
+|
+|t:|1638955155
+|-start|p1a: Dragapult|Dynamax
+|-heal|p1a: Dragapult|100/100|[silent]
+|-start|p2b: Lapras|Dynamax
+|-formechange|p2b: Lapras|Lapras-Gmax
+|-heal|p2b: Lapras|100/100|[silent]
+|move|p2a: Urshifu|Wicked Blow|p1a: Dragapult
+|-supereffective|p1a: Dragapult
+|-crit|p1a: Dragapult
+|-damage|p1a: Dragapult|11/100
+|move|p1a: Dragapult|Max Phantasm|p2b: Lapras
+|-damage|p2b: Lapras|77/100
+|-unboost|p2a: Urshifu|def|1
+|-unboost|p2b: Lapras|def|1
+|-damage|p1a: Dragapult|6/100|[from] item: Life Orb
+|move|p1b: Zacian|Behemoth Blade|p2b: Lapras
+|-damage|p2b: Lapras|0 fnt
+|faint|p2b: Lapras
+|
+|upkeep
+|
+|t:|1638955169
+|switch|p2b: Eternatus|Eternatus, L50|100/100
+|-ability|p2b: Eternatus|Pressure
+|turn|2
+|j| Makisecurisu
+|
+|t:|1638955183
+|switch|p1b: Indeedee|Indeedee-F, L50, F|100/100
+|-fieldstart|move: Psychic Terrain|[from] ability: Psychic Surge|[of] p1b: Indeedee
+|move|p1a: Dragapult|Max Guard|p1a: Dragapult
+|-singleturn|p1a: Dragapult|Max Guard
+|move|p2a: Urshifu|Wicked Blow|p1a: Dragapult
+|-activate|p1a: Dragapult|move: Max Guard
+|move|p2b: Eternatus|Flamethrower|p1b: Indeedee
+|-damage|p1b: Indeedee|48/100
+|-status|p1b: Indeedee|brn
+|-enditem|p1b: Indeedee|Sitrus Berry|[eat]
+|-heal|p1b: Indeedee|72/100 brn|[from] item: Sitrus Berry
+|
+|-damage|p1b: Indeedee|67/100 brn|[from] brn
+|upkeep
+|turn|3
+|
+|t:|1638955202
+|switch|p2b: Pyukumuku|Pyukumuku, L50, M|100/100
+|move|p1b: Indeedee|Follow Me|p1b: Indeedee
+|-singleturn|p1b: Indeedee|move: Follow Me
+|move|p2a: Urshifu|Wicked Blow|p1b: Indeedee
+|-supereffective|p1b: Indeedee
+|-crit|p1b: Indeedee
+|-damage|p1b: Indeedee|0 fnt
+|faint|p1b: Indeedee
+|move|p1a: Dragapult|Max Wyrmwind|p2b: Pyukumuku
+|-damage|p2b: Pyukumuku|44/100
+|-unboost|p2a: Urshifu|atk|1
+|-unboost|p2b: Pyukumuku|atk|1
+|-damage|p1a: Dragapult|1/100|[from] item: Life Orb
+|
+|-end|p1a: Dragapult|Dynamax
+|-heal|p1a: Dragapult|1/100|[silent]
+|upkeep
+|
+|t:|1638955217
+|switch|p1b: Whimsicott|Whimsicott, L50, M|100/100
+|turn|4
+|
+|t:|1638955229
+|move|p1b: Whimsicott|Tailwind|p1b: Whimsicott
+|-sidestart|p1: SayNoToSpachet|move: Tailwind
+|move|p1a: Dragapult|Dragon Darts|p2a: Urshifu
+|-damage|p2a: Urshifu|47/100
+|-anim|p1a: Dragapult|Dragon Darts|p2b: Pyukumuku
+|-damage|p2b: Pyukumuku|22/100
+|-damage|p1a: Dragapult|0 fnt|[from] item: Life Orb
+|faint|p1a: Dragapult
+|move|p2a: Urshifu|Wicked Blow|p1b: Whimsicott
+|-resisted|p1b: Whimsicott
+|-crit|p1b: Whimsicott
+|-damage|p1b: Whimsicott|46/100
+|move|p2b: Pyukumuku|Recover|p2b: Pyukumuku
+|-heal|p2b: Pyukumuku|72/100
+|
+|upkeep
+|
+|t:|1638955237
+|switch|p1a: Zacian|Zacian-Crowned, L50|100/100
+|-ability|p1a: Zacian|Intrepid Sword|boost
+|-boost|p1a: Zacian|atk|1
+|turn|5
+|
+|t:|1638955246
+|move|p1a: Zacian|Close Combat|p2b: Pyukumuku
+|-damage|p2b: Pyukumuku|35/100
+|-unboost|p1a: Zacian|def|1
+|-unboost|p1a: Zacian|spd|1
+|-damage|p1a: Zacian|84/100|[from] item: Rocky Helmet|[of] p2b: Pyukumuku
+|move|p1b: Whimsicott|Moonblast|p2a: Urshifu
+|-supereffective|p2a: Urshifu
+|-crit|p2a: Urshifu
+|-damage|p2a: Urshifu|0 fnt
+|faint|p2a: Urshifu
+|move|p2b: Pyukumuku|Recover|p2b: Pyukumuku
+|-heal|p2b: Pyukumuku|85/100
+|
+|upkeep
+|
+|t:|1638955254
+|switch|p2a: Eternatus|Eternatus, L50|100/100
+|-ability|p2a: Eternatus|Pressure
+|turn|6
+|
+|t:|1638955269
+|move|p1b: Whimsicott|Helping Hand|p1a: Zacian
+|-singleturn|p1a: Zacian|Helping Hand|[of] p1b: Whimsicott
+|move|p1a: Zacian|Behemoth Blade|p2a: Eternatus
+|-damage|p2a: Eternatus|0 fnt
+|faint|p2a: Eternatus
+|move|p2b: Pyukumuku|Toxic|p1b: Whimsicott
+|-status|p1b: Whimsicott|tox
+|
+|-damage|p1b: Whimsicott|40/100 tox|[from] psn
+|-fieldend|move: Psychic Terrain
+|upkeep
+|turn|7
+|
+|t:|1638955283
+|move|p1b: Whimsicott|Helping Hand|p1a: Zacian
+|-singleturn|p1a: Zacian|Helping Hand|[of] p1b: Whimsicott
+|move|p2b: Pyukumuku|Protect|p2b: Pyukumuku
+|-singleturn|p2b: Pyukumuku|Protect
+|move|p1a: Zacian|Close Combat|p2b: Pyukumuku
+|-activate|p2b: Pyukumuku|move: Protect
+|
+|-damage|p1b: Whimsicott|28/100 tox|[from] psn
+|-sideend|p1: SayNoToSpachet|move: Tailwind
+|upkeep
+|turn|8
+|
+|t:|1638955292
+|move|p1b: Whimsicott|Helping Hand|p1a: Zacian
+|-singleturn|p1a: Zacian|Helping Hand|[of] p1b: Whimsicott
+|move|p1a: Zacian|Close Combat|p2b: Pyukumuku
+|-damage|p2b: Pyukumuku|33/100
+|-unboost|p1a: Zacian|def|1
+|-unboost|p1a: Zacian|spd|1
+|-damage|p1a: Zacian|68/100|[from] item: Rocky Helmet|[of] p2b: Pyukumuku
+|move|p2b: Pyukumuku|Recover|p2b: Pyukumuku
+|-heal|p2b: Pyukumuku|83/100
+|
+|-damage|p1b: Whimsicott|11/100 tox|[from] psn
+|upkeep
+|turn|9
+|
+|t:|1638955308
+|move|p2b: Pyukumuku|Protect|p2b: Pyukumuku
+|-singleturn|p2b: Pyukumuku|Protect
+|move|p1b: Whimsicott|Sunny Day|p1b: Whimsicott
+|-weather|SunnyDay
+|move|p1a: Zacian|Close Combat|p2b: Pyukumuku
+|-activate|p2b: Pyukumuku|move: Protect
+|
+|-weather|SunnyDay|[upkeep]
+|-damage|p1b: Whimsicott|0 fnt|[from] psn
+|faint|p1b: Whimsicott
+|upkeep
+|turn|10
+|
+|t:|1638955318
+|move|p1a: Zacian|Close Combat|p2b: Pyukumuku
+|-damage|p2b: Pyukumuku|46/100
+|-unboost|p1a: Zacian|def|1
+|-unboost|p1a: Zacian|spd|1
+|-damage|p1a: Zacian|51/100|[from] item: Rocky Helmet|[of] p2b: Pyukumuku
+|move|p2b: Pyukumuku|Recover|p2b: Pyukumuku
+|-heal|p2b: Pyukumuku|96/100
+|
+|-weather|SunnyDay|[upkeep]
+|upkeep
+|turn|11
+|
+|t:|1638955324
+|move|p1a: Zacian|Close Combat|p2b: Pyukumuku
+|-damage|p2b: Pyukumuku|59/100
+|-unboost|p1a: Zacian|def|1
+|-unboost|p1a: Zacian|spd|1
+|-damage|p1a: Zacian|35/100|[from] item: Rocky Helmet|[of] p2b: Pyukumuku
+|move|p2b: Pyukumuku|Recover|p2b: Pyukumuku
+|-heal|p2b: Pyukumuku|100/100
+|
+|-weather|SunnyDay|[upkeep]
+|upkeep
+|turn|12
+|
+|t:|1638955331
+|move|p1a: Zacian|Substitute|p1a: Zacian
+|-start|p1a: Zacian|Substitute
+|-damage|p1a: Zacian|10/100
+|move|p2b: Pyukumuku|Recover||[still]
+|-fail|p2b: Pyukumuku|heal
+|
+|-weather|SunnyDay|[upkeep]
+|upkeep
+|turn|13
+|
+|t:|1638955339
+|move|p1a: Zacian|Behemoth Blade|p2b: Pyukumuku
+|-resisted|p2b: Pyukumuku
+|-damage|p2b: Pyukumuku|78/100
+|-damage|p1a: Zacian|0 fnt|[from] item: Rocky Helmet|[of] p2b: Pyukumuku
+|faint|p1a: Zacian
+|
+|win|tuttomio
+|raw|SayNoToSpachet's rating: 1561 &rarr; <strong>1535</strong><br />(-26 for losing)
+|raw|tuttomio's rating: 1453 &rarr; <strong>1479</strong><br />(+26 for winning)
+|l|☆SayNoToSpachet
+|l| Makisecurisu

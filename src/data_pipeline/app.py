@@ -2,7 +2,7 @@
 import logging
 
 # from data_extractor import DataExtractor
-# from constants import FORMATS
+from constants import FORMATS
 
 
 def init_logging(level: int):
@@ -15,7 +15,7 @@ def main():
     init_logging(logging.INFO)
     logging.info("Initializing data pipeline...")
     # data_extractor = DataExtractor(FORMATS)
-    # data_extractor.extract_info("gen8vgc2021series10")
+    # data_extractor.extract_info("gen8vgc2021series11")
 
 
 if __name__ == "__main__":

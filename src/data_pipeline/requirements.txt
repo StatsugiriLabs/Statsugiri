@@ -9,6 +9,7 @@ certifi==2021.10.8
 chardet==4.0.0
 charset-normalizer==2.0.9
 click==8.0.1
+decorator==5.1.0
 idna==3.2
 iniconfig==1.1.1
 isort==5.10.1
