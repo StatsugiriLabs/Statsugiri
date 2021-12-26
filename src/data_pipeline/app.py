@@ -2,7 +2,7 @@
 import logging
 
 # from data_extractor import DataExtractor
-from constants import FORMATS
+# from constants import FORMATS
 
 
 def init_logging(level: int):
