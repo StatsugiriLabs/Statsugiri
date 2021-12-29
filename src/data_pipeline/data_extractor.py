@@ -1,9 +1,12 @@
 """ Data Extractor is responsible for reading format metadata and retrieving the replay JSON """
+import logging
 from typing import List, Tuple
+from base_logger import logger
 import re
 import requests
 from bs4 import BeautifulSoup
 from constants import MAX_USERS
+from log_handler import LogHandler
 
 
 LADDER_BASE_URL = "https://pokemonshowdown.com/ladder/"
@@ -18,20 +21,20 @@ class DataExtractor:
     def __init__(self, formats: List[str], num_teams: int = 250):
         # Initialize available formats
         self.formats = formats
-        # self.replay_parser = ReplayParser()
         self.num_teams = num_teams
+        self.log_handler = LogHandler()
 
     def get_formats(self):
         """Return available formats"""
         return self.formats
 
     def get_ladder_users_and_ratings(
-        self, battle_format: str, num_users: int = MAX_USERS
+        self, format_id: str, num_users: int = MAX_USERS
     ) -> List[Tuple[str, int]]:
         """Return the top users and ratings within a given format"""
-        ladder_get_url = LADDER_BASE_URL + battle_format
-        if battle_format not in self.formats:
-            raise ValueError(f"Format ({battle_format}) is unavailable")
+        ladder_get_url = LADDER_BASE_URL + format_id
+        if format_id not in self.formats:
+            raise ValueError(f"Format ({format_id}) is unavailable")
         if num_users > MAX_USERS:
             raise ValueError(
                 f"Maximum number of users is {MAX_USERS}, {num_users} was requested"
@@ -65,7 +68,7 @@ class DataExtractor:
         user = user.replace(" ", "")
         return user
 
-    def get_user_replay_ids(self, user: str, battle_format: str):
+    def get_user_replay_ids(self, user: str, format_id: str):
         """Returns a user's replays by replay ID in reverse-chronological order,
         return blank if not found"""
         sanitized_user = self.sanitize_user(user)
@@ -79,46 +82,51 @@ class DataExtractor:
             replay.get("href")[1:]
             for replay in soup.find_all(
                 lambda predicate: predicate.name == "a"
-                and battle_format in predicate.get("href")
+                and format_id in predicate.get("href")
             )
         ]
 
         return replay_ids
 
-    def get_replay_log(self, battle_format: str, replay_id: str):
-        """Returns the replay log given a replay ID, blank if not found"""
-        replay_log_get_url = REPLAY_BASE_URL + battle_format + "-" + replay_id + ".log"
-        replay_log_res = requests.get(replay_log_get_url)
-        return replay_log_res.text
+    def get_replay_data(self, replay_id: str):
+        """Returns the replay data JSON given a replay ID, blank if not found"""
+        replay_data_get_url = REPLAY_BASE_URL + replay_id + ".json"
+        replay_data_res = requests.get(replay_data_get_url)
+        return {} if not replay_data_res else replay_data_res.json()
 
-    # def get_replay_parser_name(self):
-    #     return self.replay_parser.get_name()
 
-    # def set_replay_parser(self, replay_parser: ReplayParser):
-    #     self.parser = replay_parser
+    def extract_info(self, format_id: str):
+        """Run data pipeline for extracting replay data"""
+        # Retrieve top users
+        logger.info("Retrieving top users...")
+        user_ratings = self.get_ladder_users_and_ratings(format_id, 25)
 
-    # def extract_info(self, battle_format: str):
-    #     replay_log_res = requests.get(REPLAY_BASE_URL + "gen8vgc2021series3-1468972576" + ".log")
-    #     print(replay_log_res.text)
-    #     """Run data pipeline for extracting replay data"""
-    #     # Retrieve top users
-    #     user_ratings = self.get_ladder_users_and_ratings(battle_format, 100)
+        # Retrieve specified number of replays
+        teams_found = 0
+        logger.info("Searching for teams...")
+        for user_rating in user_ratings:
+            # Find users replays for specified format
+            logger.info(f"Retrieving {user_rating[0]}'s replays...")
+            user_replay_ids = self.get_user_replay_ids(user_rating[0], format_id)
+            # Skip to next user if replays not found
+            if not user_replay_ids:
+                logger.info("Skipping, no replays found...")
+                continue
+            # Find replay data using most recent replay
+            logger.info("Getting replay data...")
+            replay_data = self.get_replay_data(user_replay_ids[0])
+            # Skip to next user if replay not found
+            if not replay_data:
+                logger.info("Skipping, no replay data found...")
+                continue
+            self.log_handler.feed(replay_data)
+            self.log_handler.parse()
+                # log_handler.write()
+            logger.info("==Team found!==")
+            teams_found += 1
+            if teams_found == self.num_teams:
+                break
+            if teams_found == 3:
+                break
 
-    #     # Retrieve specified number of replays
-    #     teams_found = 0
-    #     for user_rating in user_ratings:
-    #         # Find users replays for specified format
-    #         user_replay_ids = self.get_user_replay_ids(user_rating[0], battle_format)
-    #         # Skip to next user if replays not found
-    #         if not user_replay_ids:
-    #             continue
-    #         # Find replay log using most recent replay
-    #         replay_log = self.get_replay_log(battle_format, user_replay_ids[0])
-    #         # Skip to next user if relpay not found
-    #         if not replay_log:
-    #             continue
-    #         # Check if there's a more elegant method
-    #         teams_found += 1
-    #         if teams_found == self.num_teams:
-    #             break
-    #         break
+        logger.info("Finished!")

@@ -29,12 +29,12 @@ def fixture_sample_ladder_res_text():
 
 @pytest.fixture(name="sample_log_res_text")
 def fixture_sample_log_text():
-    """Read sample ladder log text for mocking GET request"""
+    """Read sample ladder log JSON for mocking GET request"""
     __location__ = os.path.realpath(
         os.path.join(os.getcwd(), os.path.dirname(__file__))
     )
     return open(
-        os.path.join(__location__, "assets/sample_log.txt"),
+        os.path.join(__location__, "assets/sample_log.json"),
         encoding="utf-8",
     ).read()
 
@@ -127,13 +127,13 @@ def test_get_user_replay_ids_happy_path(
     ]
 
 
-def test_get_replay_log(requests_mock, sample_log_res_text, data_extractor_under_test):
+def test_get_replay_data(requests_mock, sample_log_res_text, data_extractor_under_test):
     """Test retrieval for replay logs"""
     requests_mock.get(
-        "https://replay.pokemonshowdown.com/gen8vgc2021series11-1468972576.log",
+        "https://replay.pokemonshowdown.com/gen8vgc2021series11-1480036147.json",
         text=sample_log_res_text,
     )
     try:
-        data_extractor_under_test.get_replay_log("gen8vgc2021series11", "1468972576")
+        data_extractor_under_test.get_replay_data("gen8vgc2021series11-1480036147")
     except:
-        raise pytest.fail(f"`get_replay_log` was unsuccessful")
+        raise pytest.fail(f"`get_replay_data` was unsuccessful")
