@@ -13,12 +13,20 @@ class ReplayMetadata:
     def set_upload_time(self, upload_time: int):
         self.upload_time = upload_time
 
+    def get_upload_time(self):
+        return self.upload_time
+
     def set_replay_id(self, replay_id: str):
         self.replay_id = replay_id
+
+    def get_replay_id(self):
+        return self.replay_id
 
     def set_format_id(self, format_id: str):
         self.format_id = format_id
 
+    def get_format_id(self):
+        return self.format_id
 
 # pylint: disable=R0903
 class TurnInfo:

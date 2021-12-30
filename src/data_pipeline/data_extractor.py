@@ -1,5 +1,4 @@
 """ Data Extractor is responsible for reading format metadata and retrieving the replay JSON """
-import logging
 from typing import List, Tuple
 from base_logger import logger
 import re

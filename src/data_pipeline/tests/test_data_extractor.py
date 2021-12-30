@@ -1,4 +1,4 @@
-"""Unit tests for DataExtractor class"""
+"""Unit tests for `DataExtractor` class"""
 import os
 import pytest
 from constants import MAX_USERS
