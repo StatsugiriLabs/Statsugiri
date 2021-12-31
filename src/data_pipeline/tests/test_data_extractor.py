@@ -1,4 +1,4 @@
-"""Unit tests for DataExtractor class"""
+"""Unit tests for `DataExtractor` class"""
 import os
 import pytest
 from constants import MAX_USERS
@@ -27,26 +27,14 @@ def fixture_sample_ladder_res_text():
     ).read()
 
 
-@pytest.fixture(name="sample_log_res_text")
-def fixture_sample_log_text():
-    """Read sample ladder log text for mocking GET request"""
+@pytest.fixture(name="sample_user_replays_res_text")
+def fixture_sample_user_replays_res_text():
+    """Read sample user's replays response text mocking GET request"""
     __location__ = os.path.realpath(
         os.path.join(os.getcwd(), os.path.dirname(__file__))
     )
     return open(
-        os.path.join(__location__, "assets/sample_log.txt"),
-        encoding="utf-8",
-    ).read()
-
-
-@pytest.fixture(name="sample_replays_res_text")
-def fixture_sample_replays_res_text():
-    """Read sample replays response text for mocking GET request"""
-    __location__ = os.path.realpath(
-        os.path.join(os.getcwd(), os.path.dirname(__file__))
-    )
-    return open(
-        os.path.join(__location__, "assets/sample_replays_res.txt"),
+        os.path.join(__location__, "assets/sample_user_replays_res.txt"),
         encoding="utf-8",
     ).read()
 
@@ -76,7 +64,7 @@ def test_get_ladder_users_and_ratings_happy_path(
     ]
 
 
-def test_get_ladder_rankings_unavailable_format_should_raise_value_error(
+def test_get_ladder_users_and_ratings_unavailable_format_should_raise_value_error(
     data_extractor_under_test,
 ):
     """Test when unsupported format is provided"""
@@ -86,7 +74,7 @@ def test_get_ladder_rankings_unavailable_format_should_raise_value_error(
         )
 
 
-def test_get_ladder_rankings_greater_than_max_users_should_raise_value_error(
+def test_get_ladder_users_and_ratings_greater_than_max_users_should_raise_value_error(
     data_extractor_under_test,
 ):
     """Test when number of users requested is greater than available users"""
@@ -105,12 +93,12 @@ def test_sanitize_user(data_extractor_under_test):
 
 
 def test_get_user_replay_ids_happy_path(
-    requests_mock, sample_replays_res_text, data_extractor_under_test
+    requests_mock, sample_user_replays_res_text, data_extractor_under_test
 ):
     """Test user replay ID retrieval"""
     requests_mock.get(
         "https://replay.pokemonshowdown.com/search/?output=html&user=SayNoToSpachet",
-        text=sample_replays_res_text,
+        text=sample_user_replays_res_text,
     )
     replay_ids = data_extractor_under_test.get_user_replay_ids(
         "SayNoToSpachet", "gen8vgc2021series11"
@@ -125,15 +113,3 @@ def test_get_user_replay_ids_happy_path(
         "gen8vgc2021series11-1463340788",
         "gen8vgc2021series11-1463175352",
     ]
-
-
-def test_get_replay_log(requests_mock, sample_log_res_text, data_extractor_under_test):
-    """Test retrieval for replay logs"""
-    requests_mock.get(
-        "https://replay.pokemonshowdown.com/gen8vgc2021series11-1468972576.log",
-        text=sample_log_res_text,
-    )
-    try:
-        data_extractor_under_test.get_replay_log("gen8vgc2021series11", "1468972576")
-    except:
-        raise pytest.fail(f"`get_replay_log` was unsuccessful")
