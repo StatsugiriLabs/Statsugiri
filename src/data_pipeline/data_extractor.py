@@ -19,9 +19,9 @@ class DataExtractor:
 
     def __init__(self, formats: List[str], num_teams: int = 250):
         # Initialize available formats
+        self.log_handler = LogHandler()
         self.formats = formats
         self.num_teams = num_teams
-        self.log_handler = LogHandler()
 
     def get_formats(self) -> List[str]:
         """Return available formats"""
