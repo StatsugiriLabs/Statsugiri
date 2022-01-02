@@ -50,7 +50,7 @@ def test_feed_log_happy_path(sample_cleaned_replay_data_json, log_handler_under_
 def test_feed_log_no_log_field():
     """Test when `replay_data` has no 'log' field"""
     log_handler_under_test = LogHandler()
-    assert log_handler_under_test.feed_log({}) == False
+    assert not log_handler_under_test.feed_log({})
 
 
 def test_parse_teams_happy_path(
@@ -80,20 +80,24 @@ def test_parse_teams_happy_path(
 
 
 def test_parse_teams_team_invalid_user_should_return_empty(log_handler_under_test):
+    """Test team parsing when user provided is an empty string"""
     assert log_handler_under_test.parse_teams("") == []
 
 
 def test_parse_teams_team_empty_log_should_return_empty():
+    """Test team parsing when no log has been initialized"""
     # Initialize `log_handler` without populated `sanitized_log`
     log_handler_under_test = LogHandler()
     assert log_handler_under_test.parse_teams("") == []
 
 
 def test_parse_teams_team_player_not_found_should_return_empty(log_handler_under_test):
+    """Test team parsing when player not found"""
     assert log_handler_under_test.parse_teams("not_a_user") == []
 
 
 def test_parse_teams_team_team_not_found_should_return_empty():
+    """Test team parsing when team is not found"""
     log_handler_under_test = LogHandler()
     # Feed log with valid, parseable user without team
     log_handler_under_test.feed_log({"log": "|player|p1|user_without_team|"})

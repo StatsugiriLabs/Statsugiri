@@ -44,7 +44,7 @@ function run_black_formatting () {
 function run_pylint_linting () {
     printf "Running Pylint to check Python linting...\n\n"
     # Suppress messages
-    pylint --fail-under=$LINT_THRESHOLD $SRC_DIR/**/*.py $>/dev/null
+    pylint --fail-under=$LINT_THRESHOLD $SRC_DIR/**/*.py --rcfile=$CURR_DIR/../.pylintrc $>/dev/null
 
     if [[ "$?" != 0 ]]; then
         printf "\n***Python linting did not pass! (Must meet threshold of 9.0)***\n\n"
