@@ -19,9 +19,9 @@ class DataExtractor:
 
     def __init__(self, formats: List[str], num_teams: int = 250):
         # Initialize available formats
+        self.log_handler = LogHandler()
         self.formats = formats
         self.num_teams = num_teams
-        self.log_handler = LogHandler()
 
     def get_formats(self) -> List[str]:
         """Return available formats"""
@@ -67,6 +67,7 @@ class DataExtractor:
         combined_users_ratings = list(zip(users, ratings))
         return combined_users_ratings[:num_users]
 
+    # TODO: https://github.com/kelvinkoon/babiri_v2/issues/24
     def sanitize_user(self, user: str) -> str:
         """Sanitize username for non-ASCII characters and spaces"""
         # PS! ignores non-ASCII characters and spaces
@@ -96,6 +97,7 @@ class DataExtractor:
 
         return replay_ids
 
+    # TODO: https://github.com/kelvinkoon/babiri_v2/issues/24
     def get_replay_data(self, replay_id: str) -> dict:
         """Returns the replay data JSON given a replay ID, blank if not found"""
         replay_data_get_url = REPLAY_BASE_URL + replay_id + ".json"

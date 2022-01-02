@@ -23,17 +23,17 @@ Document for daily team snapshots and ranking metadata.
 
 ```javascript
 {
-    date: datetime,         // Primary Key: yyyy-mm-dd
-    format: str,            // Secondary Key
-    teams: {
+    date: datetime,            // Primary Key: yyyy-mm-dd
+    format_id: str,            // Secondary Key
+    teams: [
         [
             {
-                pokemon_list: [str],
+                pokemon_roster: [str],
                 rating: int,
                 replay_upload_date: datetime //yyyy-mm-dd
             }
         ]
-    }
+    ]
 }
 ```
 
@@ -45,30 +45,17 @@ Document for individual Pokémon usage data out of all ranked teams.
 ```javascript
 {
     date: datetime,             // Primary Key: yyyy-mm-dd
-    format: str,                // Secondary Key
+    format_id: str,             // Secondary Key
     pokemon_usage: {            // List of Pokémon usage as number of appearances
-        [
-            str: int
-        ]
+        str: int
     },
-    pokemon_partners: {
-        [
-            str: [              // List of Pokémon recorded
-                {
-                    str: int    // Denotes Pokémon's partners as number of appearances
-                }
-            ]
-        ]
+    pokemon_partner_usage: {
+        str: {              // List of Pokémon recorded
+            str: int        // Denotes Pokémon's partners as number of appearances
+        }
     },
-    average_rating: {           // Denotes Pokémon's average rating between all appearances
-        [
-            str: float
-        ]
-    },
-    core_usage: {               // Denotes cores of three Pokémon as number of appearances
-        [
-            [str]: int
-        ]
+    pokemon_average_rating_usage: {     // Denotes Pokémon's average rating normalized by number of appearances
+        str: float
     }
 }
 ```
