@@ -2,10 +2,13 @@
 from typing import List, Tuple
 import re
 import requests
+import time
 from base_logger import logger
 from bs4 import BeautifulSoup
 from constants import MAX_USERS
+from replay_metadata import ReplayMetadata
 from log_handler import LogHandler
+from replay_metadata import ParsedUserReplay
 
 
 LADDER_BASE_URL = "https://pokemonshowdown.com/ladder/"
@@ -22,10 +25,36 @@ class DataExtractor:
         self.log_handler = LogHandler()
         self.formats = formats
         self.num_teams = num_teams
+        self.parsed_user_replay_list = []
+
+    def set_formats(self, formats: List[str]):
+        """Set available formats"""
+        self.formats = formats
 
     def get_formats(self) -> List[str]:
-        """Return available formats"""
+        """Get available formats"""
         return self.formats
+
+    def set_num_teams(self, num_teams: int):
+        """Set number of teams to search"""
+        self.num_teams = num_teams
+
+    def get_num_teams(self):
+        """Get number of teams to search"""
+        return self.num_teams
+
+    def set_parsed_user_replay_list(self, parsed_user_replay_list: List[ParsedUserReplay]):
+        """Set parsed user replay list"""
+        self.parsed_user_replay_list = parsed_user_replay_list
+
+    def add_parsed_user_replay(self, parsed_user_replay: ParsedUserReplay):
+        """Add parsed user replay to list"""
+        self.parsed_user_replay_list.append(parsed_user_replay)
+
+    def get_parsed_user_replay_list(self):
+        """Get parsed user replay list"""
+        return self.parsed_user_replay_list
+
 
     def get_ladder_users_and_ratings(
         self, format_id: str, num_users: int = MAX_USERS
@@ -105,39 +134,73 @@ class DataExtractor:
         replay_data_res = requests.get(replay_data_get_url)
         return {} if not replay_data_res else replay_data_res.json()
 
-    # def extract_info(self, format_id: str):
-    #     """Run data pipeline for extracting replay data"""
-    #     # Retrieve top users
-    #     logger.info("Retrieving top users...")
-    #     user_ratings = self.get_ladder_users_and_ratings(format_id, 25)
+    def extract_info(self, format_id: str) -> None:
+        """Run data pipeline for extracting replay data"""
+        # Commence timer recording
+        start_time = time.time()
 
-    #     # Retrieve specified number of replays
-    #     teams_found = 0
-    #     logger.info("Searching for teams...")
-    #     for user_rating in user_ratings:
-    #         # Find users replays for specified format
-    #         logger.info(f"Retrieving {user_rating[0]}'s replays...")
-    #         user_replay_ids = self.get_user_replay_ids(user_rating[0], format_id)
-    #         # Skip to next user if replays not found
-    #         if not user_replay_ids:
-    #             logger.info("Skipping, no replays found...")
-    #             continue
-    #         # Find replay data using most recent replay
-    #         logger.info("Getting replay data...")
-    #         replay_data = self.get_replay_data(user_replay_ids[0])
-    #         # Skip to next user if replay not found
-    #         if not replay_data:
-    #             logger.info("Skipping, no replay data found...")
-    #             continue
-    #         self.log_handler.feed(replay_data)
-    #         if self.log_handler.parse_users() and self.log_handler.parse_teams():
-    #             logger.info("==Team found!==")
-    #             teams_found += 1
-    #             if teams_found == self.num_teams:
-    #                 break
-    #             if teams_found == 3:
-    #                 break
-    #         else:
-    #             continue
+        # Retrieve top users
+        logger.info("Retrieving top users...")
+        user_ratings = self.get_ladder_users_and_ratings(format_id, 500)
 
-    #     logger.info("Finished!")
+        # Retrieve specified number of replays
+        # TODO: Replace with `NUM_TEAMS`, separate teams to search vs find
+        teams_found = 0
+        logger.info("Searching for teams...")
+        for user_rating in user_ratings:
+            user, rating = user_rating[0], user_rating[1]
+            # Find users replays for specified format
+            logger.info(f"Retrieving {user}'s replays...")
+            user_replay_ids = self.get_user_replay_ids(user_rating[0], format_id)
+            # Skip to next user if replays not found
+            if not user_replay_ids:
+                logger.info("Skipping, no replays found...")
+                continue
+
+            # Find replay data using most recent replay
+            logger.info("Getting replay data...")
+            replay_data = self.get_replay_data(user_replay_ids[0])
+            # Skip to next user if replay not found
+            if not replay_data:
+                logger.info("Skipping, no replay data found...")
+                continue
+
+            # Feed replay data to LogHandler
+            if not self.log_handler.feed_log(replay_data):
+                continue
+
+            # Gather replay metadata
+            if "uploadtime" not in replay_data:
+                continue
+            upload_time = replay_data["uploadtime"]
+            if "id" not in replay_data:
+                continue
+            replay_id = replay_data["id"]
+            if "format" not in replay_data:
+                continue
+            format_id = replay_data["format"]
+
+            # Populate `ReplayMetadata`
+            replay_metadata = ReplayMetadata(upload_time, replay_id, format_id)
+
+            # Populate `ParsedUserReplay` based on replay data
+            user_roster = self.log_handler.parse_team(user)
+            # Skip to next user if team not found
+            if not user_roster:
+                continue
+            parsed_user_replay = ParsedUserReplay(replay_metadata, user, rating, user_roster)
+            self.add_parsed_user_replay(parsed_user_replay)
+
+            # Record team found
+            teams_found += 1
+            # TODO: Replace with number of teams to find
+            if teams_found == 100:
+                break
+        
+        execution_time = time.time() - start_time
+
+        # TODO: Remove from PR
+        for parsed_replay in self.get_parsed_user_replay_list():
+            print(f"{parsed_replay.get_user()} ({parsed_replay.get_rating()}): {parsed_replay.get_pokemon_roster()}")
+
+        logger.info(f"Extraction finished in {execution_time: .2f} seconds")
