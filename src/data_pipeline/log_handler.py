@@ -5,11 +5,10 @@ from base_logger import logger
 
 
 class LogHandler:
-    """Module for processing replay logs (ie. `replay_data["logs"])"""
+    """Module for processing replay logs (ie. replay_data["logs"])"""
 
     def __init__(self):
         self.sanitized_log = ""
-        # TODO: Transformers will make use of ParsedReplay state from `data_extractor`` layer
 
     def set_sanitized_log(self, sanitized_log: str) -> None:
         """Set sanitized replay log"""
@@ -31,7 +30,7 @@ class LogHandler:
         self.set_sanitized_log(sanitized_log)
         return True
 
-    def parse_teams(self, user: str) -> List[str]:
+    def parse_team(self, user: str) -> List[str]:
         """Parse for teams in log"""
         if not user:
             logger.warning("Invalid username, please enter a valid user")

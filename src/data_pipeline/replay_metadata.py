@@ -1,15 +1,14 @@
 """ Classes for structuring replay metadata-associated storage """
 from typing import List
-from base_logger import logger
 
 
 class ReplayMetadata:
     """Replay metadata from individual replay"""
 
-    def __init__(self):
-        self.upload_time = 0
-        self.replay_id = ""
-        self.format_id = ""
+    def __init__(self, upload_time: int, replay_id: str, format_id: str):
+        self.upload_time = upload_time
+        self.replay_id = replay_id
+        self.format_id = format_id
 
     def set_upload_time(self, upload_time: int) -> None:
         """Set replay upload time"""
@@ -36,72 +35,50 @@ class ReplayMetadata:
         return self.format_id
 
 
-class TurnInfo:
-    """Individual turn information"""
-
-    def __init__(self, turn_num: int, turn_events=str):
-        self.turn_num = turn_num
-        self.turn_events = turn_events
-
-
-class ParsedReplay:
+class ParsedUserReplay:
     """Parsed replay information from log"""
 
-    def __init__(self):
+    def __init__(
+        self,
+        replay_metadata: ReplayMetadata,
+        user: str,
+        rating: int,
+        pokemon_roster: List[str],
+    ):
         """Teams and turns populated by `LogHandler`"""
-        self.metadata = ReplayMetadata()
-        self.p1_user = ""
-        self.p2_user = ""
-        # str: [str] -> user and team
-        self.teams = {}
-        self.turn_info_list = []
+        self.metadata = replay_metadata
+        self.user = user
+        self.rating = rating
+        self.pokemon_roster = pokemon_roster
 
-    def set_replay_metadata(
-        self, upload_time: int, format_id: str, replay_id: str
-    ) -> None:
+    def set_replay_metadata(self, replay_metadata: ReplayMetadata) -> None:
         """Set replay metadata"""
-        self.metadata.set_upload_time(upload_time)
-        self.metadata.set_format_id(format_id)
-        self.metadata.set_replay_id(replay_id)
+        self.metadata = replay_metadata
 
     def get_replay_metadata(self) -> ReplayMetadata:
         """Get replay metadata"""
         return self.metadata
 
-    def set_p1_user(self, p1_user: str) -> None:
-        """Set designated `p1` user"""
-        self.p1_user = p1_user
+    def set_user(self, user: str) -> None:
+        """Set user of interest"""
+        self.user = user
 
-    def get_p1_user(self) -> str:
-        """Get designated `p1` user"""
-        return self.p1_user
+    def get_user(self) -> str:
+        """Get user of interest"""
+        return self.user
 
-    def set_p2_user(self, p2_user: str) -> None:
-        """Set designated `p2` user"""
-        self.p2_user = p2_user
+    def set_rating(self, rating: int) -> None:
+        """Set rating"""
+        self.rating = rating
 
-    def get_p2_user(self) -> str:
-        """Get designated `p2` user"""
-        return self.p2_user
+    def get_rating(self) -> int:
+        """Get rating"""
+        return self.rating
 
-    def set_teams(
-        self, p1_user: str, p2_user: str, p1_team: List[str], p2_team: List[str]
-    ) -> None:
-        """Set player teams"""
-        self.teams[p1_user] = p1_team
-        self.teams[p2_user] = p2_team
+    def set_pokemon_roster(self, pokemon_roster: List[str]) -> None:
+        """Set Pokémon roster"""
+        self.pokemon_roster = pokemon_roster
 
-    def get_team(self, user: str) -> List[str]:
-        """Get player team given a user"""
-        if user not in self.teams:
-            logger.error(f"User ({user}) does not exist, team cannot be parsed")
-            raise ValueError(f"User ({user}) not found in `ParsedReplay`")
-        return self.teams[user]
-
-    def set_turn_info_list(self, turn_info_list: List[TurnInfo]) -> None:
-        """Set turn info events list"""
-        self.turn_info_list = turn_info_list
-
-    def add_turn_info(self, turn_info: TurnInfo) -> None:
-        """Add turn info to events list"""
-        self.turn_info_list.append(turn_info)
+    def get_pokemon_roster(self) -> List[str]:
+        """Get Pokémon roster"""
+        return self.pokemon_roster

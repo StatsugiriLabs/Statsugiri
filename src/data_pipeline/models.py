@@ -9,15 +9,15 @@ class PokemonTeamSnapshot:
     """Model for Pokémon Team Snapshots"""
 
     def __init__(self):
-        self.date: datetime.MINYEAR
+        self.date: int(datetime.MINYEAR)
         self.format_id = ""
         self.team_list = []
 
-    def set_date(self, date: datetime) -> None:
+    def set_date(self, date: int) -> None:
         """Set date"""
         self.date = date
 
-    def get_date(self) -> datetime:
+    def get_date(self) -> int:
         """Get date"""
         return self.date
 
@@ -56,7 +56,7 @@ class PokemonTeam:
     def __init__(self):
         self.pokemon_roster = []
         self.rating = 0
-        self.replay_upload_date = datetime.MINYEAR
+        self.replay_upload_date = int(datetime.MINYEAR)
 
     def set_pokemon_roster(self, pokemon_roster: List[str]) -> None:
         """Set Pokémon list"""
@@ -86,11 +86,11 @@ class PokemonTeam:
         """Get rating"""
         return self.rating
 
-    def set_replay_upload_date(self, replay_upload_date: datetime) -> None:
+    def set_replay_upload_date(self, replay_upload_date: int) -> None:
         """Set replay upload date"""
         self.replay_upload_date = replay_upload_date
 
-    def get_replay_upload_date(self) -> datetime:
+    def get_replay_upload_date(self) -> int:
         """Get replay upload date"""
         return self.replay_upload_date
 
@@ -99,7 +99,7 @@ class PokemonUsageSnapshot:
     """Model for Pokémon Usage Snapshot"""
 
     def __init__(self):
-        self.date = datetime.MINYEAR
+        self.date = int(datetime.MINYEAR)
         self.format_id = ""
         # {Pokémon -> number of apperances}
         self.pokemon_usage = {}
@@ -108,11 +108,11 @@ class PokemonUsageSnapshot:
         # {Pokémon -> average rating}
         self.pokemon_average_rating_usage = {}
 
-    def set_date(self, date: datetime) -> None:
+    def set_date(self, date: int) -> None:
         """Set date"""
         self.date = date
 
-    def get_date(self) -> datetime:
+    def get_date(self) -> int:
         """Get date"""
         return self.date
 

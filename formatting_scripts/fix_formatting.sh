@@ -47,7 +47,7 @@ function run_pylint_linting () {
     pylint --fail-under=$LINT_THRESHOLD $SRC_DIR/**/*.py --rcfile=$CURR_DIR/../.pylintrc $>/dev/null
 
     if [[ "$?" != 0 ]]; then
-        printf "\n***Python linting did not pass! (Must meet threshold of 9.0)***\n\n"
+        printf "\n***Python linting did not pass threshold of 9.0! Run `../test_scripts/run_pylint.sh` for log***\n\n"
         exit 1
     fi
 }
