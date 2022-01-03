@@ -34,19 +34,24 @@ class ReplayMetadata:
         """Get replay format ID"""
         return self.format_id
 
+
 class ParsedUserReplay:
     """Parsed replay information from log"""
 
-    def __init__(self, replay_metadata: ReplayMetadata, user: str, rating: int, pokemon_roster: List[str]):
+    def __init__(
+        self,
+        replay_metadata: ReplayMetadata,
+        user: str,
+        rating: int,
+        pokemon_roster: List[str],
+    ):
         """Teams and turns populated by `LogHandler`"""
         self.metadata = replay_metadata
         self.user = user
         self.rating = rating
         self.pokemon_roster = pokemon_roster
 
-    def set_replay_metadata(
-        self, replay_metadata: ReplayMetadata
-    ) -> None:
+    def set_replay_metadata(self, replay_metadata: ReplayMetadata) -> None:
         """Set replay metadata"""
         self.metadata = replay_metadata
 
@@ -65,14 +70,12 @@ class ParsedUserReplay:
     def set_rating(self, rating: int) -> None:
         """Set rating"""
         self.rating = rating
-    
+
     def get_rating(self) -> int:
         """Get rating"""
         return self.rating
 
-    def set_pokemon_roster(
-        self, pokemon_roster: List[str]
-    ) -> None:
+    def set_pokemon_roster(self, pokemon_roster: List[str]) -> None:
         """Set Pokémon roster"""
         self.pokemon_roster = pokemon_roster
 

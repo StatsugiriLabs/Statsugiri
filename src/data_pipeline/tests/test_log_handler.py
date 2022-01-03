@@ -53,9 +53,7 @@ def test_feed_log_no_log_field():
     assert not log_handler_under_test.feed_log({})
 
 
-def test_parse_team_happy_path(
-    sample_cleaned_replay_data_json, log_handler_under_test
-):
+def test_parse_team_happy_path(sample_cleaned_replay_data_json, log_handler_under_test):
     """Test parsing teams from log given `p1` and `p2`"""
     p1_user = sample_cleaned_replay_data_json["p1"]
     p1_team = log_handler_under_test.parse_team(p1_user)

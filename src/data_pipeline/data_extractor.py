@@ -1,14 +1,13 @@
 """ Data Extractor is responsible for reading format metadata and retrieving the replay JSON """
 from typing import List, Tuple
 import re
-import requests
 import time
+import requests
 from base_logger import logger
 from bs4 import BeautifulSoup
-from constants import MAX_USERS
-from replay_metadata import ReplayMetadata
+from constants import MAX_USERS, NUM_TEAMS
+from replay_metadata import ReplayMetadata, ParsedUserReplay
 from log_handler import LogHandler
-from replay_metadata import ParsedUserReplay
 
 
 LADDER_BASE_URL = "https://pokemonshowdown.com/ladder/"
@@ -20,7 +19,7 @@ REQUEST_TIMEOUT = 120  # [seconds]
 class DataExtractor:
     """Class for ingesting, parsing, and extracting replay data"""
 
-    def __init__(self, formats: List[str], num_teams: int = 250):
+    def __init__(self, formats: List[str], num_teams: int = NUM_TEAMS):
         # Initialize available formats
         self.log_handler = LogHandler()
         self.formats = formats
@@ -43,7 +42,9 @@ class DataExtractor:
         """Get number of teams to search"""
         return self.num_teams
 
-    def set_parsed_user_replay_list(self, parsed_user_replay_list: List[ParsedUserReplay]):
+    def set_parsed_user_replay_list(
+        self, parsed_user_replay_list: List[ParsedUserReplay]
+    ):
         """Set parsed user replay list"""
         self.parsed_user_replay_list = parsed_user_replay_list
 
@@ -54,7 +55,6 @@ class DataExtractor:
     def get_parsed_user_replay_list(self):
         """Get parsed user replay list"""
         return self.parsed_user_replay_list
-
 
     def get_ladder_users_and_ratings(
         self, format_id: str, num_users: int = MAX_USERS
@@ -141,10 +141,9 @@ class DataExtractor:
 
         # Retrieve top users
         logger.info("Retrieving top users...")
-        user_ratings = self.get_ladder_users_and_ratings(format_id, 500)
+        user_ratings = self.get_ladder_users_and_ratings(format_id, MAX_USERS)
 
         # Retrieve specified number of replays
-        # TODO: Replace with `NUM_TEAMS`, separate teams to search vs find
         teams_found = 0
         logger.info("Searching for teams...")
         for user_rating in user_ratings:
@@ -170,15 +169,17 @@ class DataExtractor:
                 continue
 
             # Gather replay metadata
-            if "uploadtime" not in replay_data:
+            if (
+                "uploadtime" not in replay_data
+                or "id" not in replay_data
+                or "format" not in replay_data
+            ):
                 continue
-            upload_time = replay_data["uploadtime"]
-            if "id" not in replay_data:
-                continue
-            replay_id = replay_data["id"]
-            if "format" not in replay_data:
-                continue
-            format_id = replay_data["format"]
+            upload_time, replay_id, format_id = (
+                replay_data["uploadtime"],
+                replay_data["id"],
+                replay_data["format"],
+            )
 
             # Populate `ReplayMetadata`
             replay_metadata = ReplayMetadata(upload_time, replay_id, format_id)
@@ -188,19 +189,14 @@ class DataExtractor:
             # Skip to next user if team not found
             if not user_roster:
                 continue
-            parsed_user_replay = ParsedUserReplay(replay_metadata, user, rating, user_roster)
+            parsed_user_replay = ParsedUserReplay(
+                replay_metadata, user, rating, user_roster
+            )
+            # Record team
             self.add_parsed_user_replay(parsed_user_replay)
 
-            # Record team found
             teams_found += 1
-            # TODO: Replace with number of teams to find
-            if teams_found == 100:
+            if teams_found == self.num_teams:
                 break
-        
-        execution_time = time.time() - start_time
 
-        # TODO: Remove from PR
-        for parsed_replay in self.get_parsed_user_replay_list():
-            print(f"{parsed_replay.get_user()} ({parsed_replay.get_rating()}): {parsed_replay.get_pokemon_roster()}")
-
-        logger.info(f"Extraction finished in {execution_time: .2f} seconds")
+        logger.info(f"Extraction finished in {time.time() - start_time: .2f} seconds")

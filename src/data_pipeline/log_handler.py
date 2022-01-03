@@ -1,6 +1,6 @@
 """ Log Handler is responsible for parsing metadata and replay logs into structured information """
 import re
-from typing import List, Tuple
+from typing import List
 from base_logger import logger
 
 
