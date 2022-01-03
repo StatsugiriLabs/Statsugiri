@@ -1,5 +1,5 @@
 """ Constants shared between modules """
 FORMATS = ["gen8vgc2021series11", "gen8ou"]
-NUM_TEAMS = 50
+NUM_TEAMS = 20
 MAX_USERS = 500
 TEAM_SIZE = 6

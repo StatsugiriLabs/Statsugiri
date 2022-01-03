@@ -4,59 +4,13 @@ from typing import List
 from constants import TEAM_SIZE, NUM_TEAMS
 from base_logger import logger
 
-
-class PokemonTeamSnapshot:
-    """Model for Pokémon Team Snapshots"""
-
-    def __init__(self):
-        self.date: int(datetime.MINYEAR)
-        self.format_id = ""
-        self.team_list = []
-
-    def set_date(self, date: int) -> None:
-        """Set date"""
-        self.date = date
-
-    def get_date(self) -> int:
-        """Get date"""
-        return self.date
-
-    def set_format_id(self, format_id: str) -> None:
-        """Set format ID"""
-        self.format_id = format_id
-
-    def get_format_id(self) -> str:
-        """Get format ID"""
-        return self.format_id
-
-    def set_team_list(self, team_list: List[List[str]]) -> None:
-        """Set team list"""
-        if len(team_list) > NUM_TEAMS:
-            logger.warning(
-                f"Cannot add team list greater than maximum size of {NUM_TEAMS}"
-            )
-        else:
-            self.team_list = team_list
-
-    def add_team(self, team: List[str]) -> None:
-        """Add team to team list"""
-        if len(self.team_list) > NUM_TEAMS - 1:
-            logger.warning(f"Cannot add team, team list limited to {NUM_TEAMS}")
-        else:
-            self.team_list.append(team)
-
-    def get_team_list(self) -> List[List[str]]:
-        """Get team list"""
-        return self.team_list
-
-
 class PokemonTeam:
     """Model for teams in Pokémon Team Snapshots"""
 
-    def __init__(self):
-        self.pokemon_roster = []
-        self.rating = 0
-        self.replay_upload_date = int(datetime.MINYEAR)
+    def __init__(self, pokemon_roster: List[str]=[], rating: int=0, replay_upload_date: int=int(datetime.MINYEAR)):
+        self.pokemon_roster = pokemon_roster
+        self.rating = rating
+        self.replay_upload_date = replay_upload_date
 
     def set_pokemon_roster(self, pokemon_roster: List[str]) -> None:
         """Set Pokémon list"""
@@ -93,6 +47,50 @@ class PokemonTeam:
     def get_replay_upload_date(self) -> int:
         """Get replay upload date"""
         return self.replay_upload_date
+
+class PokemonTeamsSnapshot:
+    """Model for Pokémon Team Snapshots"""
+
+    def __init__(self, date: int=int(datetime.MINYEAR), format_id: str="", team_list: List[List[PokemonTeam]]=[]):
+        self.date = date
+        self.format_id = format_id
+        self.team_list = team_list
+
+    def set_date(self, date: int) -> None:
+        """Set date"""
+        self.date = date
+
+    def get_date(self) -> int:
+        """Get date"""
+        return self.date
+
+    def set_format_id(self, format_id: str) -> None:
+        """Set format ID"""
+        self.format_id = format_id
+
+    def get_format_id(self) -> str:
+        """Get format ID"""
+        return self.format_id
+
+    def set_team_list(self, team_list: List[List[str]]) -> None:
+        """Set team list"""
+        if len(team_list) > NUM_TEAMS:
+            logger.warning(
+                f"Cannot add team list greater than maximum size of {NUM_TEAMS}"
+            )
+        else:
+            self.team_list = team_list
+
+    def add_team(self, team: List[str]) -> None:
+        """Add team to team list"""
+        if len(self.get_team_list()) > NUM_TEAMS - 1:
+            logger.warning(f"Cannot add team, team list limited to {NUM_TEAMS}")
+        else:
+            self.team_list.append(team)
+
+    def get_team_list(self) -> List[List[str]]:
+        """Get team list"""
+        return self.team_list
 
 
 class PokemonUsageSnapshot:

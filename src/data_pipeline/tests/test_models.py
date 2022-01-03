@@ -1,14 +1,13 @@
 """ Unit tests for models (ie. getters / setters with non-trivial logic)"""
 import pytest
-from models import PokemonTeamSnapshot, PokemonUsageSnapshot, PokemonTeam
+from models import PokemonTeamsSnapshot, PokemonUsageSnapshot, PokemonTeam
 from constants import NUM_TEAMS, TEAM_SIZE
 
 
 @pytest.fixture(name="pokemon_team_snapshot_under_test")
 def fixture_pokemon_team_snapshot():
     """Initialize Pokémon team snapshot object"""
-    return PokemonTeamSnapshot()
-
+    return PokemonTeamsSnapshot()
 
 @pytest.fixture(name="pokemon_team_under_test")
 def fixture_pokemon_team():
@@ -20,7 +19,6 @@ def fixture_pokemon_team():
 def fixture_pokemon_usage_snapshot_under_test():
     """Initialize Pokémon usage snapshot object"""
     return PokemonUsageSnapshot()
-
 
 def test_pokemon_team_snapshot_set_team_list_happy_path(
     pokemon_team_snapshot_under_test,
@@ -57,6 +55,7 @@ def test_pokemon_team_snapshot_add_team_full_should_not_add(
     pokemon_team_snapshot_under_test,
 ):
     """Test adding Pokémon when team list is full"""
+    # breakpoint()
     teams = [["pkmn1a", "pkmn1b", "pkmn1c"] for i in range(NUM_TEAMS + 1)]
     for team in teams:
         pokemon_team_snapshot_under_test.add_team(team)

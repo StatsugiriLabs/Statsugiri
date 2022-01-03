@@ -1,4 +1,4 @@
-""" Data Extractor is responsible for reading format metadata and retrieving the replay JSON """
+""" Data Extractor is responsible for reading format metadata and retrieving the replay logs """
 from typing import List, Tuple
 import re
 import time
@@ -6,6 +6,7 @@ import requests
 from base_logger import logger
 from bs4 import BeautifulSoup
 from constants import MAX_USERS, NUM_TEAMS
+from model_transformer import ModelTransformer
 from replay_metadata import ReplayMetadata, ParsedUserReplay
 from log_handler import LogHandler
 
@@ -19,12 +20,18 @@ REQUEST_TIMEOUT = 120  # [seconds]
 class DataExtractor:
     """Class for ingesting, parsing, and extracting replay data"""
 
-    def __init__(self, formats: List[str], num_teams: int = NUM_TEAMS):
-        # Initialize available formats
+    def __init__(self, date: int=0, formats: List[str]=[], num_teams: int = NUM_TEAMS):
         self.log_handler = LogHandler()
+        self.date = date
         self.formats = formats
         self.num_teams = num_teams
         self.parsed_user_replay_list = []
+
+    def set_date(self, date: int):
+        self.date = date
+
+    def get_date(self):
+        return self.date
 
     def set_formats(self, formats: List[str]):
         """Set available formats"""
@@ -60,10 +67,10 @@ class DataExtractor:
         self, format_id: str, num_users: int = MAX_USERS
     ) -> List[Tuple[str, int]]:
         """Return the top users and ratings within a given format"""
-        ladder_get_url = LADDER_BASE_URL + format_id
-        if format_id not in self.formats:
+        if format_id not in self.get_formats():
             logger.error(f"Format ({format_id}) is not found in `formats` property")
             raise ValueError(f"Format ({format_id}) is unavailable")
+
         if num_users > MAX_USERS:
             logger.error(
                 f"Requested `num_users` ({num_users}) \
@@ -75,6 +82,7 @@ class DataExtractor:
 
         # Retrieve ladder HTTP response content
         logger.info("Retrieving current ladder users and ratings")
+        ladder_get_url = LADDER_BASE_URL + format_id
         ladder_res = requests.get(ladder_get_url, timeout=REQUEST_TIMEOUT)
         soup = BeautifulSoup(ladder_res.text, "html.parser")
 
@@ -172,17 +180,15 @@ class DataExtractor:
             if (
                 "uploadtime" not in replay_data
                 or "id" not in replay_data
-                or "format" not in replay_data
             ):
                 continue
-            upload_time, replay_id, format_id = (
+            upload_time, replay_id = (
                 replay_data["uploadtime"],
                 replay_data["id"],
-                replay_data["format"],
             )
 
             # Populate `ReplayMetadata`
-            replay_metadata = ReplayMetadata(upload_time, replay_id, format_id)
+            replay_metadata = ReplayMetadata(upload_time, replay_id)
 
             # Populate `ParsedUserReplay` based on replay data
             user_roster = self.log_handler.parse_team(user)
@@ -199,4 +205,13 @@ class DataExtractor:
             if teams_found == self.num_teams:
                 break
 
+        # Configure model transformer
+        model_transformer = ModelTransformer(self.get_parsed_user_replay_list(), 
+            self.get_date(), format_id)
+        team_snapshot = model_transformer.make_pokemon_team_snapshot()
+        # TODO: Remove for PR
+        print("Date: ", team_snapshot.get_date())
+        print("Format: ", team_snapshot.get_format_id())
+        for pokemon_team in team_snapshot.get_team_list():
+            print(f"{pokemon_team.get_rating()}: {pokemon_team.get_pokemon_roster()}")
         logger.info(f"Extraction finished in {time.time() - start_time: .2f} seconds")
