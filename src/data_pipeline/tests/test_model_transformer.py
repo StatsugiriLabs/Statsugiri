@@ -97,3 +97,7 @@ def test_model_transformer_make_pokemon_teams_snapshot_happy_path(
     verify_pokemon_teams_snapshot_match(
         pokemon_teams_snapshot, expected_pokemon_teams_snapshot
     )
+
+def test_model_transformer_make_pokemon_usage_snapshot_happy_path(model_transformer_under_test):
+    """Test model transformer generating `PokemonUsageSnapshot` list"""
+    pokemon_usage_snapshot = model_transformer_under_test.make_pokemon_usage_snapshot()

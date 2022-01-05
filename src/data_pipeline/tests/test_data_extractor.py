@@ -129,7 +129,7 @@ def test_get_ladder_users_and_ratings_greater_than_max_users_should_raise_value_
 
 def test_sanitize_user(data_extractor_under_test):
     """Test removing non-ASCII characters and spaces"""
-    sanitized_user = data_extractor_under_test.sanitize_user("user test 中文")
+    sanitized_user = data_extractor_under_test._sanitize_user("user test 中文")
     assert sanitized_user == "usertest"
 
 
@@ -219,7 +219,7 @@ def test_extract_info_happy_path(
         "data_extractor.DataExtractor.get_user_replay_ids", return_value=replay_ids
     )
     mocker.patch(
-        "data_extractor.DataExtractor.get_replay_data",
+        "data_extractor.DataExtractor._get_replay_data",
         return_value=sample_replay_data_ToastNoButter_json,
     )
     mocker.patch("log_handler.LogHandler.feed_log", return_value=True)
