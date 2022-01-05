@@ -87,9 +87,15 @@ def test_model_transformer_make_pokemon_teams_snapshot_happy_path(
     model_transformer_under_test,
 ):
     """Test model transformer generating `PokemonTeamSnapshot` list"""
-    pokemon_team_1 = PokemonTeam(["pkmn1-1", "pkmn1-2", "pkmn1-3"], RATING_1, UPLOAD_DATE_1)
-    pokemon_team_2 = PokemonTeam(["pkmn2-1", "pkmn2-2", "pkmn2-3"], RATING_2, UPLOAD_DATE_2)
-    expected_pokemon_teams_snapshot = PokemonTeamsSnapshot(DATE, FORMAT, [pokemon_team_1, pokemon_team_2])
+    pokemon_team_1 = PokemonTeam(
+        ["pkmn1-1", "pkmn1-2", "pkmn1-3"], RATING_1, UPLOAD_DATE_1
+    )
+    pokemon_team_2 = PokemonTeam(
+        ["pkmn2-1", "pkmn2-2", "pkmn2-3"], RATING_2, UPLOAD_DATE_2
+    )
+    expected_pokemon_teams_snapshot = PokemonTeamsSnapshot(
+        DATE, FORMAT, [pokemon_team_1, pokemon_team_2]
+    )
     pokemon_teams_snapshot = model_transformer_under_test.make_pokemon_teams_snapshot()
     verify_pokemon_teams_snapshot_match(
         pokemon_teams_snapshot, expected_pokemon_teams_snapshot

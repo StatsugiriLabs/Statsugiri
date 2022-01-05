@@ -62,7 +62,13 @@ class ModelTransformer:
         pokemon_team_list = []
         for parsed_user_replay in self.get_parsed_user_replay_list():
             # Create team metadata based on roster
-            pokemon_team = PokemonTeam(parsed_user_replay.get_pokemon_roster(), parsed_user_replay.get_rating(), parsed_user_replay.get_replay_metadata().get_upload_time())
+            pokemon_team = PokemonTeam(
+                parsed_user_replay.get_pokemon_roster(),
+                parsed_user_replay.get_rating(),
+                parsed_user_replay.get_replay_metadata().get_upload_time(),
+            )
             pokemon_team_list.append(pokemon_team)
 
-        return PokemonTeamsSnapshot(self.get_date(), self.get_format_id(), pokemon_team_list)
+        return PokemonTeamsSnapshot(
+            self.get_date(), self.get_format_id(), pokemon_team_list
+        )
