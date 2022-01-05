@@ -1,62 +1,22 @@
 """ Models for the storage layer """
 import datetime
 from typing import List
-from constants import TEAM_SIZE, NUM_TEAMS
+from constants import TEAM_SIZE
 from base_logger import logger
-
-
-class PokemonTeamSnapshot:
-    """Model for Pokémon Team Snapshots"""
-
-    def __init__(self):
-        self.date: int(datetime.MINYEAR)
-        self.format_id = ""
-        self.team_list = []
-
-    def set_date(self, date: int) -> None:
-        """Set date"""
-        self.date = date
-
-    def get_date(self) -> int:
-        """Get date"""
-        return self.date
-
-    def set_format_id(self, format_id: str) -> None:
-        """Set format ID"""
-        self.format_id = format_id
-
-    def get_format_id(self) -> str:
-        """Get format ID"""
-        return self.format_id
-
-    def set_team_list(self, team_list: List[List[str]]) -> None:
-        """Set team list"""
-        if len(team_list) > NUM_TEAMS:
-            logger.warning(
-                f"Cannot add team list greater than maximum size of {NUM_TEAMS}"
-            )
-        else:
-            self.team_list = team_list
-
-    def add_team(self, team: List[str]) -> None:
-        """Add team to team list"""
-        if len(self.team_list) > NUM_TEAMS - 1:
-            logger.warning(f"Cannot add team, team list limited to {NUM_TEAMS}")
-        else:
-            self.team_list.append(team)
-
-    def get_team_list(self) -> List[List[str]]:
-        """Get team list"""
-        return self.team_list
 
 
 class PokemonTeam:
     """Model for teams in Pokémon Team Snapshots"""
 
-    def __init__(self):
-        self.pokemon_roster = []
-        self.rating = 0
-        self.replay_upload_date = int(datetime.MINYEAR)
+    def __init__(
+        self,
+        pokemon_roster: List[str] = None,
+        rating: int = 0,
+        replay_upload_date: int = int(datetime.MINYEAR),
+    ):
+        self.pokemon_roster = [] if pokemon_roster is None else pokemon_roster
+        self.rating = rating
+        self.replay_upload_date = replay_upload_date
 
     def set_pokemon_roster(self, pokemon_roster: List[str]) -> None:
         """Set Pokémon list"""
@@ -95,18 +55,67 @@ class PokemonTeam:
         return self.replay_upload_date
 
 
+class PokemonTeamsSnapshot:
+    """Model for Pokémon Team Snapshots"""
+
+    def __init__(
+        self,
+        date: int = int(datetime.MINYEAR),
+        format_id: str = "",
+        pokemon_team_list: List[PokemonTeam] = None,
+    ):
+        self.date = date
+        self.format_id = format_id
+        self.pokemon_team_list = [] if pokemon_team_list is None else pokemon_team_list
+
+    def set_date(self, date: int) -> None:
+        """Set date"""
+        self.date = date
+
+    def get_date(self) -> int:
+        """Get date"""
+        return self.date
+
+    def set_format_id(self, format_id: str) -> None:
+        """Set format ID"""
+        self.format_id = format_id
+
+    def get_format_id(self) -> str:
+        """Get format ID"""
+        return self.format_id
+
+    def set_pokemon_team_list(self, pokemon_team_list: List[PokemonTeam]) -> None:
+        """Set pokemon team list"""
+        self.pokemon_team_list = pokemon_team_list
+
+    def get_pokemon_team_list(self) -> List[PokemonTeam]:
+        """Get pokemon team list"""
+        return self.pokemon_team_list
+
+
 class PokemonUsageSnapshot:
     """Model for Pokémon Usage Snapshot"""
 
-    def __init__(self):
-        self.date = int(datetime.MINYEAR)
-        self.format_id = ""
+    def __init__(
+        self,
+        date: int = datetime.MINYEAR,
+        format_id: str = "",
+        pokemon_usage: dict = None,
+        pokemon_partner_usage: dict = None,
+        pokemon_average_rating_usage: dict = None,
+    ):
+        self.date = date
+        self.format_id = format_id
         # {Pokémon -> number of apperances}
-        self.pokemon_usage = {}
+        self.pokemon_usage = {} if pokemon_usage is None else pokemon_usage
         # {Pokémon -> {partner -> number of apperances}}
-        self.pokemon_partner_usage = {}
+        self.pokemon_partner_usage = (
+            {} if pokemon_partner_usage is None else pokemon_partner_usage
+        )
         # {Pokémon -> average rating}
-        self.pokemon_average_rating_usage = {}
+        self.pokemon_average_rating_usage = (
+            {} if pokemon_average_rating_usage is None else pokemon_average_rating_usage
+        )
 
     def set_date(self, date: int) -> None:
         """Set date"""

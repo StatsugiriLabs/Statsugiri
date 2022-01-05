@@ -13,7 +13,7 @@ NUM_USERS_TO_SEARCH = 10
 @pytest.fixture(name="data_extractor_under_test")
 def fixture_data_extractor():
     """Initialize data extractor for tests"""
-    return DataExtractor(TEST_FORMATS, NUM_TEAMS_TO_RETURN)
+    return DataExtractor(0, TEST_FORMATS, NUM_TEAMS_TO_RETURN)
 
 
 @pytest.fixture(name="sample_ladder_res_text")
@@ -103,10 +103,6 @@ def test_get_ladder_users_and_ratings_happy_path(
         ("Poiserd", 1776),
         ("bblgo", 1776),
     ]
-
-
-def load_data(*args, **kwargs):
-    return {"blah": "blahblahblah"}
 
 
 def test_get_ladder_users_and_ratings_unavailable_format_should_raise_value_error(

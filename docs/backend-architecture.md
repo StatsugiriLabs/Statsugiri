@@ -26,13 +26,11 @@ Document for daily team snapshots and ranking metadata.
     date: datetime,            // Primary Key: yyyy-mm-dd
     format_id: str,            // Secondary Key
     teams: [
-        [
-            {
-                pokemon_roster: [str],
-                rating: int,
-                replay_upload_date: datetime //yyyy-mm-dd
-            }
-        ]
+        {
+            pokemon_roster: [str],
+            rating: int,
+            replay_upload_date: datetime //yyyy-mm-dd
+        }
     ]
 }
 ```

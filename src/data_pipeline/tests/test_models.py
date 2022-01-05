@@ -1,13 +1,13 @@
 """ Unit tests for models (ie. getters / setters with non-trivial logic)"""
 import pytest
-from models import PokemonTeamSnapshot, PokemonUsageSnapshot, PokemonTeam
+from models import PokemonTeamsSnapshot, PokemonUsageSnapshot, PokemonTeam
 from constants import NUM_TEAMS, TEAM_SIZE
 
 
 @pytest.fixture(name="pokemon_team_snapshot_under_test")
 def fixture_pokemon_team_snapshot():
     """Initialize Pokémon team snapshot object"""
-    return PokemonTeamSnapshot()
+    return PokemonTeamsSnapshot()
 
 
 @pytest.fixture(name="pokemon_team_under_test")
@@ -20,47 +20,6 @@ def fixture_pokemon_team():
 def fixture_pokemon_usage_snapshot_under_test():
     """Initialize Pokémon usage snapshot object"""
     return PokemonUsageSnapshot()
-
-
-def test_pokemon_team_snapshot_set_team_list_happy_path(
-    pokemon_team_snapshot_under_test,
-):
-    """Test setting team list successfully"""
-    teams = [
-        ["pkmn1a", "pkmn1b", "pkmn1c"],
-        ["pkmn2a", "pkmn2b", "pkmn2c"],
-        ["pkmn3a", "pkmn3b", "pkmn3c"],
-        ["pkmn4a", "pkmn4b", "pkmn4c"],
-    ]
-    pokemon_team_snapshot_under_test.set_team_list(teams)
-    assert pokemon_team_snapshot_under_test.get_team_list() == teams
-
-
-def test_pokemon_team_snapshot_set_team_list_exceeds_size_should_not_set(
-    pokemon_team_snapshot_under_test,
-):
-    """Test setting team when provided team exceeds size"""
-    # Exceed maximum allotted number of teams
-    teams = [["pkmn1a", "pkmn1b", "pkmn1c"] for _ in range(NUM_TEAMS + 1)]
-    pokemon_team_snapshot_under_test.set_team_list(teams)
-    assert pokemon_team_snapshot_under_test.get_team_list() == []
-
-
-def test_pokemon_team_snapshot_add_team_happy_path(pokemon_team_snapshot_under_test):
-    """Test adding team successfully"""
-    new_team = ["newpkmn1a", "newpkmn1b", "newpkmn1c"]
-    pokemon_team_snapshot_under_test.add_team(new_team)
-    assert pokemon_team_snapshot_under_test.get_team_list() == [new_team]
-
-
-def test_pokemon_team_snapshot_add_team_full_should_not_add(
-    pokemon_team_snapshot_under_test,
-):
-    """Test adding Pokémon when team list is full"""
-    teams = [["pkmn1a", "pkmn1b", "pkmn1c"] for i in range(NUM_TEAMS + 1)]
-    for team in teams:
-        pokemon_team_snapshot_under_test.add_team(team)
-    assert pokemon_team_snapshot_under_test.get_team_list() == teams[:NUM_TEAMS]
 
 
 def test_pokemon_team_set_pokemon_roster_happy_path(pokemon_team_under_test):

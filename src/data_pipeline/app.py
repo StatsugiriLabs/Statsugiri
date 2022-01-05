@@ -8,7 +8,7 @@ from constants import FORMATS
 def main():
     """Main function"""
     logger.info("Initializing data pipeline...")
-    data_extractor = DataExtractor(FORMATS)
+    data_extractor = DataExtractor(1641197251, FORMATS)
     data_extractor.extract_info("gen8vgc2021series11")
 
 

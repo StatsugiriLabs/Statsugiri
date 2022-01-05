@@ -5,10 +5,9 @@ from typing import List
 class ReplayMetadata:
     """Replay metadata from individual replay"""
 
-    def __init__(self, upload_time: int, replay_id: str, format_id: str):
+    def __init__(self, upload_time: int, replay_id: str):
         self.upload_time = upload_time
         self.replay_id = replay_id
-        self.format_id = format_id
 
     def set_upload_time(self, upload_time: int) -> None:
         """Set replay upload time"""
@@ -25,14 +24,6 @@ class ReplayMetadata:
     def get_replay_id(self) -> str:
         """Get replay ID"""
         return self.replay_id
-
-    def set_format_id(self, format_id: str) -> None:
-        """Set replay format ID"""
-        self.format_id = format_id
-
-    def get_format_id(self) -> str:
-        """Get replay format ID"""
-        return self.format_id
 
 
 class ParsedUserReplay:
