@@ -20,17 +20,21 @@ REQUEST_TIMEOUT = 120  # [seconds]
 class DataExtractor:
     """Class for ingesting, parsing, and extracting replay data"""
 
-    def __init__(self, date: int=0, formats: List[str]=[], num_teams: int = NUM_TEAMS):
+    def __init__(
+        self, date: int = 0, formats: List[str] = None, num_teams: int = NUM_TEAMS
+    ):
         self.log_handler = LogHandler()
         self.date = date
-        self.formats = formats
+        self.formats = [] if formats is None else formats
         self.num_teams = num_teams
         self.parsed_user_replay_list = []
 
     def set_date(self, date: int):
+        """Set date"""
         self.date = date
 
     def get_date(self):
+        """Get date"""
         return self.date
 
     def set_formats(self, formats: List[str]):
@@ -142,6 +146,7 @@ class DataExtractor:
         replay_data_res = requests.get(replay_data_get_url)
         return {} if not replay_data_res else replay_data_res.json()
 
+    # TODO: https://github.com/kelvinkoon/babiri_v2/issues/49
     def extract_info(self, format_id: str) -> None:
         """Run data pipeline for extracting replay data"""
         # Commence timer recording
@@ -177,10 +182,7 @@ class DataExtractor:
                 continue
 
             # Gather replay metadata
-            if (
-                "uploadtime" not in replay_data
-                or "id" not in replay_data
-            ):
+            if "uploadtime" not in replay_data or "id" not in replay_data:
                 continue
             upload_time, replay_id = (
                 replay_data["uploadtime"],
@@ -206,12 +208,13 @@ class DataExtractor:
                 break
 
         # Configure model transformer
-        model_transformer = ModelTransformer(self.get_parsed_user_replay_list(), 
-            self.get_date(), format_id)
-        team_snapshot = model_transformer.make_pokemon_team_snapshot()
+        model_transformer = ModelTransformer(
+            self.get_parsed_user_replay_list(), self.get_date(), format_id
+        )
+        team_snapshot = model_transformer.make_pokemon_teams_snapshot()
         # TODO: Remove for PR
         print("Date: ", team_snapshot.get_date())
         print("Format: ", team_snapshot.get_format_id())
-        for pokemon_team in team_snapshot.get_team_list():
+        for pokemon_team in team_snapshot.get_pokemon_team_list():
             print(f"{pokemon_team.get_rating()}: {pokemon_team.get_pokemon_roster()}")
         logger.info(f"Extraction finished in {time.time() - start_time: .2f} seconds")

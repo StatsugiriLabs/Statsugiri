@@ -89,6 +89,7 @@ disable=raw-checker-failed,
         # Additional warnings to ignore
         W0511, # Ignore TODO fixme warnings
         R0903, # Allow classes without methods
+        R0801, # Ignore similar lines
 
 
 

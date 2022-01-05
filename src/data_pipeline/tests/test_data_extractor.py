@@ -105,10 +105,6 @@ def test_get_ladder_users_and_ratings_happy_path(
     ]
 
 
-def load_data(*args, **kwargs):
-    return {"blah": "blahblahblah"}
-
-
 def test_get_ladder_users_and_ratings_unavailable_format_should_raise_value_error(
     data_extractor_under_test,
 ):
