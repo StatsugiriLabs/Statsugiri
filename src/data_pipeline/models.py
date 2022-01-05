@@ -64,8 +64,8 @@ class PokemonTeamsSnapshot:
         format_id: str = "",
         pokemon_team_list: List[PokemonTeam] = None,
     ):
-        self.date = int(datetime.MINYEAR)
-        self.format_id = ""
+        self.date = date
+        self.format_id = format_id
         self.pokemon_team_list = [] if pokemon_team_list is None else pokemon_team_list
 
     def set_date(self, date: int) -> None:
