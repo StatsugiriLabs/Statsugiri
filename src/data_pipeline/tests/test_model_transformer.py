@@ -19,13 +19,11 @@ def fixture_model_transformer():
     parsed_user_replay_list_data = [
         {
             "replay_metadata": ReplayMetadata(UPLOAD_DATE_1, "replay_id_1"),
-            "user": "user1",
             "rating": RATING_1,
             "pokemon_roster": ["pkmn1-1", "pkmn1-2", "pkmn1-3"],
         },
         {
             "replay_metadata": ReplayMetadata(UPLOAD_DATE_2, "replay_id_2"),
-            "user": "user2",
             "rating": RATING_2,
             "pokemon_roster": ["pkmn2-1", "pkmn2-2", "pkmn2-3"],
         },
@@ -36,7 +34,6 @@ def fixture_model_transformer():
         parsed_user_replay_list.append(
             ParsedUserReplay(
                 parsed_user_replay_data["replay_metadata"],
-                parsed_user_replay_data["user"],
                 parsed_user_replay_data["rating"],
                 parsed_user_replay_data["pokemon_roster"],
             )

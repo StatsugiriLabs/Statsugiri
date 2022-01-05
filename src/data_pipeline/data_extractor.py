@@ -197,9 +197,7 @@ class DataExtractor:
             # Skip to next user if team not found
             if not user_roster:
                 continue
-            parsed_user_replay = ParsedUserReplay(
-                replay_metadata, user, rating, user_roster
-            )
+            parsed_user_replay = ParsedUserReplay(replay_metadata, rating, user_roster)
             # Record team
             self.add_parsed_user_replay(parsed_user_replay)
 
@@ -212,9 +210,8 @@ class DataExtractor:
             self.get_parsed_user_replay_list(), self.get_date(), format_id
         )
         team_snapshot = model_transformer.make_pokemon_teams_snapshot()
-        # TODO: Remove for PR
-        print("Date: ", team_snapshot.get_date())
-        print("Format: ", team_snapshot.get_format_id())
-        for pokemon_team in team_snapshot.get_pokemon_team_list():
-            print(f"{pokemon_team.get_rating()}: {pokemon_team.get_pokemon_roster()}")
+        # print("Date: ", team_snapshot.get_date())
+        # print("Format: ", team_snapshot.get_format_id())
+        # for pokemon_team in team_snapshot.get_pokemon_team_list():
+        #     print(f"{pokemon_team.get_rating()}: {pokemon_team.get_pokemon_roster()}")
         logger.info(f"Extraction finished in {time.time() - start_time: .2f} seconds")
