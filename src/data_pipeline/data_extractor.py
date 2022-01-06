@@ -108,8 +108,7 @@ class DataExtractor:
         combined_users_ratings = list(zip(users, ratings))
         return combined_users_ratings[:num_users]
 
-    # TODO: https://github.com/kelvinkoon/babiri_v2/issues/24
-    def sanitize_user(self, user: str) -> str:
+    def _sanitize_user(self, user: str) -> str:
         """Sanitize username for non-ASCII characters and spaces"""
         # PS! ignores non-ASCII characters and spaces
         user = re.sub(r"[^\x00-\x7f]", r"", user)
@@ -119,11 +118,13 @@ class DataExtractor:
     def get_user_replay_ids(self, user: str, format_id: str) -> List[str]:
         """Returns a user's replays by replay ID in reverse-chronological order,
         Returns blank if no replays found"""
-        sanitized_user = self.sanitize_user(user)
+        sanitized_user = self._sanitize_user(user)
 
         user_replay_ids_get_url = REPLAY_SEARCH_BASE_URL + sanitized_user
         logger.info(f"Retrieving replay IDs for '{user}'")
-        user_replays_res = requests.get(user_replay_ids_get_url)
+        user_replays_res = requests.get(
+            user_replay_ids_get_url, timeout=REQUEST_TIMEOUT
+        )
         soup = BeautifulSoup(user_replays_res.text, "html.parser")
 
         # Parsed replays are reverse-chronological order
@@ -138,12 +139,11 @@ class DataExtractor:
 
         return replay_ids
 
-    # TODO: https://github.com/kelvinkoon/babiri_v2/issues/24
-    def get_replay_data(self, replay_id: str) -> dict:
+    def _get_replay_data(self, replay_id: str) -> dict:
         """Returns the replay data JSON given a replay ID, blank if not found"""
         replay_data_get_url = REPLAY_BASE_URL + replay_id + ".json"
         logger.info(f"Retrieving replay data for '{replay_id}'")
-        replay_data_res = requests.get(replay_data_get_url)
+        replay_data_res = requests.get(replay_data_get_url, timeout=REQUEST_TIMEOUT)
         return {} if not replay_data_res else replay_data_res.json()
 
     # TODO: https://github.com/kelvinkoon/babiri_v2/issues/49
@@ -171,7 +171,7 @@ class DataExtractor:
 
             # Find replay data using most recent replay
             logger.info("Getting replay data...")
-            replay_data = self.get_replay_data(user_replay_ids[0])
+            replay_data = self._get_replay_data(user_replay_ids[0])
             # Skip to next user if replay not found
             if not replay_data:
                 logger.info("Skipping, no replay data found...")
@@ -209,9 +209,6 @@ class DataExtractor:
         model_transformer = ModelTransformer(
             self.get_parsed_user_replay_list(), self.get_date(), format_id
         )
-        team_snapshot = model_transformer.make_pokemon_teams_snapshot()
-        # print("Date: ", team_snapshot.get_date())
-        # print("Format: ", team_snapshot.get_format_id())
-        # for pokemon_team in team_snapshot.get_pokemon_team_list():
-        #     print(f"{pokemon_team.get_rating()}: {pokemon_team.get_pokemon_roster()}")
+        pokemon_teams_snapshot = model_transformer.make_pokemon_teams_snapshot()
+        pokemon_usage_snapshot = model_transformer.make_pokemon_usage_snapshot()
         logger.info(f"Extraction finished in {time.time() - start_time: .2f} seconds")

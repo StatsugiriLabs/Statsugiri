@@ -1,7 +1,10 @@
-"""Model Handler is responsible for generating DB models and writing to storage"""
+"""Model Transformer is responsible for generating DB models"""
+from itertools import combinations, chain
+from collections import Counter
 from typing import List
 from replay_metadata import ParsedUserReplay
-from models import PokemonTeam, PokemonTeamsSnapshot
+from models import PokemonTeam, PokemonTeamsSnapshot, PokemonUsageSnapshot
+from constants import NUM_PARTNERS
 from base_logger import logger
 
 
@@ -71,4 +74,131 @@ class ModelTransformer:
 
         return PokemonTeamsSnapshot(
             self.get_date(), self.get_format_id(), pokemon_team_list
+        )
+
+    def _calculate_pokemon_usage(self, pokemon_teams: List[List[str]]) -> dict:
+        """Calculate Pokémon usage by descending"""
+        if not pokemon_teams:
+            return {}
+
+        pokemon_usage = {}
+        # Flatten teams into one list
+        flattened_pokemon_teams = list(chain(*pokemon_teams))
+        # Record by frequency
+        for pokemon_appearances in Counter(flattened_pokemon_teams).most_common():
+            pokemon = pokemon_appearances[0]
+            num_appearances = pokemon_appearances[1]
+            pokemon_usage[pokemon] = num_appearances
+
+        # Python 3.7+ preserves insertion order, hence no need to sort
+        return pokemon_usage
+
+    def _calculate_pokemon_partner_usage(self, pokemon_teams: List[List[str]]) -> dict:
+        """Calculate Pokémon partner usage by descending"""
+        if not pokemon_teams:
+            return {}
+
+        pokemon_partner_usage = {}
+        # Flatten teams into one list
+        flattened_pokemon_teams = list(chain(*pokemon_teams))
+        """
+        Identify most frequent pairings through teams by
+        generating all pairings using `combinations`
+        https://stackoverflow.com/questions/10844556/
+        python-counting-frequency-of-pairs-of-elements-in-a-list-of-lists
+        """
+        all_pokemon_pair_appearances = Counter(
+            chain.from_iterable(
+                combinations(pokemon_team, 2) for pokemon_team in pokemon_teams
+            )
+        )
+
+        # Search Pokémon from most common appearance
+        for pokemon_appearance in Counter(flattened_pokemon_teams).most_common():
+            pokemon = pokemon_appearance[0]
+            pokemon_partner_usage[pokemon] = {}
+            partners_found = 0
+            # Find partners by most common appearance
+            for pokemon_pair_appearance in all_pokemon_pair_appearances.most_common():
+                pokemon_pair = pokemon_pair_appearance[0]
+                num_appearances = pokemon_pair_appearance[1]
+                # If found in pair, record until `NUM_PARTNERS` found
+                if pokemon in pokemon_pair:
+                    # Determine which is the partner
+                    pokemon_partner = (
+                        pokemon_pair[1]
+                        if pokemon == pokemon_pair[0]
+                        else pokemon_pair[0]
+                    )
+                    pokemon_partner_usage[pokemon][pokemon_partner] = num_appearances
+                    partners_found += 1
+                if partners_found == NUM_PARTNERS:
+                    break
+
+        return pokemon_partner_usage
+
+    def _calculate_pokemon_average_rating_usage(
+        self, pokemon_teams: List[List[str]]
+    ) -> dict:
+        """Calculate Pokémon average rating usage by descending"""
+        if not pokemon_teams:
+            return {}
+
+        # Get all replays with Pokemon
+        pokemon_average_rating_usage = {}
+        # Flatten teams into one list
+        flattened_pokemon_teams = list(chain(*pokemon_teams))
+        # Record by frequency
+        for pokemon_appearances in Counter(flattened_pokemon_teams).most_common():
+            # Filter for parsed replays featuring Pokémon
+            pokemon = pokemon_appearances[0]
+            filtered_parsed_user_replay_list = list(
+                filter(
+                    lambda parsed_user_replay: (
+                        pokemon in parsed_user_replay.get_pokemon_roster()
+                    ),
+                    self.get_parsed_user_replay_list(),
+                )
+            )
+            # Calculate average rating
+            average_rating = sum(
+                [
+                    parsed_user_replay.get_rating()
+                    for parsed_user_replay in filtered_parsed_user_replay_list
+                ]
+            ) / len(filtered_parsed_user_replay_list)
+            pokemon_average_rating_usage[pokemon] = average_rating
+
+        return dict(
+            sorted(
+                pokemon_average_rating_usage.items(),
+                key=lambda item: item[1],
+                reverse=True,
+            )
+        )
+
+    def make_pokemon_usage_snapshot(self) -> PokemonUsageSnapshot:
+        """Generate Pokémon usage snapshot"""
+        if not self.get_parsed_user_replay_list():
+            logger.warning(
+                "Cannot generate usage snapshot, `ParsedUserReplay` list is not populated"
+            )
+            return PokemonUsageSnapshot()
+
+        pokemon_teams = [
+            sorted(parsed_user_replay.get_pokemon_roster())
+            for parsed_user_replay in self.get_parsed_user_replay_list()
+        ]
+        pokemon_usage = self._calculate_pokemon_usage(pokemon_teams)
+        pokemon_partner_usage = self._calculate_pokemon_partner_usage(pokemon_teams)
+        pokemon_average_rating_usage = self._calculate_pokemon_average_rating_usage(
+            pokemon_teams
+        )
+
+        return PokemonUsageSnapshot(
+            self.get_date(),
+            self.get_format_id(),
+            pokemon_usage,
+            pokemon_partner_usage,
+            pokemon_average_rating_usage,
         )
