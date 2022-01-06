@@ -177,7 +177,7 @@ class PokemonUsageSnapshot:
             return 0
         return self.pokemon_partner_usage[pokemon][partner_pokemon]
 
-    def set_pokemon_average_rating_usage(self, pokemon: str, rating: int) -> None:
+    def set_pokemon_average_rating_usage(self, pokemon: str, rating: float) -> None:
         """Set Pokémon average rating normalized by usage"""
         if pokemon in self.pokemon_average_rating_usage:
             logger.warning(
@@ -186,11 +186,11 @@ class PokemonUsageSnapshot:
         else:
             self.pokemon_average_rating_usage[pokemon] = rating
 
-    def get_pokemon_average_rating_usage(self, pokemon: str) -> int:
+    def get_pokemon_average_rating_usage(self, pokemon: str) -> float:
         """Get Pokémon average rating normalized by usage"""
         if pokemon not in self.pokemon_average_rating_usage:
             logger.warning(
                 "Pokémon not found in Pokémon average rating usage, cannot retrieve"
             )
-            return 0
+            return 0.0
         return self.pokemon_average_rating_usage[pokemon]
