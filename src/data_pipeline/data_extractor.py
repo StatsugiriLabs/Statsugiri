@@ -122,7 +122,9 @@ class DataExtractor:
 
         user_replay_ids_get_url = REPLAY_SEARCH_BASE_URL + sanitized_user
         logger.info(f"Retrieving replay IDs for '{user}'")
-        user_replays_res = requests.get(user_replay_ids_get_url)
+        user_replays_res = requests.get(
+            user_replay_ids_get_url, timeout=REQUEST_TIMEOUT
+        )
         soup = BeautifulSoup(user_replays_res.text, "html.parser")
 
         # Parsed replays are reverse-chronological order
@@ -141,7 +143,7 @@ class DataExtractor:
         """Returns the replay data JSON given a replay ID, blank if not found"""
         replay_data_get_url = REPLAY_BASE_URL + replay_id + ".json"
         logger.info(f"Retrieving replay data for '{replay_id}'")
-        replay_data_res = requests.get(replay_data_get_url)
+        replay_data_res = requests.get(replay_data_get_url, timeout=REQUEST_TIMEOUT)
         return {} if not replay_data_res else replay_data_res.json()
 
     # TODO: https://github.com/kelvinkoon/babiri_v2/issues/49

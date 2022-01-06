@@ -1,4 +1,4 @@
-"""Model Handler is responsible for generating DB models and writing to storage"""
+"""Model Transformer is responsible for generating DB models"""
 from itertools import combinations, chain
 from collections import Counter
 from typing import List
@@ -80,6 +80,7 @@ class ModelTransformer:
         """Calculate Pokémon usage by descending"""
         if not pokemon_teams:
             return {}
+
         pokemon_usage = {}
         # Flatten teams into one list
         flattened_pokemon_teams = list(chain(*pokemon_teams))
@@ -88,6 +89,7 @@ class ModelTransformer:
             pokemon = pokemon_appearances[0]
             num_appearances = pokemon_appearances[1]
             pokemon_usage[pokemon] = num_appearances
+
         # Python 3.7+ preserves insertion order, hence no need to sort
         return pokemon_usage
 
@@ -98,8 +100,12 @@ class ModelTransformer:
         pokemon_partner_usage = {}
         # Flatten teams into one list
         flattened_pokemon_teams = list(chain(*pokemon_teams))
-        # Identify most frequent pairings through teams by generating all pairings using `combinations`
-        # Taken from: https://stackoverflow.com/questions/10844556/python-counting-frequency-of-pairs-of-elements-in-a-list-of-lists
+        """
+        Identify most frequent pairings through teams by
+        generating all pairings using `combinations`
+        https://stackoverflow.com/questions/10844556/
+        python-counting-frequency-of-pairs-of-elements-in-a-list-of-lists
+        """
         all_pokemon_pair_appearances = Counter(
             chain.from_iterable(
                 combinations(pokemon_team, 2) for pokemon_team in pokemon_teams
@@ -157,6 +163,7 @@ class ModelTransformer:
                 ]
             ) / len(filtered_parsed_user_replay_list)
             pokemon_average_rating_usage[pokemon] = average_rating
+
         return dict(
             sorted(
                 pokemon_average_rating_usage.items(),
@@ -182,6 +189,7 @@ class ModelTransformer:
         pokemon_average_rating_usage = self._calculate_pokemon_average_rating_usage(
             pokemon_teams
         )
+
         return PokemonUsageSnapshot(
             self.get_date(),
             self.get_format_id(),

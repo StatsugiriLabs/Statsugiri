@@ -90,6 +90,9 @@ disable=raw-checker-failed,
         W0511, # Ignore TODO fixme warnings
         R0903, # Allow classes without methods
         R0801, # Ignore similar lines
+        W0105, # Allow block comments via `pointless-string-statement`
+        R0913, # Allow many arguments for object initialization
+        R0201, # Ignore private methods from `no-self-use`
 
 
 

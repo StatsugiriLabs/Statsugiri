@@ -140,6 +140,10 @@ class PokemonUsageSnapshot:
         else:
             self.pokemon_usage[pokemon] = usage
 
+    def get_all_pokemon_usage(self) -> dict:
+        """Get all Pokémon usage"""
+        return self.pokemon_usage
+
     def get_pokemon_usage(self, pokemon: str) -> int:
         """Get Pokémon usage"""
         if pokemon not in self.pokemon_usage:
@@ -161,6 +165,10 @@ class PokemonUsageSnapshot:
             )
         else:
             self.pokemon_partner_usage[pokemon][partner_pokemon] = usage
+
+    def get_all_pokemon_partner_usage(self) -> dict:
+        """Get all Pokémon partner usage for specified Pokémon"""
+        return self.pokemon_partner_usage
 
     def get_pokemon_partner_usage(self, pokemon: str, partner_pokemon: str) -> int:
         """Get Pokémon partner usage for specified Pokémon"""
@@ -185,6 +193,10 @@ class PokemonUsageSnapshot:
             )
         else:
             self.pokemon_average_rating_usage[pokemon] = rating
+
+    def get_all_pokemon_average_rating_usage(self) -> dict:
+        """Get all Pokémon average rating normalized by usage"""
+        return self.pokemon_average_rating_usage
 
     def get_pokemon_average_rating_usage(self, pokemon: str) -> float:
         """Get Pokémon average rating normalized by usage"""
