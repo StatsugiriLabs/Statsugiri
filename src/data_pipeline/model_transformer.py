@@ -94,6 +94,7 @@ class ModelTransformer:
         return pokemon_usage
 
     def _calculate_pokemon_partner_usage(self, pokemon_teams: List[List[str]]) -> dict:
+        """Calculate Pokémon partner usage by descending"""
         if not pokemon_teams:
             return {}
 
@@ -139,6 +140,10 @@ class ModelTransformer:
     def _calculate_pokemon_average_rating_usage(
         self, pokemon_teams: List[List[str]]
     ) -> dict:
+        """Calculate Pokémon average rating usage by descending"""
+        if not pokemon_teams:
+            return {}
+
         # Get all replays with Pokemon
         pokemon_average_rating_usage = {}
         # Flatten teams into one list

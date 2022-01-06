@@ -158,4 +158,25 @@ def test_model_transformer_make_pokemon_usage_snapshot_happy_path(
     verify_pokemon_usage_snapshot_match(
         pokemon_usage_snapshot, expected_pokemon_usage_snapshot
     )
-    pass
+
+
+def test_model_transformer_make_pokemon_teams_snapshot_empty_parsed_user_replay_list_should_return_empty_snapshot():
+    model_transformer_under_test = ModelTransformer()
+    empty_snapshot = model_transformer_under_test.make_pokemon_teams_snapshot()
+    verify_pokemon_teams_snapshot_match(empty_snapshot, PokemonTeamsSnapshot())
+
+
+def test_model_transformer_make_pokemon_usage_snapshot_empty_parsed_user_replay_list_should_return_empty_snapshot():
+    model_transformer_under_test = ModelTransformer()
+    empty_snapshot = model_transformer_under_test.make_pokemon_usage_snapshot()
+    verify_pokemon_usage_snapshot_match(empty_snapshot, PokemonUsageSnapshot())
+
+
+def test_model_transformer_calculate_pokemon_stats_empty_teams_should_return_empty_dictionary(
+    model_transformer_under_test,
+):
+    assert model_transformer_under_test._calculate_pokemon_usage([]) == {}
+    assert model_transformer_under_test._calculate_pokemon_partner_usage([]) == {}
+    assert (
+        model_transformer_under_test._calculate_pokemon_average_rating_usage([]) == {}
+    )
