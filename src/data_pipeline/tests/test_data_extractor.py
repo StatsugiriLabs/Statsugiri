@@ -4,6 +4,7 @@ import json
 import pytest
 import boto3
 from constants import MAX_USERS, DYNAMODB_STR
+from moto import mock_dynamodb2
 from data_extractor import DataExtractor
 from replay_metadata import ParsedUserReplay, ReplayMetadata
 
@@ -62,6 +63,7 @@ MOCK_REPLAY_IDS = [
 
 
 @pytest.fixture(name="data_extractor_under_test")
+@mock_dynamodb2
 def fixture_data_extractor():
     """Initialize data extractor for tests"""
     dynamodb_resource = boto3.resource(DYNAMODB_STR)
