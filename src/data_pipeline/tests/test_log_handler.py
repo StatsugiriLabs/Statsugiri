@@ -41,6 +41,20 @@ def fixture_sample_cleaned_replay_data_json():
     )
 
 
+@pytest.fixture(name="sample_replay_data_four_pkmn_json")
+def fixture_sample_replay_data_four_pkmn_json():
+    """Read replay data JSON response with 4 only Pokémon for mocking GET request"""
+    __location__ = os.path.realpath(
+        os.path.join(os.getcwd(), os.path.dirname(__file__))
+    )
+    return json.loads(
+        open(
+            os.path.join(__location__, "assets/sample_replay_data_four_pkmn.json"),
+            encoding="utf-8",
+        ).read()
+    )
+
+
 def test_feed_log_happy_path(sample_cleaned_replay_data_json, log_handler_under_test):
     """Test sanitizing log from valid `replay_data`"""
     sanitized_log = log_handler_under_test.get_sanitized_log()
@@ -75,6 +89,15 @@ def test_parse_team_happy_path(sample_cleaned_replay_data_json, log_handler_unde
         "Urshifu",
         "Rillaboom",
     ]
+
+
+def test_parse_team_less_than_six_pkmn(
+    sample_replay_data_four_pkmn_json, log_handler_under_test
+):
+    """Test parsing teams when log has less than 6 Pokémon present"""
+    log_handler_under_test.feed_log(sample_replay_data_four_pkmn_json)
+    team = log_handler_under_test.parse_team("babiri_tester")
+    assert team == ["Groudon", "Yveltal", "Incineroar", "Regieleki"]
 
 
 def test_parse_teams_team_invalid_user_should_return_empty(log_handler_under_test):
