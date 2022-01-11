@@ -34,5 +34,6 @@ function install_python_dependencies () {
 # Run setup
 check_pip
 install_python_dependencies
+printf "\n***Setup complete! Please set environment variables for ACCESS_KEY_ID, SECRET_ACCESS_KEY, and REGION_NAME for AWS authentication.***\n\n"
 
 exit 0

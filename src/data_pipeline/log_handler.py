@@ -30,7 +30,6 @@ class LogHandler:
         self.set_sanitized_log(sanitized_log)
         return True
 
-    # TODO: https://github.com/kelvinkoon/babiri_v2/issues/56
     def parse_team(self, user: str) -> List[str]:
         """Parse for teams in log"""
         if not user:
