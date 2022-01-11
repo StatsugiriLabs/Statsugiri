@@ -3,9 +3,17 @@ from typing import List, Tuple
 import re
 import time
 import requests
+import mypy_boto3_dynamodb as dynamodb
 from base_logger import logger
 from bs4 import BeautifulSoup
-from constants import MAX_USERS, NUM_TEAMS
+from constants import (
+    MAX_USERS,
+    NUM_TEAMS,
+)
+from db_utils import (
+    write_pokemon_teams_snapshots_table,
+    write_pokemon_usage_snapshots_table,
+)
 from model_transformer import ModelTransformer
 from replay_metadata import ReplayMetadata, ParsedUserReplay
 from log_handler import LogHandler
@@ -21,23 +29,38 @@ class DataExtractor:
     """Class for ingesting, parsing, and extracting replay data"""
 
     def __init__(
-        self, date: int = 0, formats: List[str] = None, num_teams: int = NUM_TEAMS
+        self,
+        dynamodb_resource: dynamodb.DynamoDBServiceResource,
+        date: int = 0,
+        formats: List[str] = None,
+        num_teams: int = NUM_TEAMS,
     ):
         self.log_handler = LogHandler()
+        self.dynamodb_resource = dynamodb_resource
         self.date = date
         self.formats = [] if formats is None else formats
         self.num_teams = num_teams
         self.parsed_user_replay_list = []
 
-    def set_date(self, date: int):
+    def set_dynamodb_resource(
+        self, dynamodb_resource: dynamodb.DynamoDBServiceResource
+    ) -> None:
+        """Set DynamoDB resource"""
+        self.dynamodb_resource = dynamodb_resource
+
+    def get_dynamodb_resource(self) -> dynamodb.DynamoDBServiceResource:
+        """Get DynamoDB resource"""
+        return self.dynamodb_resource
+
+    def set_date(self, date: int) -> None:
         """Set date"""
         self.date = date
 
-    def get_date(self):
+    def get_date(self) -> int:
         """Get date"""
         return self.date
 
-    def set_formats(self, formats: List[str]):
+    def set_formats(self, formats: List[str]) -> None:
         """Set available formats"""
         self.formats = formats
 
@@ -45,25 +68,25 @@ class DataExtractor:
         """Get available formats"""
         return self.formats
 
-    def set_num_teams(self, num_teams: int):
+    def set_num_teams(self, num_teams: int) -> None:
         """Set number of teams to search"""
         self.num_teams = num_teams
 
-    def get_num_teams(self):
+    def get_num_teams(self) -> int:
         """Get number of teams to search"""
         return self.num_teams
 
     def set_parsed_user_replay_list(
         self, parsed_user_replay_list: List[ParsedUserReplay]
-    ):
+    ) -> None:
         """Set parsed user replay list"""
         self.parsed_user_replay_list = parsed_user_replay_list
 
-    def add_parsed_user_replay(self, parsed_user_replay: ParsedUserReplay):
+    def add_parsed_user_replay(self, parsed_user_replay: ParsedUserReplay) -> None:
         """Add parsed user replay to list"""
         self.parsed_user_replay_list.append(parsed_user_replay)
 
-    def get_parsed_user_replay_list(self):
+    def get_parsed_user_replay_list(self) -> List[ParsedUserReplay]:
         """Get parsed user replay list"""
         return self.parsed_user_replay_list
 
@@ -146,8 +169,68 @@ class DataExtractor:
         replay_data_res = requests.get(replay_data_get_url, timeout=REQUEST_TIMEOUT)
         return {} if not replay_data_res else replay_data_res.json()
 
-    # TODO: https://github.com/kelvinkoon/babiri_v2/issues/49
-    def extract_info(self, format_id: str) -> None:
+    def _extract_parsed_user_replay(
+        self, user: str, rating: int, format_id: str
+    ) -> Tuple[ParsedUserReplay, bool]:
+        """Extract replay metadata and log information into `ParsedUserReplay`
+        Return True on success, False otherwise"""
+
+        logger.info(f"Retrieving {user}'s replays...")
+        user_replay_ids = self.get_user_replay_ids(user, format_id)
+        # Skip to next user if replays not found
+        if not user_replay_ids:
+            logger.info("Skipping, no replays found...")
+            return (ParsedUserReplay(), False)
+
+        # Find replay data using most recent replay
+        logger.info("Getting replay data...")
+        replay_data = self._get_replay_data(user_replay_ids[0])
+        # Skip to next user if replay not found or metadata tags not found
+        if not replay_data or (
+            "uploadtime" not in replay_data or "id" not in replay_data
+        ):
+            logger.info("Skipping, replay data invalid or not found...")
+            return (ParsedUserReplay(), False)
+
+        # Feed replay data to LogHandler
+        if not self.log_handler.feed_log(replay_data):
+            logger.info("Skipping, feeding log failed")
+            return (ParsedUserReplay(), False)
+
+        # Populate `ReplayMetadata`
+        replay_metadata = ReplayMetadata(replay_data["uploadtime"], replay_data["id"])
+
+        # Populate `ParsedUserReplay` based on replay data
+        user_roster = self.log_handler.parse_team(user)
+        # Skip to next user if team not found
+        if not user_roster:
+            logger.info("Skipping, team could not be found")
+            return (ParsedUserReplay(), False)
+
+        return (ParsedUserReplay(replay_metadata, rating, user_roster), True)
+
+    def _write_snapshots(self, format_id: str) -> None:
+        """Write snapshots to storage"""
+        # Configure model transformer
+        model_transformer = ModelTransformer(
+            self.get_parsed_user_replay_list(), self.get_date(), format_id
+        )
+        pokemon_teams_snapshot_model = (
+            model_transformer.make_pokemon_teams_snapshot_model()
+        )
+        pokemon_usage_snapshot_model = (
+            model_transformer.make_pokemon_usage_snapshot_model()
+        )
+
+        # Write to DB
+        write_pokemon_teams_snapshots_table(
+            self.dynamodb_resource, pokemon_teams_snapshot_model
+        )
+        write_pokemon_usage_snapshots_table(
+            self.dynamodb_resource, pokemon_usage_snapshot_model
+        )
+
+    def extract_info(self, format_id: str) -> bool:
         """Run data pipeline for extracting replay data"""
         # Commence timer recording
         start_time = time.time()
@@ -155,60 +238,28 @@ class DataExtractor:
         # Retrieve top users
         logger.info("Retrieving top users...")
         user_ratings = self.get_ladder_users_and_ratings(format_id, MAX_USERS)
+        if not user_ratings:
+            logger.warning("Could not retrieve ladder rankings, aborting...")
+            return False
 
         # Retrieve specified number of replays
         teams_found = 0
         logger.info("Searching for teams...")
-        for user_rating in user_ratings:
-            user, rating = user_rating[0], user_rating[1]
-            # Find users replays for specified format
-            logger.info(f"Retrieving {user}'s replays...")
-            user_replay_ids = self.get_user_replay_ids(user_rating[0], format_id)
-            # Skip to next user if replays not found
-            if not user_replay_ids:
-                logger.info("Skipping, no replays found...")
-                continue
 
-            # Find replay data using most recent replay
-            logger.info("Getting replay data...")
-            replay_data = self._get_replay_data(user_replay_ids[0])
-            # Skip to next user if replay not found
-            if not replay_data:
-                logger.info("Skipping, no replay data found...")
-                continue
-
-            # Feed replay data to LogHandler
-            if not self.log_handler.feed_log(replay_data):
-                continue
-
-            # Gather replay metadata
-            if "uploadtime" not in replay_data or "id" not in replay_data:
-                continue
-            upload_time, replay_id = (
-                replay_data["uploadtime"],
-                replay_data["id"],
+        # Parse replay to populate `ParsedUserReplay`
+        for user, rating in user_ratings:
+            parsed_user_replay, success = self._extract_parsed_user_replay(
+                user, rating, format_id
             )
+            # If unsuccessful, skip to next user
+            if success:
+                self.add_parsed_user_replay(parsed_user_replay)
+                teams_found += 1
+                if teams_found == self.num_teams:
+                    break
 
-            # Populate `ReplayMetadata`
-            replay_metadata = ReplayMetadata(upload_time, replay_id)
+        # Write to storage
+        self._write_snapshots(format_id)
 
-            # Populate `ParsedUserReplay` based on replay data
-            user_roster = self.log_handler.parse_team(user)
-            # Skip to next user if team not found
-            if not user_roster:
-                continue
-            parsed_user_replay = ParsedUserReplay(replay_metadata, rating, user_roster)
-            # Record team
-            self.add_parsed_user_replay(parsed_user_replay)
-
-            teams_found += 1
-            if teams_found == self.num_teams:
-                break
-
-        # Configure model transformer
-        model_transformer = ModelTransformer(
-            self.get_parsed_user_replay_list(), self.get_date(), format_id
-        )
-        pokemon_teams_snapshot = model_transformer.make_pokemon_teams_snapshot()
-        pokemon_usage_snapshot = model_transformer.make_pokemon_usage_snapshot()
-        logger.info(f"Extraction finished in {time.time() - start_time: .2f} seconds")
+        logger.info(f"Processing finished in {time.time() - start_time: .2f} seconds")
+        return True

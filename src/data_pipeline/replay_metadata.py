@@ -1,11 +1,12 @@
 """ Classes for structuring replay metadata-associated storage """
 from typing import List
+import datetime
 
 
 class ReplayMetadata:
     """Replay metadata from individual replay"""
 
-    def __init__(self, upload_time: int, replay_id: str):
+    def __init__(self, upload_time: int = int(datetime.MINYEAR), replay_id: str = ""):
         self.upload_time = upload_time
         self.replay_id = replay_id
 
@@ -31,14 +32,14 @@ class ParsedUserReplay:
 
     def __init__(
         self,
-        replay_metadata: ReplayMetadata,
-        rating: int,
-        pokemon_roster: List[str],
+        replay_metadata: ReplayMetadata = None,
+        rating: int = 0,
+        pokemon_roster: List[str] = None,
     ):
         """Teams and turns populated by `LogHandler`"""
-        self.metadata = replay_metadata
+        self.metadata = ReplayMetadata() if replay_metadata is None else replay_metadata
         self.rating = rating
-        self.pokemon_roster = pokemon_roster
+        self.pokemon_roster = [] if pokemon_roster is None else pokemon_roster
 
     def set_replay_metadata(self, replay_metadata: ReplayMetadata) -> None:
         """Set replay metadata"""

@@ -53,13 +53,13 @@ class ModelTransformer:
         """Get format ID"""
         return self.format_id
 
-    def make_pokemon_teams_snapshot(self) -> PokemonTeamsSnapshot:
-        """Generate Pokémon teams snapshot"""
+    def make_pokemon_teams_snapshot_model(self) -> dict:
+        """Generate Pokémon teams snapshot model"""
         if not self.get_parsed_user_replay_list():
             logger.warning(
                 "Cannot generate teams snapshot, `ParsedUserReplay` list is not populated"
             )
-            return PokemonTeamsSnapshot()
+            return {}
 
         # Create team snapshot
         pokemon_team_list = []
@@ -74,7 +74,7 @@ class ModelTransformer:
 
         return PokemonTeamsSnapshot(
             self.get_date(), self.get_format_id(), pokemon_team_list
-        )
+        ).make_model()
 
     def _calculate_pokemon_usage(self, pokemon_teams: List[List[str]]) -> dict:
         """Calculate Pokémon usage by descending"""
@@ -90,7 +90,6 @@ class ModelTransformer:
             num_appearances = pokemon_appearances[1]
             pokemon_usage[pokemon] = num_appearances
 
-        # Python 3.7+ preserves insertion order, hence no need to sort
         return pokemon_usage
 
     def _calculate_pokemon_partner_usage(self, pokemon_teams: List[List[str]]) -> dict:
@@ -166,24 +165,18 @@ class ModelTransformer:
                     parsed_user_replay.get_rating()
                     for parsed_user_replay in filtered_parsed_user_replay_list
                 ]
-            ) / len(filtered_parsed_user_replay_list)
+            ) // len(filtered_parsed_user_replay_list)
             pokemon_average_rating_usage[pokemon] = average_rating
 
-        return dict(
-            sorted(
-                pokemon_average_rating_usage.items(),
-                key=lambda item: item[1],
-                reverse=True,
-            )
-        )
+        return pokemon_average_rating_usage
 
-    def make_pokemon_usage_snapshot(self) -> PokemonUsageSnapshot:
-        """Generate Pokémon usage snapshot"""
+    def make_pokemon_usage_snapshot_model(self) -> dict:
+        """Generate Pokémon usage snapshot model"""
         if not self.get_parsed_user_replay_list():
             logger.warning(
                 "Cannot generate usage snapshot, `ParsedUserReplay` list is not populated"
             )
-            return PokemonUsageSnapshot()
+            return {}
 
         pokemon_teams = [
             sorted(parsed_user_replay.get_pokemon_roster())
@@ -201,4 +194,4 @@ class ModelTransformer:
             pokemon_usage,
             pokemon_partner_usage,
             pokemon_average_rating_usage,
-        )
+        ).make_model()

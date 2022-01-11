@@ -1,7 +1,9 @@
 """ Models for the storage layer """
 import datetime
 from typing import List
-from constants import TEAM_SIZE
+from constants import (
+    TEAM_SIZE,
+)
 from base_logger import logger
 
 
@@ -91,6 +93,21 @@ class PokemonTeamsSnapshot:
     def get_pokemon_team_list(self) -> List[PokemonTeam]:
         """Get pokemon team list"""
         return self.pokemon_team_list
+
+    def make_model(self) -> dict:
+        """Generate model for database as dictionary"""
+        return {
+            "date": self.get_date(),
+            "format_id": self.get_format_id(),
+            "teams": [
+                {
+                    "pokemon_roster": team.get_pokemon_roster(),
+                    "rating": team.get_rating(),
+                    "replay_upload_date": team.get_replay_upload_date(),
+                }
+                for team in self.get_pokemon_team_list()
+            ],
+        }
 
 
 class PokemonUsageSnapshot:
@@ -185,7 +202,7 @@ class PokemonUsageSnapshot:
             return 0
         return self.pokemon_partner_usage[pokemon][partner_pokemon]
 
-    def set_pokemon_average_rating_usage(self, pokemon: str, rating: float) -> None:
+    def set_pokemon_average_rating_usage(self, pokemon: str, rating: int) -> None:
         """Set Pokémon average rating normalized by usage"""
         if pokemon in self.pokemon_average_rating_usage:
             logger.warning(
@@ -198,7 +215,7 @@ class PokemonUsageSnapshot:
         """Get all Pokémon average rating normalized by usage"""
         return self.pokemon_average_rating_usage
 
-    def get_pokemon_average_rating_usage(self, pokemon: str) -> float:
+    def get_pokemon_average_rating_usage(self, pokemon: str) -> int:
         """Get Pokémon average rating normalized by usage"""
         if pokemon not in self.pokemon_average_rating_usage:
             logger.warning(
@@ -206,3 +223,13 @@ class PokemonUsageSnapshot:
             )
             return 0.0
         return self.pokemon_average_rating_usage[pokemon]
+
+    def make_model(self) -> dict:
+        """Generate model for database as dictionary"""
+        return {
+            "date": self.get_date(),
+            "format_id": self.get_format_id(),
+            "pokemon_usage": self.get_all_pokemon_usage(),
+            "pokemon_partner_usage": self.get_all_pokemon_partner_usage(),
+            "pokemon_average_rating_usage": self.get_all_pokemon_average_rating_usage(),
+        }

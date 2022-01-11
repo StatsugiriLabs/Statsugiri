@@ -52,44 +52,6 @@ def fixture_model_transformer():
     return ModelTransformer(parsed_user_replay_list, DATE, FORMAT)
 
 
-def verify_pokemon_teams_snapshot_match(
-    pokemon_teams_snapshot: PokemonTeamsSnapshot,
-    expected_pokemon_teams_snapshot: PokemonTeamsSnapshot,
-):
-    """Check if two `PokémonTeamSnapshot` objects match"""
-    assert (
-        pokemon_teams_snapshot.get_date() == expected_pokemon_teams_snapshot.get_date()
-    )
-    assert (
-        pokemon_teams_snapshot.get_format_id()
-        == expected_pokemon_teams_snapshot.get_format_id()
-    )
-    verify_pokemon_team_match(
-        pokemon_teams_snapshot.get_pokemon_team_list(),
-        expected_pokemon_teams_snapshot.get_pokemon_team_list(),
-    )
-
-
-def verify_pokemon_team_match(
-    pokemon_team_list: List[PokemonTeam], expected_pokemon_team_list: List[PokemonTeam]
-):
-    """Check if two `PokemonTeam` objects match"""
-    assert len(pokemon_team_list) == len(expected_pokemon_team_list)
-    for i in range(len(pokemon_team_list)):
-        assert (
-            pokemon_team_list[i].get_pokemon_roster()
-            == expected_pokemon_team_list[i].get_pokemon_roster()
-        )
-        assert (
-            pokemon_team_list[i].get_rating()
-            == expected_pokemon_team_list[i].get_rating()
-        )
-        assert (
-            pokemon_team_list[i].get_replay_upload_date()
-            == expected_pokemon_team_list[i].get_replay_upload_date()
-        )
-
-
 def test_model_transformer_make_pokemon_teams_snapshot_happy_path(
     model_transformer_under_test,
 ):
@@ -99,37 +61,11 @@ def test_model_transformer_make_pokemon_teams_snapshot_happy_path(
     pokemon_team_3 = PokemonTeam(ROSTER_3, RATING_3, UPLOAD_DATE_3)
     expected_pokemon_teams_snapshot = PokemonTeamsSnapshot(
         DATE, FORMAT, [pokemon_team_1, pokemon_team_2, pokemon_team_3]
+    ).make_model()
+    pokemon_teams_snapshot = (
+        model_transformer_under_test.make_pokemon_teams_snapshot_model()
     )
-    pokemon_teams_snapshot = model_transformer_under_test.make_pokemon_teams_snapshot()
-    verify_pokemon_teams_snapshot_match(
-        pokemon_teams_snapshot, expected_pokemon_teams_snapshot
-    )
-
-
-def verify_pokemon_usage_snapshot_match(
-    pokemon_usage_snapshot: PokemonUsageSnapshot,
-    expected_pokemon_usage_snapshot: PokemonUsageSnapshot,
-):
-    """Check if two `PokemonUsageSnapshot` objects match"""
-    assert (
-        pokemon_usage_snapshot.get_date() == expected_pokemon_usage_snapshot.get_date()
-    )
-    assert (
-        pokemon_usage_snapshot.get_format_id()
-        == expected_pokemon_usage_snapshot.get_format_id()
-    )
-    assert (
-        pokemon_usage_snapshot.get_all_pokemon_usage()
-        == expected_pokemon_usage_snapshot.get_all_pokemon_usage()
-    )
-    assert (
-        pokemon_usage_snapshot.get_all_pokemon_partner_usage()
-        == expected_pokemon_usage_snapshot.get_all_pokemon_partner_usage()
-    )
-    assert (
-        pokemon_usage_snapshot.get_all_pokemon_average_rating_usage()
-        == expected_pokemon_usage_snapshot.get_all_pokemon_average_rating_usage()
-    )
+    assert pokemon_teams_snapshot == expected_pokemon_teams_snapshot
 
 
 def test_model_transformer_make_pokemon_usage_snapshot_happy_path(
@@ -145,31 +81,31 @@ def test_model_transformer_make_pokemon_usage_snapshot_happy_path(
         "pkmn_e": {"pkmn_b": 1, "pkmn_c": 1},
     }
     pokemon_average_rating_usage = {
-        "pkmn_e": 3.0,
-        "pkmn_b": 2.0,
-        "pkmn_c": 2.0,
-        "pkmn_d": 2.0,
-        "pkmn_a": 1.0,
+        "pkmn_e": 3,
+        "pkmn_b": 2,
+        "pkmn_c": 2,
+        "pkmn_d": 2,
+        "pkmn_a": 1,
     }
     expected_pokemon_usage_snapshot = PokemonUsageSnapshot(
         DATE, FORMAT, pokemon_usage, pokemon_partner_usage, pokemon_average_rating_usage
+    ).make_model()
+    pokemon_usage_snapshot = (
+        model_transformer_under_test.make_pokemon_usage_snapshot_model()
     )
-    pokemon_usage_snapshot = model_transformer_under_test.make_pokemon_usage_snapshot()
-    verify_pokemon_usage_snapshot_match(
-        pokemon_usage_snapshot, expected_pokemon_usage_snapshot
-    )
+    assert pokemon_usage_snapshot == expected_pokemon_usage_snapshot
 
 
 def test_model_transformer_make_pokemon_teams_snapshot_empty_parsed_user_replay_list_should_return_empty_snapshot():
     model_transformer_under_test = ModelTransformer()
-    empty_snapshot = model_transformer_under_test.make_pokemon_teams_snapshot()
-    verify_pokemon_teams_snapshot_match(empty_snapshot, PokemonTeamsSnapshot())
+    empty_snapshot = model_transformer_under_test.make_pokemon_teams_snapshot_model()
+    assert empty_snapshot == {}
 
 
 def test_model_transformer_make_pokemon_usage_snapshot_empty_parsed_user_replay_list_should_return_empty_snapshot():
     model_transformer_under_test = ModelTransformer()
-    empty_snapshot = model_transformer_under_test.make_pokemon_usage_snapshot()
-    verify_pokemon_usage_snapshot_match(empty_snapshot, PokemonUsageSnapshot())
+    empty_snapshot = model_transformer_under_test.make_pokemon_usage_snapshot_model()
+    assert empty_snapshot == {}
 
 
 def test_model_transformer_calculate_pokemon_stats_empty_teams_should_return_empty_dictionary(
