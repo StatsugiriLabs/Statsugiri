@@ -2,18 +2,70 @@
 import os
 import json
 import pytest
-from constants import MAX_USERS
+import boto3
+from constants import MAX_USERS, DYNAMODB_STR
 from data_extractor import DataExtractor
+from replay_metadata import ParsedUserReplay, ReplayMetadata
 
 TEST_FORMATS = ["gen8vgc2021series11"]
 NUM_TEAMS_TO_RETURN = 100
 NUM_USERS_TO_SEARCH = 10
+USER_TO_TEST = "ToastNoButter"
+USER_TO_TEST_RATING = 1874
+USER_TO_TEST_TEAM = [
+    "Whimsicott",
+    "Calyrex-Shadow",
+    "Urshifu",
+    "Tapu Lele",
+    "Thundurus",
+    "Chandelure",
+]
+MOCK_REPLAY_IDS = [
+    "gen8vgc2021series11-1483710801",
+    "gen8vgc2021series11-1483657513",
+    "gen8vgc2021series11-1482150610",
+    "gen8vgc2021series11-1482135387",
+    "gen8vgc2021series11-1481400639",
+    "gen8vgc2021series11-1481391310",
+    "gen8vgc2021series11-1481377054",
+    "gen8vgc2021series11-1479481903",
+    "gen8vgc2021series11-1479464786",
+    "gen8vgc2021series11-1479462077",
+    "gen8vgc2021series11-1479449630",
+    "gen8vgc2021series11-1478902568",
+    "gen8vgc2021series11-1478454710",
+    "gen8vgc2021series11-1478308804",
+    "gen8vgc2021series11-1478300602",
+    "gen8vgc2021series11-1477763896",
+    "gen8vgc2021series11-1477759413",
+    "gen8vgc2021series11-1476414583",
+    "gen8vgc2021series11-1476398026",
+    "gen8vgc2021series11-1476395636",
+    "gen8vgc2021series11-1476037573",
+    "gen8vgc2021series11-1476035911",
+    "gen8vgc2021series11-1476027554",
+    "gen8vgc2021series11-1475507871",
+    "gen8vgc2021series11-1475368059",
+    "gen8vgc2021series11-1474886856",
+    "gen8vgc2021series11-1474869237",
+    "gen8vgc2021series11-1474865018",
+    "gen8vgc2021series11-1474772915",
+    "gen8vgc2021series11-1474761247",
+    "gen8vgc2021series11-1474236147",
+    "gen8vgc2021series11-1473569650",
+    "gen8vgc2021series11-1472907115",
+    "gen8vgc2021series11-1472826492",
+    "gen8vgc2021series11-1472821150",
+    "gen8vgc2021series11-1472815787",
+    "gen8vgc2021series11-1472800139",
+]
 
 
 @pytest.fixture(name="data_extractor_under_test")
 def fixture_data_extractor():
     """Initialize data extractor for tests"""
-    return DataExtractor(0, TEST_FORMATS, NUM_TEAMS_TO_RETURN)
+    dynamodb_resource = boto3.resource(DYNAMODB_STR)
+    return DataExtractor(dynamodb_resource, 0, TEST_FORMATS, NUM_TEAMS_TO_RETURN)
 
 
 @pytest.fixture(name="sample_ladder_res_text")
@@ -77,6 +129,23 @@ def fixture_sample_replay_data_ToastNoButter_json():
             os.path.join(__location__, "assets/sample_replay_data_ToastNoButter.json"),
             encoding="utf-8",
         ).read()
+    )
+
+
+def verify_parsed_user_replay_identical(
+    parsed_user_replay: ParsedUserReplay, expected_parsed_user_replay: ParsedUserReplay
+):
+    """Verify `ParsedUserReplay` objects are identical"""
+    replay_metadata = parsed_user_replay.get_replay_metadata()
+    expected_replay_metadata = expected_parsed_user_replay.get_replay_metadata()
+    assert (
+        replay_metadata.get_upload_time() == expected_replay_metadata.get_upload_time()
+    )
+    assert replay_metadata.get_replay_id() == expected_replay_metadata.get_replay_id()
+    assert parsed_user_replay.get_rating() == expected_parsed_user_replay.get_rating()
+    assert (
+        parsed_user_replay.get_pokemon_roster()
+        == expected_parsed_user_replay.get_pokemon_roster()
     )
 
 
@@ -157,58 +226,13 @@ def test_get_user_replay_ids_happy_path(
 
 
 # TODO: https://github.com/kelvinkoon/babiri_v2/issues/46
-def test_extract_info_happy_path(
-    mocker, sample_replay_data_ToastNoButter_json, data_extractor_under_test
-):
+def test_extract_info_happy_path(mocker, data_extractor_under_test):
     """Test extracting info cycle"""
-    users = [("ToastNoButter", 1874)]
-    replay_ids = [
-        "gen8vgc2021series11-1483710801",
-        "gen8vgc2021series11-1483657513",
-        "gen8vgc2021series11-1482150610",
-        "gen8vgc2021series11-1482135387",
-        "gen8vgc2021series11-1481400639",
-        "gen8vgc2021series11-1481391310",
-        "gen8vgc2021series11-1481377054",
-        "gen8vgc2021series11-1479481903",
-        "gen8vgc2021series11-1479464786",
-        "gen8vgc2021series11-1479462077",
-        "gen8vgc2021series11-1479449630",
-        "gen8vgc2021series11-1478902568",
-        "gen8vgc2021series11-1478454710",
-        "gen8vgc2021series11-1478308804",
-        "gen8vgc2021series11-1478300602",
-        "gen8vgc2021series11-1477763896",
-        "gen8vgc2021series11-1477759413",
-        "gen8vgc2021series11-1476414583",
-        "gen8vgc2021series11-1476398026",
-        "gen8vgc2021series11-1476395636",
-        "gen8vgc2021series11-1476037573",
-        "gen8vgc2021series11-1476035911",
-        "gen8vgc2021series11-1476027554",
-        "gen8vgc2021series11-1475507871",
-        "gen8vgc2021series11-1475368059",
-        "gen8vgc2021series11-1474886856",
-        "gen8vgc2021series11-1474869237",
-        "gen8vgc2021series11-1474865018",
-        "gen8vgc2021series11-1474772915",
-        "gen8vgc2021series11-1474761247",
-        "gen8vgc2021series11-1474236147",
-        "gen8vgc2021series11-1473569650",
-        "gen8vgc2021series11-1472907115",
-        "gen8vgc2021series11-1472826492",
-        "gen8vgc2021series11-1472821150",
-        "gen8vgc2021series11-1472815787",
-        "gen8vgc2021series11-1472800139",
-    ]
-    team = [
-        "Whimsicott",
-        "Calyrex-Shadow",
-        "Urshifu",
-        "Tapu Lele",
-        "Thundurus",
-        "Chandelure",
-    ]
+    users = [(USER_TO_TEST, USER_TO_TEST_RATING)]
+    replay_metadata = ReplayMetadata()
+    parsed_user_replay = ParsedUserReplay(
+        replay_metadata, USER_TO_TEST_RATING, USER_TO_TEST_TEAM
+    )
     # Configure for one team
     data_extractor_under_test.set_num_teams(1)
     # Mock functions outside of module
@@ -216,17 +240,145 @@ def test_extract_info_happy_path(
         "data_extractor.DataExtractor.get_ladder_users_and_ratings", return_value=users
     )
     mocker.patch(
-        "data_extractor.DataExtractor.get_user_replay_ids", return_value=replay_ids
+        "data_extractor.DataExtractor._extract_parsed_user_replay",
+        return_value=(parsed_user_replay, True),
+    )
+    mocker.patch("data_extractor.DataExtractor._write_snapshots", return_value=())
+
+    # Take VGC format, which is the first in `TEST_FORMATS`
+    res = data_extractor_under_test.extract_info(TEST_FORMATS[0])
+    assert (
+        data_extractor_under_test.get_parsed_user_replay_list()[0].get_pokemon_roster()
+        == USER_TO_TEST_TEAM
+    )
+    assert res
+
+
+def test_extract_info_get_ladder_failed_should_exit(mocker, data_extractor_under_test):
+    """Test data extraction when ladder rankings cannot be retrieved"""
+    # Mock functions outside of module
+    mocker.patch(
+        "data_extractor.DataExtractor.get_ladder_users_and_ratings", return_value=[]
+    )
+
+    # Take VGC format, which is the first in `TEST_FORMATS`
+    res = data_extractor_under_test.extract_info(TEST_FORMATS[0])
+    assert not res
+
+
+def test_extract_parsed_user_replay_happy_path(
+    mocker, sample_replay_data_ToastNoButter_json, data_extractor_under_test
+):
+    """Test extracting for `ParsedUserReplay`"""
+    # Mock functions outside of module
+    mocker.patch(
+        "data_extractor.DataExtractor.get_user_replay_ids", return_value=MOCK_REPLAY_IDS
     )
     mocker.patch(
         "data_extractor.DataExtractor._get_replay_data",
         return_value=sample_replay_data_ToastNoButter_json,
     )
-    mocker.patch("log_handler.LogHandler.feed_log", return_value=True)
-    mocker.patch("log_handler.LogHandler.parse_team", return_value=team)
-    # Take VGC format, which is the first in `TEST_FORMATS`
-    data_extractor_under_test.extract_info(TEST_FORMATS[0])
-    assert (
-        data_extractor_under_test.get_parsed_user_replay_list()[0].get_pokemon_roster()
-        == team
+    mocker.patch(
+        "log_handler.LogHandler.feed_log",
+        return_value=True,
     )
+    mocker.patch(
+        "log_handler.LogHandler.parse_team",
+        return_value=USER_TO_TEST_TEAM,
+    )
+    expected_replay_metadata = ReplayMetadata(
+        sample_replay_data_ToastNoButter_json["uploadtime"],
+        sample_replay_data_ToastNoButter_json["id"],
+    )
+    expected_parsed_user_replay = ParsedUserReplay(
+        expected_replay_metadata, USER_TO_TEST_RATING, USER_TO_TEST_TEAM
+    )
+
+    parsed_user_replay, success = data_extractor_under_test._extract_parsed_user_replay(
+        USER_TO_TEST, USER_TO_TEST_RATING, TEST_FORMATS[0]
+    )
+    verify_parsed_user_replay_identical(parsed_user_replay, expected_parsed_user_replay)
+    assert success
+
+
+def test_extract_parsed_user_replay_no_replay_data_should_return_false(
+    mocker, data_extractor_under_test
+):
+    """Test extracting ParsedUserReplay when no replay IDs are returned"""
+    # Mock functions outside of module
+    mocker.patch("data_extractor.DataExtractor.get_user_replay_ids", return_value=[])
+
+    parsed_user_replay, success = data_extractor_under_test._extract_parsed_user_replay(
+        USER_TO_TEST, USER_TO_TEST_RATING, TEST_FORMATS[0]
+    )
+    verify_parsed_user_replay_identical(parsed_user_replay, ParsedUserReplay())
+    assert not success
+
+
+def test_extract_parsed_user_replay_replay_data_invalid_should_return_false(
+    mocker, data_extractor_under_test
+):
+    """Test extracting `ParsedUserReplay` when returned replay data is invalid"""
+    # Mock functions outside of module
+    mocker.patch(
+        "data_extractor.DataExtractor.get_user_replay_ids", return_value=MOCK_REPLAY_IDS
+    )
+    mocker.patch("data_extractor.DataExtractor._get_replay_data", return_value={})
+
+    parsed_user_replay, success = data_extractor_under_test._extract_parsed_user_replay(
+        USER_TO_TEST, USER_TO_TEST_RATING, TEST_FORMATS[0]
+    )
+    verify_parsed_user_replay_identical(parsed_user_replay, ParsedUserReplay())
+    assert not success
+
+
+def test_extract_parsed_user_replay_feed_log_failed_should_return_false(
+    mocker, sample_replay_data_ToastNoButter_json, data_extractor_under_test
+):
+    """Test extracting `ParsedUserReplay` when feeding the log fails"""
+    # Mock functions outside of module
+    mocker.patch(
+        "data_extractor.DataExtractor.get_user_replay_ids", return_value=MOCK_REPLAY_IDS
+    )
+    mocker.patch(
+        "data_extractor.DataExtractor._get_replay_data",
+        return_value=sample_replay_data_ToastNoButter_json,
+    )
+    mocker.patch(
+        "log_handler.LogHandler.feed_log",
+        return_value=False,
+    )
+
+    parsed_user_replay, success = data_extractor_under_test._extract_parsed_user_replay(
+        USER_TO_TEST, USER_TO_TEST_RATING, TEST_FORMATS[0]
+    )
+    verify_parsed_user_replay_identical(parsed_user_replay, ParsedUserReplay())
+    assert not success
+
+
+def test_extract_parsed_user_replay_parse_team_fail_should_return_false(
+    mocker, sample_replay_data_ToastNoButter_json, data_extractor_under_test
+):
+    """Test extracting `ParsedUserReplay` when team parsing fails"""
+    # Mock functions outside of module
+    mocker.patch(
+        "data_extractor.DataExtractor.get_user_replay_ids", return_value=MOCK_REPLAY_IDS
+    )
+    mocker.patch(
+        "data_extractor.DataExtractor._get_replay_data",
+        return_value=sample_replay_data_ToastNoButter_json,
+    )
+    mocker.patch(
+        "log_handler.LogHandler.feed_log",
+        return_value=True,
+    )
+    mocker.patch(
+        "log_handler.LogHandler.parse_team",
+        return_value=[],
+    )
+
+    parsed_user_replay, success = data_extractor_under_test._extract_parsed_user_replay(
+        USER_TO_TEST, USER_TO_TEST_RATING, TEST_FORMATS[0]
+    )
+    verify_parsed_user_replay_identical(parsed_user_replay, ParsedUserReplay())
+    assert not success
