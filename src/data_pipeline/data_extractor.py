@@ -174,7 +174,6 @@ class DataExtractor:
     ) -> Tuple[ParsedUserReplay, bool]:
         """Extract replay metadata and log information into `ParsedUserReplay`
         Return True on success, False otherwise"""
-
         logger.info(f"Retrieving {user}'s replays...")
         user_replay_ids = self.get_user_replay_ids(user, format_id)
         # Skip to next user if replays not found

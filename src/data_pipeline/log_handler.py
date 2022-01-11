@@ -43,6 +43,7 @@ class LogHandler:
             return []
 
         # Identify if user is `p1` or `p2`
+        # '|' is removed, nicknames do not affect regex
         player_num = re.findall(f"\\|player\\|(.*?)\\|{user}\\|", sanitized_log)
         if len(player_num) != 1:
             logger.warning("Could not properly locate user in log")
