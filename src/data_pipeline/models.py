@@ -221,7 +221,7 @@ class PokemonUsageSnapshot:
             logger.warning(
                 "Pokémon not found in Pokémon average rating usage, cannot retrieve"
             )
-            return 0.0
+            return 0
         return self.pokemon_average_rating_usage[pokemon]
 
     def make_model(self) -> dict:

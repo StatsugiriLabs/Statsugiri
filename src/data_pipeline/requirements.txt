@@ -5,7 +5,6 @@ attrs==21.2.0
 beautifulsoup4==4.10.0
 black==21.9b0
 boto3==1.20.30
-boto3-stubs==1.20.30
 botocore==1.23.30
 botocore-stubs==1.23.30
 bs4==0.0.1
@@ -21,12 +20,15 @@ iniconfig==1.1.1
 isort==5.10.1
 Jinja2==3.0.3
 jmespath==0.10.0
+lambda-typing==0.1.0
 lazy-object-proxy==1.6.0
 MarkupSafe==2.0.1
 mccabe==0.6.1
 moto==2.3.1
 multidict==5.2.0
+mypy==0.931
 mypy-boto3-dynamodb==1.20.18
+mypy-boto3-lambda==1.20.13
 mypy-extensions==0.4.3
 packaging==21.3
 pathspec==0.9.0
@@ -49,6 +51,8 @@ six==1.16.0
 soupsieve==2.2.1
 toml==0.10.2
 tomli==1.2.1
+types-requests==2.27.5
+types-urllib3==1.26.4
 typing-extensions==3.10.0.2
 urllib3==1.26.7
 Werkzeug==2.0.2
