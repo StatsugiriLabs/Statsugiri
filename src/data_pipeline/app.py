@@ -1,14 +1,14 @@
 """ Application-level logic for facilitating data pipeline """
 import os
+import json
 import boto3
 import botocore
 from base_logger import logger
 from boto3.session import Session
+from lambda_typing.types import LambdaDict, LambdaContext
 
 from data_extractor import DataExtractor
 from constants import FORMATS, NUM_TEAMS, DYNAMODB_STR
-
-DYNAMODB_STR = "dynamodb"
 
 
 def create_session() -> Session:
@@ -37,15 +37,32 @@ def create_session() -> Session:
         raise error
 
 
-def main():
-    """Main function"""
+def lambda_handler(event: LambdaDict, context: LambdaContext) -> dict:
+    """Lambda handler for starting the data extraction process"""
+    format_arg = event.get("format") or ""
+    if not format_arg:
+        raise ValueError("'format' must be provided.")
+
     logger.info("Initializing data pipeline...")
     session = create_session()
+
     data_extractor = DataExtractor(
         session.resource(DYNAMODB_STR), 1641197251, FORMATS, NUM_TEAMS
     )
-    data_extractor.extract_info("gen8vgc2021series11")
 
-
-if __name__ == "__main__":
-    main()
+    # Will run successfully if errors were not raised
+    snapshots = data_extractor.extract_info(format_arg)
+    return {
+        "statusCode": 200,
+        "headers": {"Content-Type": "application/json"},
+        "body": json.dumps(
+            {
+                "pokemon_teams_snapshot_model": snapshots[
+                    "pokemon_teams_snapshot_model"
+                ],
+                "pokemon_usage_snapshot_model": snapshots[
+                    "pokemon_usage_snapshot_model"
+                ],
+            }
+        ),
+    }

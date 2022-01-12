@@ -1,7 +1,7 @@
 """Model Transformer is responsible for generating DB models"""
 from itertools import combinations, chain
 from collections import Counter
-from typing import List
+from typing import List, Dict
 from replay_metadata import ParsedUserReplay
 from models import PokemonTeam, PokemonTeamsSnapshot, PokemonUsageSnapshot
 from constants import NUM_PARTNERS
@@ -97,7 +97,7 @@ class ModelTransformer:
         if not pokemon_teams:
             return {}
 
-        pokemon_partner_usage = {}
+        pokemon_partner_usage: Dict[str, Dict[str, int]] = {}
         # Flatten teams into one list
         flattened_pokemon_teams = list(chain(*pokemon_teams))
         """

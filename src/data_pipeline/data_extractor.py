@@ -3,7 +3,7 @@ from typing import List, Tuple
 import re
 import time
 import requests
-import mypy_boto3_dynamodb as dynamodb
+import mypy_boto3_dynamodb as boto3_dynamodb
 from base_logger import logger
 from bs4 import BeautifulSoup
 from constants import (
@@ -30,7 +30,7 @@ class DataExtractor:
 
     def __init__(
         self,
-        dynamodb_resource: dynamodb.DynamoDBServiceResource,
+        dynamodb_resource: boto3_dynamodb.DynamoDBServiceResource,
         date: int = 0,
         formats: List[str] = None,
         num_teams: int = NUM_TEAMS,
@@ -40,15 +40,15 @@ class DataExtractor:
         self.date = date
         self.formats = [] if formats is None else formats
         self.num_teams = num_teams
-        self.parsed_user_replay_list = []
+        self.parsed_user_replay_list: List[ParsedUserReplay] = []
 
     def set_dynamodb_resource(
-        self, dynamodb_resource: dynamodb.DynamoDBServiceResource
+        self, dynamodb_resource: boto3_dynamodb.DynamoDBServiceResource
     ) -> None:
         """Set DynamoDB resource"""
         self.dynamodb_resource = dynamodb_resource
 
-    def get_dynamodb_resource(self) -> dynamodb.DynamoDBServiceResource:
+    def get_dynamodb_resource(self) -> boto3_dynamodb.DynamoDBServiceResource:
         """Get DynamoDB resource"""
         return self.dynamodb_resource
 
@@ -208,20 +208,12 @@ class DataExtractor:
 
         return (ParsedUserReplay(replay_metadata, rating, user_roster), True)
 
-    def _write_snapshots(self, format_id: str) -> None:
+    def _write_snapshots(
+        self,
+        pokemon_teams_snapshot_model: dict,
+        pokemon_usage_snapshot_model: dict,
+    ) -> None:
         """Write snapshots to storage"""
-        # Configure model transformer
-        model_transformer = ModelTransformer(
-            self.get_parsed_user_replay_list(), self.get_date(), format_id
-        )
-        pokemon_teams_snapshot_model = (
-            model_transformer.make_pokemon_teams_snapshot_model()
-        )
-        pokemon_usage_snapshot_model = (
-            model_transformer.make_pokemon_usage_snapshot_model()
-        )
-
-        # Write to DB
         write_pokemon_teams_snapshots_table(
             self.dynamodb_resource, pokemon_teams_snapshot_model
         )
@@ -229,7 +221,7 @@ class DataExtractor:
             self.dynamodb_resource, pokemon_usage_snapshot_model
         )
 
-    def extract_info(self, format_id: str) -> bool:
+    def extract_info(self, format_id: str) -> dict:
         """Run data pipeline for extracting replay data"""
         # Commence timer recording
         start_time = time.time()
@@ -257,8 +249,24 @@ class DataExtractor:
                 if teams_found == self.num_teams:
                     break
 
+        # Configure model transformer
+        model_transformer = ModelTransformer(
+            self.get_parsed_user_replay_list(), self.get_date(), format_id
+        )
+        pokemon_teams_snapshot_model = (
+            model_transformer.make_pokemon_teams_snapshot_model()
+        )
+        pokemon_usage_snapshot_model = (
+            model_transformer.make_pokemon_usage_snapshot_model()
+        )
+
         # Write to storage
-        self._write_snapshots(format_id)
+        self._write_snapshots(
+            pokemon_teams_snapshot_model, pokemon_usage_snapshot_model
+        )
 
         logger.info(f"Processing finished in {time.time() - start_time: .2f} seconds")
-        return True
+        return {
+            "pokemon_teams_snapshot_model": pokemon_teams_snapshot_model,
+            "pokemon_usage_snapshot_model": pokemon_usage_snapshot_model,
+        }
