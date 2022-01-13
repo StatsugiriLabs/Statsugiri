@@ -3,7 +3,7 @@ from typing import List, Tuple
 import re
 import time
 import requests
-import mypy_boto3_dynamodb as boto3_dynamodb
+import pymongo
 from base_logger import logger
 from bs4 import BeautifulSoup
 from constants import (
@@ -11,8 +11,8 @@ from constants import (
     NUM_TEAMS,
 )
 from db_utils import (
-    write_pokemon_teams_snapshots_table,
-    write_pokemon_usage_snapshots_table,
+    write_pokemon_teams_snapshots_collection,
+    write_pokemon_usage_snapshots_collection,
 )
 from model_transformer import ModelTransformer
 from replay_metadata import ReplayMetadata, ParsedUserReplay
@@ -30,27 +30,25 @@ class DataExtractor:
 
     def __init__(
         self,
-        dynamodb_resource: boto3_dynamodb.DynamoDBServiceResource,
+        mongo_client: pymongo.MongoClient,
         date: int = 0,
         formats: List[str] = None,
         num_teams: int = NUM_TEAMS,
     ):
         self.log_handler = LogHandler()
-        self.dynamodb_resource = dynamodb_resource
+        self.mongo_client = mongo_client
         self.date = date
         self.formats = [] if formats is None else formats
         self.num_teams = num_teams
         self.parsed_user_replay_list: List[ParsedUserReplay] = []
 
-    def set_dynamodb_resource(
-        self, dynamodb_resource: boto3_dynamodb.DynamoDBServiceResource
-    ) -> None:
-        """Set DynamoDB resource"""
-        self.dynamodb_resource = dynamodb_resource
+    def set_mongo_client(self, mongo_client: pymongo.MongoClient) -> None:
+        """Set Mongo client"""
+        self.mongo_client = mongo_client
 
-    def get_dynamodb_resource(self) -> boto3_dynamodb.DynamoDBServiceResource:
-        """Get DynamoDB resource"""
-        return self.dynamodb_resource
+    def get_mongo_client(self) -> pymongo.MongoClient:
+        """Get Mongo client"""
+        return self.mongo_client
 
     def set_date(self, date: int) -> None:
         """Set date"""
@@ -214,11 +212,12 @@ class DataExtractor:
         pokemon_usage_snapshot_model: dict,
     ) -> None:
         """Write snapshots to storage"""
-        write_pokemon_teams_snapshots_table(
-            self.dynamodb_resource, pokemon_teams_snapshot_model
+        mongo_client = self.get_mongo_client()
+        write_pokemon_teams_snapshots_collection(
+            mongo_client, pokemon_teams_snapshot_model
         )
-        write_pokemon_usage_snapshots_table(
-            self.dynamodb_resource, pokemon_usage_snapshot_model
+        write_pokemon_usage_snapshots_collection(
+            mongo_client, pokemon_usage_snapshot_model
         )
 
     def extract_info(self, format_id: str) -> dict:
@@ -266,7 +265,9 @@ class DataExtractor:
         )
 
         logger.info(f"Processing finished in {time.time() - start_time: .2f} seconds")
-        return {
-            "pokemon_teams_snapshot_model": pokemon_teams_snapshot_model,
-            "pokemon_usage_snapshot_model": pokemon_usage_snapshot_model,
-        }
+        return dict(
+            {
+                "pokemon_teams_snapshot_model": pokemon_teams_snapshot_model,
+                "pokemon_usage_snapshot_model": pokemon_usage_snapshot_model,
+            }
+        )
