@@ -1,120 +1,127 @@
 """Database utility functions for managing tables"""
 import os
 from typing import List
-import mypy_boto3_dynamodb as boto3_dynamodb
+
+import pymongo
 from constants import (
-    POKEMON_TEAMS_SNAPSHOTS_TABLE_NAME,
-    POKEMON_USAGE_SNAPSHOTS_TABLE_NAME,
+    POKEMON_TEAMS_SNAPSHOTS_COLLECTION_NAME,
+    POKEMON_USAGE_SNAPSHOTS_COLLECTION_NAME,
+    DB_CLUSTER_NAME,
 )
 from base_logger import logger
 
-db_env_prefix = "PROD_" if os.getenv("ENV", "") == "PROD" else "DEV_"
+
+def create_pymongo_client() -> pymongo.MongoClient:
+    """Create pymongo client"""
+    mongo_conn_str = os.getenv("MONGO_CONN_STR", "")
+    if not mongo_conn_str:
+        raise ValueError(
+            "Please set your MongoDB Atlas connection URI as env var, 'MONGO_CONN_STR'"
+        )
+
+    client = pymongo.MongoClient(mongo_conn_str)
+    if client is None:
+        raise ConnectionError("Could not connect to MongoDB")
+
+    return client
 
 
-def get_table_names(
-    dynamodb_resource: boto3_dynamodb.DynamoDBServiceResource,
+def get_collection_names(
+    mongo_client: pymongo.MongoClient,
 ) -> List[str]:
-    """Get all table names"""
-    return [table.name for table in dynamodb_resource.tables.all()]
-
-
-def create_pokemon_teams_snapshots_table(
-    dynamodb_resource: boto3_dynamodb.DynamoDBServiceResource,
-):
-    """Creates Pokémon Teams Snapshots Table"""
+    """Get all collection names"""
     try:
-        pokemon_teams_snapshots_table = dynamodb_resource.create_table(
-            TableName=db_env_prefix + POKEMON_TEAMS_SNAPSHOTS_TABLE_NAME,
-            KeySchema=[
-                {"AttributeName": "date", "KeyType": "HASH"},
-                {"AttributeName": "format_id", "KeyType": "RANGE"},
-            ],
-            AttributeDefinitions=[
-                {"AttributeName": "date", "AttributeType": "N"},
-                {"AttributeName": "format_id", "AttributeType": "S"},
-            ],
-            ProvisionedThroughput={
-                "ReadCapacityUnits": 10,
-                "WriteCapacityUnits": 10,
-            },
-        )
-        # Wait until table is active
-        pokemon_teams_snapshots_table.meta.client.get_waiter("table_exists").wait(
-            TableName=db_env_prefix + POKEMON_TEAMS_SNAPSHOTS_TABLE_NAME
-        )
+        database = mongo_client[DB_CLUSTER_NAME]
+        return database.list_collection_names()
+
+    except pymongo.errors.OperationFailure as error:
+        logger.error(error)
+        raise error
+
+
+def create_pokemon_teams_snapshots_collection(
+    mongo_client: pymongo.MongoClient,
+) -> pymongo.database.Database:
+    """Creates Pokémon Teams Snapshots collection"""
+    try:
+        collection_name = POKEMON_TEAMS_SNAPSHOTS_COLLECTION_NAME
+        collection = mongo_client[collection_name]
         logger.info("Created Pokémon Teams Snapshots Table")
-    except dynamodb_resource.meta.client.exceptions.TableAlreadyExistsException as error:
+        return collection
+
+    except pymongo.errors.WriteError as error:
+        logger.error(error)
+        raise error
+    except pymongo.errors.ServerSelectionTimeoutError as error:
         logger.error(error)
         raise error
 
 
-def create_pokemon_usage_snapshots_table(
-    dynamodb_resource: boto3_dynamodb.DynamoDBServiceResource,
-):
-    """Creates Pokémon Usage Snapshots Table"""
+def create_pokemon_usage_snapshots_collection(
+    mongo_client: pymongo.MongoClient,
+) -> pymongo.database.Database:
+    """Creates Pokémon Usage Snapshots collection"""
     try:
-        pokemon_usage_snapshots_table = dynamodb_resource.create_table(
-            TableName=db_env_prefix + POKEMON_USAGE_SNAPSHOTS_TABLE_NAME,
-            KeySchema=[
-                {"AttributeName": "date", "KeyType": "HASH"},
-                {"AttributeName": "format_id", "KeyType": "RANGE"},
-            ],
-            AttributeDefinitions=[
-                {"AttributeName": "date", "AttributeType": "N"},
-                {"AttributeName": "format_id", "AttributeType": "S"},
-            ],
-            ProvisionedThroughput={
-                "ReadCapacityUnits": 10,
-                "WriteCapacityUnits": 10,
-            },
-        )
-        # Wait until table is active
-        pokemon_usage_snapshots_table.meta.client.get_waiter("table_exists").wait(
-            TableName=db_env_prefix + POKEMON_USAGE_SNAPSHOTS_TABLE_NAME
-        )
+        database = mongo_client[DB_CLUSTER_NAME]
+        collection = database[POKEMON_TEAMS_SNAPSHOTS_COLLECTION_NAME]
         logger.info("Created Pokémon Usage Snapshots Table")
-    except dynamodb_resource.meta.client.exceptions.TableAlreadyExistsException as error:
+        return collection
+
+    except pymongo.errors.WriteError as error:
+        logger.error(error)
+        raise error
+    except pymongo.errors.ServerSelectionTimeoutError as error:
         logger.error(error)
         raise error
 
 
-def write_pokemon_teams_snapshots_table(
-    dynamodb_resource: boto3_dynamodb.DynamoDBServiceResource,
+def write_pokemon_teams_snapshots_collection(
+    mongo_client: pymongo.MongoClient,
     pokemon_teams_snapshot_model: dict,
-) -> None:
-    """Write to `POKEMON_TEAMS_SNAPSHOT` table"""
+) -> pymongo.results.InsertOneResult:
+    """Write to `POKEMON_TEAMS_SNAPSHOT` collection"""
     try:
         # Create table if it does not exist
-        if (db_env_prefix + POKEMON_TEAMS_SNAPSHOTS_TABLE_NAME) not in get_table_names(
-            dynamodb_resource
+        if (POKEMON_TEAMS_SNAPSHOTS_COLLECTION_NAME) not in get_collection_names(
+            mongo_client
         ):
-            create_pokemon_teams_snapshots_table(dynamodb_resource)
+            create_pokemon_teams_snapshots_collection(mongo_client)
 
-        pokemon_teams_snapshots_table = dynamodb_resource.Table(
-            db_env_prefix + POKEMON_TEAMS_SNAPSHOTS_TABLE_NAME
-        )
-        pokemon_teams_snapshots_table.put_item(Item=pokemon_teams_snapshot_model)
-    except dynamodb_resource.meta.client.exceptions.TableNotFoundException as error:
+        database = mongo_client[DB_CLUSTER_NAME]
+        collection = database[POKEMON_TEAMS_SNAPSHOTS_COLLECTION_NAME]
+        inserted_res = collection.insert_one(pokemon_teams_snapshot_model)
+        logger.info("Wrote to POKEMON_TEAMS_SNAPSHOT collection")
+        return inserted_res
+
+    except pymongo.errors.WriteError as error:
+        logger.error(error)
+        raise error
+    except pymongo.errors.ServerSelectionTimeoutError as error:
         logger.error(error)
         raise error
 
 
-def write_pokemon_usage_snapshots_table(
-    dynamodb_resource: boto3_dynamodb.DynamoDBServiceResource,
+def write_pokemon_usage_snapshots_collection(
+    mongo_client: pymongo.MongoClient,
     pokemon_usage_snapshots_model: dict,
-) -> None:
-    """Write to `POKEMON_USAGE_SNAPSHOT` table"""
+) -> pymongo.results.InsertOneResult:
+    """Write to `POKEMON_USAGE_SNAPSHOT` collection"""
     try:
-        # Create table if it does not exist
-        if (db_env_prefix + POKEMON_USAGE_SNAPSHOTS_TABLE_NAME) not in get_table_names(
-            dynamodb_resource
+        # Create collection if it does not exist
+        if (POKEMON_USAGE_SNAPSHOTS_COLLECTION_NAME) not in get_collection_names(
+            mongo_client
         ):
-            create_pokemon_usage_snapshots_table(dynamodb_resource)
+            create_pokemon_usage_snapshots_collection(mongo_client)
 
-        pokemon_usage_snapshots_table = dynamodb_resource.Table(
-            db_env_prefix + POKEMON_USAGE_SNAPSHOTS_TABLE_NAME
-        )
-        pokemon_usage_snapshots_table.put_item(Item=pokemon_usage_snapshots_model)
-    except dynamodb_resource.meta.client.exceptions.TableNotFoundException as error:
+        database = mongo_client[DB_CLUSTER_NAME]
+        collection = database[POKEMON_USAGE_SNAPSHOTS_COLLECTION_NAME]
+        inserted_res = collection.insert_one(pokemon_usage_snapshots_model)
+        logger.info("Wrote to POKEMON_USAGE_SNAPSHOT collection")
+        return inserted_res
+
+    except pymongo.errors.WriteError as error:
+        logger.error(error)
+        raise error
+    except pymongo.errors.ServerSelectionTimeoutError as error:
         logger.error(error)
         raise error
