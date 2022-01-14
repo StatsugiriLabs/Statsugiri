@@ -1,5 +1,4 @@
 """ Models for the storage layer """
-import datetime
 from typing import List
 from constants import (
     TEAM_SIZE,
@@ -14,7 +13,7 @@ class PokemonTeam:
         self,
         pokemon_roster: List[str] = None,
         rating: int = 0,
-        replay_upload_date: int = int(datetime.MINYEAR),
+        replay_upload_date: str = "1970-01-1970",
     ):
         self.pokemon_roster = [] if pokemon_roster is None else pokemon_roster
         self.rating = rating
@@ -48,11 +47,11 @@ class PokemonTeam:
         """Get rating"""
         return self.rating
 
-    def set_replay_upload_date(self, replay_upload_date: int) -> None:
+    def set_replay_upload_date(self, replay_upload_date: str) -> None:
         """Set replay upload date"""
         self.replay_upload_date = replay_upload_date
 
-    def get_replay_upload_date(self) -> int:
+    def get_replay_upload_date(self) -> str:
         """Get replay upload date"""
         return self.replay_upload_date
 
@@ -62,7 +61,7 @@ class PokemonTeamsSnapshot:
 
     def __init__(
         self,
-        date: int = int(datetime.MINYEAR),
+        date: str = "1970-01-01",
         format_id: str = "",
         pokemon_team_list: List[PokemonTeam] = None,
     ):
@@ -70,11 +69,11 @@ class PokemonTeamsSnapshot:
         self.format_id = format_id
         self.pokemon_team_list = [] if pokemon_team_list is None else pokemon_team_list
 
-    def set_date(self, date: int) -> None:
+    def set_date(self, date: str) -> None:
         """Set date"""
         self.date = date
 
-    def get_date(self) -> int:
+    def get_date(self) -> str:
         """Get date"""
         return self.date
 
@@ -115,7 +114,7 @@ class PokemonUsageSnapshot:
 
     def __init__(
         self,
-        date: int = datetime.MINYEAR,
+        date: str = "1970-01-01",
         format_id: str = "",
         pokemon_usage: dict = None,
         pokemon_partner_usage: dict = None,
@@ -134,11 +133,11 @@ class PokemonUsageSnapshot:
             {} if pokemon_average_rating_usage is None else pokemon_average_rating_usage
         )
 
-    def set_date(self, date: int) -> None:
+    def set_date(self, date: str) -> None:
         """Set date"""
         self.date = date
 
-    def get_date(self) -> int:
+    def get_date(self) -> str:
         """Get date"""
         return self.date
 

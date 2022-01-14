@@ -6,6 +6,7 @@ from replay_metadata import ParsedUserReplay
 from models import PokemonTeam, PokemonTeamsSnapshot, PokemonUsageSnapshot
 from constants import NUM_PARTNERS
 from base_logger import logger
+from utils import convert_unix_timestamp_to_str
 
 
 class ModelTransformer:
@@ -20,6 +21,7 @@ class ModelTransformer:
         self.parsed_user_replay_list = (
             [] if parsed_user_replay_list is None else parsed_user_replay_list
         )
+        # Output models will have 'yyyy-mm-dd' string format
         self.date = date
         self.format_id = format_id
 
@@ -73,7 +75,9 @@ class ModelTransformer:
             pokemon_team_list.append(pokemon_team)
 
         return PokemonTeamsSnapshot(
-            self.get_date(), self.get_format_id(), pokemon_team_list
+            convert_unix_timestamp_to_str(self.get_date()),
+            self.get_format_id(),
+            pokemon_team_list,
         ).make_model()
 
     def _calculate_pokemon_usage(self, pokemon_teams: List[List[str]]) -> dict:
@@ -189,7 +193,7 @@ class ModelTransformer:
         )
 
         return PokemonUsageSnapshot(
-            self.get_date(),
+            convert_unix_timestamp_to_str(self.get_date()),
             self.get_format_id(),
             pokemon_usage,
             pokemon_partner_usage,
