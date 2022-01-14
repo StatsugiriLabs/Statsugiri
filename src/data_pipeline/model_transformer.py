@@ -70,7 +70,9 @@ class ModelTransformer:
             pokemon_team = PokemonTeam(
                 parsed_user_replay.get_pokemon_roster(),
                 parsed_user_replay.get_rating(),
-                parsed_user_replay.get_replay_metadata().get_upload_time(),
+                convert_unix_timestamp_to_str(
+                    parsed_user_replay.get_replay_metadata().get_upload_time()
+                ),
             )
             pokemon_team_list.append(pokemon_team)
 

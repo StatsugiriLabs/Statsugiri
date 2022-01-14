@@ -1,6 +1,5 @@
 """Unit tests for `ModelTransformer` class"""
 import pytest
-from typing import List
 from models import PokemonTeamsSnapshot, PokemonTeam, PokemonUsageSnapshot
 from replay_metadata import ParsedUserReplay, ReplayMetadata
 from model_transformer import ModelTransformer
@@ -57,9 +56,15 @@ def test_model_transformer_make_pokemon_teams_snapshot_happy_path(
     model_transformer_under_test,
 ):
     """Test model transformer generating `PokemonTeamSnapshot` list"""
-    pokemon_team_1 = PokemonTeam(ROSTER_1, RATING_1, UPLOAD_DATE_1)
-    pokemon_team_2 = PokemonTeam(ROSTER_2, RATING_2, UPLOAD_DATE_2)
-    pokemon_team_3 = PokemonTeam(ROSTER_3, RATING_3, UPLOAD_DATE_3)
+    pokemon_team_1 = PokemonTeam(
+        ROSTER_1, RATING_1, convert_unix_timestamp_to_str(UPLOAD_DATE_1)
+    )
+    pokemon_team_2 = PokemonTeam(
+        ROSTER_2, RATING_2, convert_unix_timestamp_to_str(UPLOAD_DATE_2)
+    )
+    pokemon_team_3 = PokemonTeam(
+        ROSTER_3, RATING_3, convert_unix_timestamp_to_str(UPLOAD_DATE_3)
+    )
     expected_pokemon_teams_snapshot = PokemonTeamsSnapshot(
         convert_unix_timestamp_to_str(DATE),
         FORMAT,
