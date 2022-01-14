@@ -142,7 +142,7 @@ class DataExtractor:
         sanitized_user = self._sanitize_user(user)
 
         user_replay_ids_get_url = REPLAY_SEARCH_BASE_URL + sanitized_user
-        logger.info(f"Retrieving replay IDs for '{user}'")
+        logger.debug(f"Retrieving replay IDs for '{user}'")
         user_replays_res = requests.get(
             user_replay_ids_get_url, timeout=REQUEST_TIMEOUT
         )
@@ -163,7 +163,7 @@ class DataExtractor:
     def _get_replay_data(self, replay_id: str) -> dict:
         """Returns the replay data JSON given a replay ID, blank if not found"""
         replay_data_get_url = REPLAY_BASE_URL + replay_id + ".json"
-        logger.info(f"Retrieving replay data for '{replay_id}'")
+        logger.debug(f"Retrieving replay data for '{replay_id}'")
         replay_data_res = requests.get(replay_data_get_url, timeout=REQUEST_TIMEOUT)
         return {} if not replay_data_res else replay_data_res.json()
 
@@ -176,22 +176,22 @@ class DataExtractor:
         user_replay_ids = self.get_user_replay_ids(user, format_id)
         # Skip to next user if replays not found
         if not user_replay_ids:
-            logger.info("Skipping, no replays found...")
+            logger.debug("Skipping, no replays found...")
             return (ParsedUserReplay(), False)
 
         # Find replay data using most recent replay
-        logger.info("Getting replay data...")
+        logger.debug("Getting replay data...")
         replay_data = self._get_replay_data(user_replay_ids[0])
         # Skip to next user if replay not found or metadata tags not found
         if not replay_data or (
             "uploadtime" not in replay_data or "id" not in replay_data
         ):
-            logger.info("Skipping, replay data invalid or not found...")
+            logger.debug("Skipping, replay data invalid or not found...")
             return (ParsedUserReplay(), False)
 
         # Feed replay data to LogHandler
         if not self.log_handler.feed_log(replay_data):
-            logger.info("Skipping, feeding log failed")
+            logger.debug("Skipping, feeding log failed")
             return (ParsedUserReplay(), False)
 
         # Populate `ReplayMetadata`
@@ -201,7 +201,7 @@ class DataExtractor:
         user_roster = self.log_handler.parse_team(user)
         # Skip to next user if team not found
         if not user_roster:
-            logger.info("Skipping, team could not be found")
+            logger.debug("Skipping, team could not be found")
             return (ParsedUserReplay(), False)
 
         return (ParsedUserReplay(replay_metadata, rating, user_roster), True)
@@ -226,7 +226,6 @@ class DataExtractor:
         start_time = time.time()
 
         # Retrieve top users
-        logger.info("Retrieving top users...")
         user_ratings = self.get_ladder_users_and_ratings(format_id, MAX_USERS)
         if not user_ratings:
             logger.warning("Could not retrieve ladder rankings, aborting...")

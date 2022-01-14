@@ -1,9 +1,9 @@
 """Unit tests for `ModelTransformer` class"""
 import pytest
-from typing import List
 from models import PokemonTeamsSnapshot, PokemonTeam, PokemonUsageSnapshot
 from replay_metadata import ParsedUserReplay, ReplayMetadata
 from model_transformer import ModelTransformer
+from utils import convert_unix_timestamp_to_str
 
 DATE = 12
 FORMAT = "gen8vgc2021series11"
@@ -56,11 +56,19 @@ def test_model_transformer_make_pokemon_teams_snapshot_happy_path(
     model_transformer_under_test,
 ):
     """Test model transformer generating `PokemonTeamSnapshot` list"""
-    pokemon_team_1 = PokemonTeam(ROSTER_1, RATING_1, UPLOAD_DATE_1)
-    pokemon_team_2 = PokemonTeam(ROSTER_2, RATING_2, UPLOAD_DATE_2)
-    pokemon_team_3 = PokemonTeam(ROSTER_3, RATING_3, UPLOAD_DATE_3)
+    pokemon_team_1 = PokemonTeam(
+        ROSTER_1, RATING_1, convert_unix_timestamp_to_str(UPLOAD_DATE_1)
+    )
+    pokemon_team_2 = PokemonTeam(
+        ROSTER_2, RATING_2, convert_unix_timestamp_to_str(UPLOAD_DATE_2)
+    )
+    pokemon_team_3 = PokemonTeam(
+        ROSTER_3, RATING_3, convert_unix_timestamp_to_str(UPLOAD_DATE_3)
+    )
     expected_pokemon_teams_snapshot = PokemonTeamsSnapshot(
-        DATE, FORMAT, [pokemon_team_1, pokemon_team_2, pokemon_team_3]
+        convert_unix_timestamp_to_str(DATE),
+        FORMAT,
+        [pokemon_team_1, pokemon_team_2, pokemon_team_3],
     ).make_model()
     pokemon_teams_snapshot = (
         model_transformer_under_test.make_pokemon_teams_snapshot_model()
@@ -88,7 +96,11 @@ def test_model_transformer_make_pokemon_usage_snapshot_happy_path(
         "pkmn_a": 1,
     }
     expected_pokemon_usage_snapshot = PokemonUsageSnapshot(
-        DATE, FORMAT, pokemon_usage, pokemon_partner_usage, pokemon_average_rating_usage
+        convert_unix_timestamp_to_str(DATE),
+        FORMAT,
+        pokemon_usage,
+        pokemon_partner_usage,
+        pokemon_average_rating_usage,
     ).make_model()
     pokemon_usage_snapshot = (
         model_transformer_under_test.make_pokemon_usage_snapshot_model()

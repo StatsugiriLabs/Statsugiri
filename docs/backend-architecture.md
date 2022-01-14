@@ -5,11 +5,12 @@ The backend architecture processes the time-series usage and global ranking snap
 # Tech Stack
 
 -   Go
+-   Python
+-   MongoDB
 -   AWS Lambda
--   AWS DynamoDB
--   AWS API Gateway
+-   AWS Elastic Container Registry
 -   AWS Cloudwatch
--   AWS Virtual Private Cloud
+-   AWS EventBridge
 -   Redis
 
 # Database Models
@@ -18,12 +19,11 @@ Document tables are separated by formats. For instance, if there are 5 formats s
 
 ## Pokémon Team Snapshots
 
-Corresponds to `teams-[FORMAT]` table name format.
 Document for daily team snapshots and ranking metadata.
 
 ```javascript
 {
-    date: datetime,            // Primary Key: yyyy-mm-dd
+    date: str,                 // Primary Key: yyyy-mm-dd
     format_id: str,            // Secondary Key
     teams: [
         {
@@ -37,12 +37,11 @@ Document for daily team snapshots and ranking metadata.
 
 ## Pokémon Usage Snapshots
 
-Corresponds to `usage-[FORMAT]` table name format.
 Document for individual Pokémon usage data out of all ranked teams.
 
 ```javascript
 {
-    date: datetime,             // Primary Key: yyyy-mm-dd
+    date: str,                  // Primary Key: yyyy-mm-dd
     format_id: str,             // Secondary Key
     pokemon_usage: {            // List of Pokémon usage as number of appearances
         str: int
@@ -53,7 +52,7 @@ Document for individual Pokémon usage data out of all ranked teams.
         }
     },
     pokemon_average_rating_usage: {     // Denotes Pokémon's average rating normalized by number of appearances
-        str: float
+        str: int
     }
 }
 ```

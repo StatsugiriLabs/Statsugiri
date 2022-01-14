@@ -18,17 +18,27 @@ The core components of the data pipeline are the [DataExtractor](#DataExtractor)
 
 The Data Extraction [Lambda](https://aws.amazon.com/lambda/) is scheduled to run every 24 hours using [CloudWatch](https://aws.amazon.com/cloudwatch/). CloudWatch is also responsible for monitoring errors from the Data Extraction Lamba logs. [Simple Notification Service](https://aws.amazon.com/sns/?whats-new-cards.sort-by=item.additionalFields.postDateTime&whats-new-cards.sort-order=desc) (SNS) will notify the user via email. The Data Extraction Lambda builds are updated through [Elastic Container Registry](https://aws.amazon.com/ecr/) (ECR) deploying the Docker image after pushes to the main branch.
 
+### Main Modules
+
 ## DataExtractor
 
-The `DataExtractor` ingests, parses, and extracts replay data. The main function, `extract_info`, retrieves the current users and ratings from the [ranking ladder](https://pokemonshowdown.com/ladder). The module searches through each set of public replays available from the highest-rated user and retrieves the replay log from the most recent of the format. The replay logs are handed to the `LogHandler` for processing, which are used to populate the `ParsedUserReplay` list. Notably, [`ParsedUserReplay`](https://github.com/kelvinkoon/babiri_v2/blob/master/src/data_pipeline/replay_metadata.py) is the format replay logs are defined internally in `DataExtractor`. Details about `ParsedUserReplay` can be found in [`replay_metadata.py`](https://github.com/kelvinkoon/babiri_v2/blob/master/src/data_pipeline/replay_metadata.py).
+The `DataExtractor` ingests, parses, and extracts replay data. The main function, `extract_info`, retrieves the current users and ratings from the [ranking ladder](https://pokemonshowdown.com/ladder). The module searches through each set of public replays available from the highest-rated user and retrieves the replay log from the most recent of the format. The replay logs are handed to the `LogHandler` for processing, which are used to populate the [`ParsedUserReplay`](#ParsedUserReplay) list. Details about `ParsedUserReplay` can be found in [`ReplayMetadata`](#ReplayMetadata).
 
 ## LogHandler
 
-The `LogHandler` processes replay logs. Replay data is ingested through `feed_log`, which sanitizes the log (ie. Handling alternate-form Pokémon). Information such as teams are parsed with regex.
+The `LogHandler` processes replay logs. Replay data is ingested through `feed_log`, which sanitizes the log (ie. Handling alternate-form Pokémon). Information such as teams and items can be parsed with regular expressions. The `DataExtractor` leverages `LogHandler` processing for `ParsedUserReplay` objects.
 
 ## ModelTransformer
 
-The `ModelTransformer` is transforms the `ParsedUserReplay` list from `DataExtractor` into the database model representations to be used. Notably, the models that can be generated from the `ParsedUserReplay` list are found in [`models.py`](https://github.com/kelvinkoon/babiri_v2/blob/master/src/data_pipeline/models.py). The models feature a `make_model` method to restructure them into a dictionary for DynamoDB.
+The `ModelTransformer` is transforms the `ParsedUserReplay` list from `DataExtractor` into the database model representations to be used. The models feature a `make_model` method to restructure them into a dictionary for the NoSQL database. Details about the output models can be found in [`Models`](#Models).
+
+## ReplayMetadata
+
+### ParsedUserReplay
+
+`ParsedUserReplay` is the internal format of how replays information is stored after processing the replay logs in `DataExtractor`. It organizes specific information parsed from the logs (eg. teams) for each replay processed. `ParsedUserReplay` is read by the `ModelTransformer` to populate the database snapshot models.
+
+## Models
 
 ### PokemonTeamsSnapshot
 
