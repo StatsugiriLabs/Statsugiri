@@ -1,11 +1,11 @@
 package api
 
 import (
+	mux "github.com/gorilla/mux"
+	log "github.com/sirupsen/logrus"
 	"net/http"
 	"strconv"
 	"time"
-	mux "github.com/gorilla/mux"
-	log "github.com/sirupsen/logrus"
 )
 
 const READ_TIMEOUT_DURATION = 30
@@ -17,7 +17,7 @@ func Serve(port int) {
 
 	http.Handle("/", r)
 
-	server := newServer(":" + strconv.Itoa(port), r)
+	server := newServer(":"+strconv.Itoa(port), r)
 	log.Infof("Server is running on Port %s", strconv.Itoa(port))
 
 	err := server.ListenAndServe()
