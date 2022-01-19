@@ -21,12 +21,15 @@ class LogHandler:
     def feed_log(self, replay_data: dict) -> bool:
         """Clean replay data and populate metadata from log,
         Return True on success"""
-        # Sanitize alternate form names
         if "log" not in replay_data:
             logger.warning("Replay data does not have 'log' field, no log to feed")
             return False
 
-        sanitized_log = replay_data["log"].replace("-*", "")
+        # Sanitize alternate form names, gender
+        sanitized_log = replay_data["log"]
+        unwanted_str_list = ["-*", ", M", ", F"]
+        for unwanted_str in unwanted_str_list:
+            sanitized_log = sanitized_log.replace(unwanted_str, "")
         self.set_sanitized_log(sanitized_log)
         return True
 
@@ -49,7 +52,7 @@ class LogHandler:
             return []
 
         player_num = player_num[0]
-        team = re.findall(f"\\|poke\\|{player_num}\\|(.*?),", sanitized_log)
+        team = re.findall(f"\\|poke\\|{player_num}\\|(.*?)\\|", sanitized_log)
         if not team:
             logger.warning("Cannot parse team in log, team not found")
             return []
