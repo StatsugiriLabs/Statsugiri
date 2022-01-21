@@ -3,7 +3,6 @@ package controllers
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/kelvinkoon/babiri_v2/configs"
 	"github.com/kelvinkoon/babiri_v2/middleware"
@@ -120,8 +119,6 @@ func queryTeamsSnapshots(rw http.ResponseWriter, pipeline mongo.Pipeline) {
 	if err = cursor.All(ctx, &snapshots); err != nil {
 		panic(err)
 	}
-	fmt.Println(snapshots)
-	fmt.Println(len(snapshots))
 
 	rw.WriteHeader(http.StatusOK)
 	json.NewEncoder(rw).Encode(snapshots)

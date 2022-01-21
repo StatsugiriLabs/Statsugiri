@@ -1,8 +1,15 @@
 """ Constants shared between modules """
 import os
+import json
+
+CURR_DIR = os.path.dirname(__file__)
+
+# Read from JSON configs
+with open(os.path.join(CURR_DIR, "../shared/formats.json")) as json_file:
+    formats_json = json.load(json_file)
 
 # PS! terms
-FORMATS = ["gen8vgc2021series11", "gen8ou"]
+FORMATS = formats_json["formats"]
 NUM_TEAMS = 10
 MAX_USERS = 500
 NUM_PARTNERS = 5

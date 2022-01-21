@@ -11,8 +11,7 @@ from constants import FORMATS, NUM_TEAMS
 
 def lambda_handler(event: LambdaDict, context: LambdaContext) -> dict:
     """Lambda handler for starting the data extraction process"""
-    # format_arg = event.get("format") or ""
-    format_arg = "gen8ou"
+    format_arg = event.get("format") or ""
     if not format_arg:
         raise ValueError("'format' must be provided.")
 
@@ -32,6 +31,3 @@ def lambda_handler(event: LambdaDict, context: LambdaContext) -> dict:
             }
         ),
     }
-
-
-lambda_handler(None, None)
