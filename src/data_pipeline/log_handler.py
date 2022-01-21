@@ -27,7 +27,7 @@ class LogHandler:
 
         # Sanitize alternate form names, gender
         sanitized_log = replay_data["log"]
-        unwanted_str_list = ["-*", ", M", ", F"]
+        unwanted_str_list = ["-*", ", M", ", F", ", L50"]
         for unwanted_str in unwanted_str_list:
             sanitized_log = sanitized_log.replace(unwanted_str, "")
         self.set_sanitized_log(sanitized_log)

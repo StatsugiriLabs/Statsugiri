@@ -33,4 +33,5 @@ def lambda_handler(event: LambdaDict, context: LambdaContext) -> dict:
         ),
     }
 
+
 lambda_handler(None, None)

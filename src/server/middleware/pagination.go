@@ -2,27 +2,31 @@ package middleware
 
 import (
 	"net/http"
-    "go.mongodb.org/mongo-driver/mongo/options"	
 	"strconv"
 )
 
-// https://stackoverflow.com/a/64602288
-func Pagination(r *http.Request, FindOptions *options.FindOptions) (int64, int64) {
-    if r.URL.Query().Get("page") != "" && r.URL.Query().Get("limit") != "" {
-        page, _ := strconv.ParseInt(r.URL.Query().Get("page"), 10, 32)
-        limit, _ := strconv.ParseInt(r.URL.Query().Get("limit"), 10, 32)
-        if page == 1 {
-            FindOptions.SetSkip(0)
-            FindOptions.SetLimit(limit)
-            return page, limit
-        }
+const (
+	PAGE_QUERY_STR = "page"
+	LIMIT_QUERY_STR = "limit"
+)
 
-        FindOptions.SetSkip((page - 1) * limit)
-        FindOptions.SetLimit(limit)
-        return page, limit
+// Return page, limit
+// 1 indexed
+func ParsePagination(r *http.Request) (int, int) {
+	// Retrieve page and limit query parameters
+	pageParam := r.URL.Query().Get(PAGE_QUERY_STR)
+	limitParam := r.URL.Query().Get(LIMIT_QUERY_STR)
 
-    }
-    FindOptions.SetSkip(0)
-    FindOptions.SetLimit(0)
-    return 0, 0
+	// Ignore pagination unless both are provided
+	if pageParam != "" && limitParam != "" {
+		page, _ := strconv.Atoi(pageParam)
+		limit, _ := strconv.Atoi(limitParam)
+
+		// Only limit if 1st page requested
+		if page == 1 {
+			return 0, limit
+		}
+		return (page - 1) * limit, limit
+	}
+	return 0, 0
 }
