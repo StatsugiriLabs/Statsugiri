@@ -56,7 +56,7 @@ function run_pylint_linting () {
 function run_gofmt_formatting () {
     printf "Running gofmt to format Go files...\n\n"
     # Suppress messages
-    gofmt -s -w . &>/dev/null
+    gofmt -s -w $SRC_DIR &>/dev/null
 
     if [[ "$?" != 0 ]]; then
         printf "\n***Failed to format Go files!***\n\n"

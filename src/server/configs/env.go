@@ -1,9 +1,9 @@
 package configs
 
 import (
+	"github.com/joho/godotenv"
 	log "github.com/sirupsen/logrus"
 	"os"
-	"github.com/joho/godotenv"
 )
 
 func EnvMongoURI() string {

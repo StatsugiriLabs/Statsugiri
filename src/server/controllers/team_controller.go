@@ -2,18 +2,18 @@ package controllers
 
 import (
 	"context"
-	log "github.com/sirupsen/logrus"
 	"encoding/json"
-	"net/http"
-	"time"
 	"fmt"
-	"go.mongodb.org/mongo-driver/bson/primitive"
-    "go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/bson"
 	"github.com/gorilla/mux"
 	"github.com/kelvinkoon/babiri_v2/configs"
 	"github.com/kelvinkoon/babiri_v2/middleware"
 	"github.com/kelvinkoon/babiri_v2/utils"
+	log "github.com/sirupsen/logrus"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
+	"net/http"
+	"time"
 )
 
 var teamCollection *mongo.Collection = configs.GetCollection(configs.DB, "DEV_pokemon_teams_snapshots")
@@ -47,7 +47,7 @@ func GetTeamSnapshotsByFormat() http.HandlerFunc {
 		// Generate pipeline stages
 		intermediateStages := []bson.D{
 			// Match with format provided
-			bson.D{
+			{
 				primitive.E{
 					Key: "$match", Value: bson.D{
 						primitive.E{
@@ -77,7 +77,7 @@ func GetTeamSnapshotsByFormatAndDate() http.HandlerFunc {
 		// Generate pipeline stages
 		intermediateStages := []bson.D{
 			// Match with format provided
-			bson.D{
+			{
 				primitive.E{
 					Key: "$match", Value: bson.D{
 						primitive.E{
@@ -87,7 +87,7 @@ func GetTeamSnapshotsByFormatAndDate() http.HandlerFunc {
 				},
 			},
 			// Match with date provided
-			bson.D{
+			{
 				primitive.E{
 					Key: "$match", Value: bson.D{
 						primitive.E{
@@ -103,7 +103,6 @@ func GetTeamSnapshotsByFormatAndDate() http.HandlerFunc {
 	}
 }
 
-
 func queryTeamsSnapshots(rw http.ResponseWriter, pipeline mongo.Pipeline) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -116,7 +115,7 @@ func queryTeamsSnapshots(rw http.ResponseWriter, pipeline mongo.Pipeline) {
 	}
 	defer cursor.Close(ctx)
 
-	// Iterate through queries 
+	// Iterate through queries
 	var snapshots []bson.M
 	if err = cursor.All(ctx, &snapshots); err != nil {
 		panic(err)
@@ -125,5 +124,5 @@ func queryTeamsSnapshots(rw http.ResponseWriter, pipeline mongo.Pipeline) {
 	fmt.Println(len(snapshots))
 
 	rw.WriteHeader(http.StatusOK)
-	json.NewEncoder(rw).Encode(snapshots)	
+	json.NewEncoder(rw).Encode(snapshots)
 }

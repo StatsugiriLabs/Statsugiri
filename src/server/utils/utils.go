@@ -1,10 +1,9 @@
 package utils
 
 import (
-	"net/http"
 	"encoding/json"
+	"net/http"
 )
-
 
 // TODO: move this to an error.go file
 // ERROR RESPONSES

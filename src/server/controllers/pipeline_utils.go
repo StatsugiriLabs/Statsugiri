@@ -1,9 +1,9 @@
 package controllers
 
 import (
-    "go.mongodb.org/mongo-driver/mongo"	
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 func MakeTeamQueryPipeline(page int, limit int, pokemon string, intermediateStages []bson.D) mongo.Pipeline {

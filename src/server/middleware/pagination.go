@@ -6,7 +6,7 @@ import (
 )
 
 const (
-	PAGE_QUERY_STR = "page"
+	PAGE_QUERY_STR  = "page"
 	LIMIT_QUERY_STR = "limit"
 )
 
