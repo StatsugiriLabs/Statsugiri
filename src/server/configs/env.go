@@ -1,11 +1,13 @@
 package configs
 
 import (
+	"os"
+
 	"github.com/joho/godotenv"
 	log "github.com/sirupsen/logrus"
-	"os"
 )
 
+// Reads the MongoURI from the environment variable.
 func EnvMongoURI() string {
 	err := godotenv.Load()
 	if err != nil {

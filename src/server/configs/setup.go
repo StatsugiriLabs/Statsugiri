@@ -2,14 +2,17 @@ package configs
 
 import (
 	"context"
+	"time"
+
 	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"time"
 )
 
 const CONN_TIMEOUT = 10
 
+// Connects to the MongoDB database.
+// Returns a Mongo client for accessing the instance.
 func ConnectDB() *mongo.Client {
 	// Configure new client
 	client, err := mongo.NewClient(options.Client().ApplyURI(EnvMongoURI()))
@@ -20,6 +23,8 @@ func ConnectDB() *mongo.Client {
 	// Define connection timeout
 	ctx, cancel := context.WithTimeout(context.Background(), CONN_TIMEOUT*time.Second)
 	defer cancel()
+
+	// Connect to DB
 	err = client.Connect(ctx)
 	if err != nil {
 		log.Fatal(err)
@@ -38,7 +43,7 @@ func ConnectDB() *mongo.Client {
 // Client instance
 var DB *mongo.Client = ConnectDB()
 
-// Getting database collections
+// Returns a specified database collection
 func GetCollection(client *mongo.Client, collectionName string) *mongo.Collection {
 	// TODO: Make this an env var
 	collection := client.Database("babiri-dev-cluster").Collection(collectionName)

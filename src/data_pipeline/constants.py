@@ -17,6 +17,7 @@ TEAM_SIZE = 6
 
 # DB terms
 DB_ENV_PREFIX = "PROD_" if os.getenv("ENV", "") == "PROD" else "DEV_"
+# TODO: Convert to env var
 DB_CLUSTER_NAME = "babiri-dev-cluster"
 POKEMON_TEAMS_SNAPSHOTS_COLLECTION_NAME = DB_ENV_PREFIX + "pokemon_teams_snapshots"
 POKEMON_USAGE_SNAPSHOTS_COLLECTION_NAME = DB_ENV_PREFIX + "pokemon_usage_snapshots"

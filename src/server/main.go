@@ -19,6 +19,8 @@ func main() {
 
 	// Configure routes
 	routes.TeamRoute(router)
+	routes.FormatRoute(router)
+	routes.HealthRoute(router)
 
 	log.Fatal(http.ListenAndServe(":3000", router))
 }

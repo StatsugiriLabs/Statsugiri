@@ -1,13 +1,15 @@
 package models
 
+// Model for Pokémon Teams
 type Team struct {
-	Pokemon_Roster     []string
-	Rating             int
-	Replay_Upload_Date string
+	PokemonRoster    []string `json:"PokemonRoster,omitempty" validate:"required"`
+	Rating           int      `json:"Rating,omitempty" validate:"required"`
+	ReplayUploadDate string   `json:"ReplayUploadDate,omitempty" validate:"required"`
 }
 
+// Model for Pokémon Team Snapshots
 type PokemonTeamsSnapshot struct {
-	Date      string `json:"date,omitempty" validate:"required"`
-	Format_ID string `json:"format,omitempty" validate:"required"`
-	Teams     []Team `json:"team,omitempty" validate:"required"`
+	Date     string `json:"Date,omitempty" validate:"required"`
+	FormatId string `json:"FormatId,omitempty" validate:"required"`
+	Teams    []Team `json:"Teams,omitempty" validate:"required"`
 }

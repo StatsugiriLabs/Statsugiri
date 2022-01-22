@@ -10,8 +10,9 @@ const (
 	LIMIT_QUERY_STR = "limit"
 )
 
-// Return page, limit
-// 1 indexed
+// Returns the page and limit given the request.
+// Parameter queries must be populated for valid results.
+// Pages are one-indexed.
 func ParsePagination(r *http.Request) (int, int) {
 	// Retrieve page and limit query parameters
 	pageParam := r.URL.Query().Get(PAGE_QUERY_STR)

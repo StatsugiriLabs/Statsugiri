@@ -1,4 +1,4 @@
-package controllers
+package utils
 
 import (
 	"go.mongodb.org/mongo-driver/bson"
@@ -6,6 +6,9 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+// Generates a aggregation pipeline for team queries.
+// Prepends team unwinding and reverse chronological sorting.
+// Appends skip and limit queries if parameters provided.
 func MakeTeamQueryPipeline(page int, limit int, pokemon string, intermediateStages []bson.D) mongo.Pipeline {
 	// Unwind team replay information
 	unwindTeamStage := bson.D{

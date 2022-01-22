@@ -3,24 +3,26 @@ package controllers
 import (
 	"context"
 	"encoding/json"
+	"net/http"
+	"time"
+
 	"github.com/gorilla/mux"
 	"github.com/kelvinkoon/babiri_v2/configs"
+	"github.com/kelvinkoon/babiri_v2/controllers/utils"
+	"github.com/kelvinkoon/babiri_v2/errors"
 	"github.com/kelvinkoon/babiri_v2/middleware"
-	"github.com/kelvinkoon/babiri_v2/utils"
-	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
-	"net/http"
-	"time"
 )
 
+// TODO: Convert collection name to constant
 var teamCollection *mongo.Collection = configs.GetCollection(configs.DB, "DEV_pokemon_teams_snapshots")
 
+// Returns handler for retrieving all team snapshots.
+// Can filter teams by Pokémon query parameter.
 func GetAllTeamSnapshots() http.HandlerFunc {
 	return func(rw http.ResponseWriter, r *http.Request) {
-		log.Infof("`GetAllTeamsSnapshots`")
-
 		// Get parameters and pagination options
 		page, limit := middleware.ParsePagination(r)
 		pokemon := r.URL.Query().Get("pokemon")
@@ -28,16 +30,15 @@ func GetAllTeamSnapshots() http.HandlerFunc {
 		// Generate pipeline stages
 		var intermediateStages []bson.D
 
-		pipeline := MakeTeamQueryPipeline(page, limit, pokemon, intermediateStages)
+		pipeline := utils.MakeTeamQueryPipeline(page, limit, pokemon, intermediateStages)
 		queryTeamsSnapshots(rw, pipeline)
 	}
 }
 
-// GetTeamsSnapshotsByFormat() /teams/{format}
+// Returns handler for retrieving all team snapshots by format.
+// Can filter teams by Pokémon query parameter.
 func GetTeamSnapshotsByFormat() http.HandlerFunc {
 	return func(rw http.ResponseWriter, r *http.Request) {
-		log.Infof("`GetTeamsSnapshotsByFormat`")
-
 		// Get parameters and pagination options
 		page, limit := middleware.ParsePagination(r)
 		format := mux.Vars(r)["format"]
@@ -57,16 +58,15 @@ func GetTeamSnapshotsByFormat() http.HandlerFunc {
 			},
 		}
 
-		pipeline := MakeTeamQueryPipeline(page, limit, pokemon, intermediateStages)
+		pipeline := utils.MakeTeamQueryPipeline(page, limit, pokemon, intermediateStages)
 		queryTeamsSnapshots(rw, pipeline)
 	}
 }
 
-// GetTeamsSnapshotsByFormatAndDate() /teams/{format}/{date}
+// Returns handler for retrieving all team snapshots by format and date.
+// Can filter teams by Pokémon query parameter.
 func GetTeamSnapshotsByFormatAndDate() http.HandlerFunc {
 	return func(rw http.ResponseWriter, r *http.Request) {
-		log.Infof("`GetTeamsSnapshotsByFormatAndDate`")
-
 		// Get parameters and pagination options
 		page, limit := middleware.ParsePagination(r)
 		format := mux.Vars(r)["format"]
@@ -97,11 +97,12 @@ func GetTeamSnapshotsByFormatAndDate() http.HandlerFunc {
 			},
 		}
 
-		pipeline := MakeTeamQueryPipeline(page, limit, pokemon, intermediateStages)
+		pipeline := utils.MakeTeamQueryPipeline(page, limit, pokemon, intermediateStages)
 		queryTeamsSnapshots(rw, pipeline)
 	}
 }
 
+// Encodes the response with snapshot results from aggregation pipeline.
 func queryTeamsSnapshots(rw http.ResponseWriter, pipeline mongo.Pipeline) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -109,7 +110,7 @@ func queryTeamsSnapshots(rw http.ResponseWriter, pipeline mongo.Pipeline) {
 	// Run query with options
 	cursor, err := teamCollection.Aggregate(ctx, pipeline)
 	if err != nil {
-		utils.CreateInternalServerErrorResponse(rw, err)
+		errors.CreateInternalServerErrorResponse(rw, err)
 		return
 	}
 	defer cursor.Close(ctx)
