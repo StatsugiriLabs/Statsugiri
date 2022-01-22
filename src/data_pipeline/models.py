@@ -96,13 +96,13 @@ class PokemonTeamsSnapshot:
     def make_model(self) -> dict:
         """Generate model for database as dictionary"""
         return {
-            "date": self.get_date(),
-            "format_id": self.get_format_id(),
-            "teams": [
+            "Date": self.get_date(),
+            "FormatId": self.get_format_id(),
+            "Teams": [
                 {
-                    "pokemon_roster": team.get_pokemon_roster(),
-                    "rating": team.get_rating(),
-                    "replay_upload_date": team.get_replay_upload_date(),
+                    "PokemonRoster": team.get_pokemon_roster(),
+                    "Rating": team.get_rating(),
+                    "ReplayUploadDate": team.get_replay_upload_date(),
                 }
                 for team in self.get_pokemon_team_list()
             ],
@@ -226,9 +226,9 @@ class PokemonUsageSnapshot:
     def make_model(self) -> dict:
         """Generate model for database as dictionary"""
         return {
-            "date": self.get_date(),
-            "format_id": self.get_format_id(),
-            "pokemon_usage": self.get_all_pokemon_usage(),
-            "pokemon_partner_usage": self.get_all_pokemon_partner_usage(),
-            "pokemon_average_rating_usage": self.get_all_pokemon_average_rating_usage(),
+            "Date": self.get_date(),
+            "FormatId": self.get_format_id(),
+            "PokemonUsage": self.get_all_pokemon_usage(),
+            "PokemonPartnerUsage": self.get_all_pokemon_partner_usage(),
+            "PokemonAverageRatingUsage": self.get_all_pokemon_average_rating_usage(),
         }
