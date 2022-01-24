@@ -4,8 +4,16 @@ import (
 	"os"
 )
 
-var MongoUri string = os.Getenv("MONGOURI")
-var Env string = os.Getenv("ENV")
-var DbClusterName string = os.Getenv("DB_CLUSTER_NAME")
-var PokemonTeamsSnapshotsCollection string = os.Getenv("POKEMON_TEAMS_SNAPSHOTS_COLLECTION")
-var PokemonUsageSnapshotsCollection string = os.Getenv("POKEMON_USAGE_SNAPSHOTS_COLLECTION")
+func getEnv(key, fallback string) string {
+	value, exists := os.LookupEnv(key)
+	if !exists {
+		value = fallback
+	}
+	return value
+}
+
+var MongoUri string = getEnv("MONGOURI", "")
+var Env string = getEnv("ENV", "DEV")
+var DbClusterName string = getEnv("DB_CLUSTER_NAME", "")
+var PokemonTeamsSnapshotsCollection string = getEnv("POKEMON_TEAMS_SNAPSHOTS_COLLECTION", "")
+var PokemonUsageSnapshotsCollection string = getEnv("POKEMON_USAGE_SNAPSHOTS_COLLECTION", "")
