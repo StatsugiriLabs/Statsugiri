@@ -11,6 +11,6 @@ import (
 func GetFormats() http.HandlerFunc {
 	return func(rw http.ResponseWriter, r *http.Request) {
 		rw.WriteHeader(http.StatusOK)
-		json.NewEncoder(rw).Encode(utils.FormatsRes)
+		json.NewEncoder(rw).Encode(utils.Formats)
 	}
 }

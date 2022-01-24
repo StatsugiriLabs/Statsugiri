@@ -2,9 +2,9 @@
 import os
 import json
 import pytest
-from constants import MAX_USERS
-from data_extractor import DataExtractor
-from replay_metadata import ParsedUserReplay, ReplayMetadata
+from utils.constants import MAX_USERS
+from modules.data_extractor import DataExtractor
+from models.replay_metadata import ParsedUserReplay, ReplayMetadata
 
 TEST_FORMATS = ["gen8vgc2021series11"]
 NUM_TEAMS_TO_RETURN = 100
@@ -235,13 +235,16 @@ def test_extract_info_happy_path(mocker, data_extractor_under_test):
     data_extractor_under_test.set_num_teams(1)
     # Mock functions outside of module
     mocker.patch(
-        "data_extractor.DataExtractor.get_ladder_users_and_ratings", return_value=users
+        "modules.data_extractor.DataExtractor.get_ladder_users_and_ratings",
+        return_value=users,
     )
     mocker.patch(
-        "data_extractor.DataExtractor._extract_parsed_user_replay",
+        "modules.data_extractor.DataExtractor._extract_parsed_user_replay",
         return_value=(parsed_user_replay, True),
     )
-    mocker.patch("data_extractor.DataExtractor._write_snapshots", return_value=())
+    mocker.patch(
+        "modules.data_extractor.DataExtractor._write_snapshots", return_value=()
+    )
 
     # Take VGC format, which is the first in `TEST_FORMATS`
     res = data_extractor_under_test.extract_info(TEST_FORMATS[0])
@@ -256,7 +259,8 @@ def test_extract_info_get_ladder_failed_should_exit(mocker, data_extractor_under
     """Test data extraction when ladder rankings cannot be retrieved"""
     # Mock functions outside of module
     mocker.patch(
-        "data_extractor.DataExtractor.get_ladder_users_and_ratings", return_value=[]
+        "modules.data_extractor.DataExtractor.get_ladder_users_and_ratings",
+        return_value=[],
     )
 
     # Take VGC format, which is the first in `TEST_FORMATS`
@@ -270,18 +274,19 @@ def test_extract_parsed_user_replay_happy_path(
     """Test extracting for `ParsedUserReplay`"""
     # Mock functions outside of module
     mocker.patch(
-        "data_extractor.DataExtractor.get_user_replay_ids", return_value=MOCK_REPLAY_IDS
+        "modules.data_extractor.DataExtractor.get_user_replay_ids",
+        return_value=MOCK_REPLAY_IDS,
     )
     mocker.patch(
-        "data_extractor.DataExtractor._get_replay_data",
+        "modules.data_extractor.DataExtractor._get_replay_data",
         return_value=sample_replay_data_ToastNoButter_json,
     )
     mocker.patch(
-        "log_handler.LogHandler.feed_log",
+        "modules.log_handler.LogHandler.feed_log",
         return_value=True,
     )
     mocker.patch(
-        "log_handler.LogHandler.parse_team",
+        "modules.log_handler.LogHandler.parse_team",
         return_value=USER_TO_TEST_TEAM,
     )
     expected_replay_metadata = ReplayMetadata(
@@ -304,7 +309,9 @@ def test_extract_parsed_user_replay_no_replay_data_should_return_false(
 ):
     """Test extracting ParsedUserReplay when no replay IDs are returned"""
     # Mock functions outside of module
-    mocker.patch("data_extractor.DataExtractor.get_user_replay_ids", return_value=[])
+    mocker.patch(
+        "modules.data_extractor.DataExtractor.get_user_replay_ids", return_value=[]
+    )
 
     parsed_user_replay, success = data_extractor_under_test._extract_parsed_user_replay(
         USER_TO_TEST, USER_TO_TEST_RATING, TEST_FORMATS[0]
@@ -319,9 +326,12 @@ def test_extract_parsed_user_replay_replay_data_invalid_should_return_false(
     """Test extracting `ParsedUserReplay` when returned replay data is invalid"""
     # Mock functions outside of module
     mocker.patch(
-        "data_extractor.DataExtractor.get_user_replay_ids", return_value=MOCK_REPLAY_IDS
+        "modules.data_extractor.DataExtractor.get_user_replay_ids",
+        return_value=MOCK_REPLAY_IDS,
     )
-    mocker.patch("data_extractor.DataExtractor._get_replay_data", return_value={})
+    mocker.patch(
+        "modules.data_extractor.DataExtractor._get_replay_data", return_value={}
+    )
 
     parsed_user_replay, success = data_extractor_under_test._extract_parsed_user_replay(
         USER_TO_TEST, USER_TO_TEST_RATING, TEST_FORMATS[0]
@@ -336,14 +346,15 @@ def test_extract_parsed_user_replay_feed_log_failed_should_return_false(
     """Test extracting `ParsedUserReplay` when feeding the log fails"""
     # Mock functions outside of module
     mocker.patch(
-        "data_extractor.DataExtractor.get_user_replay_ids", return_value=MOCK_REPLAY_IDS
+        "modules.data_extractor.DataExtractor.get_user_replay_ids",
+        return_value=MOCK_REPLAY_IDS,
     )
     mocker.patch(
-        "data_extractor.DataExtractor._get_replay_data",
+        "modules.data_extractor.DataExtractor._get_replay_data",
         return_value=sample_replay_data_ToastNoButter_json,
     )
     mocker.patch(
-        "log_handler.LogHandler.feed_log",
+        "modules.log_handler.LogHandler.feed_log",
         return_value=False,
     )
 
@@ -360,18 +371,19 @@ def test_extract_parsed_user_replay_parse_team_fail_should_return_false(
     """Test extracting `ParsedUserReplay` when team parsing fails"""
     # Mock functions outside of module
     mocker.patch(
-        "data_extractor.DataExtractor.get_user_replay_ids", return_value=MOCK_REPLAY_IDS
+        "modules.data_extractor.DataExtractor.get_user_replay_ids",
+        return_value=MOCK_REPLAY_IDS,
     )
     mocker.patch(
-        "data_extractor.DataExtractor._get_replay_data",
+        "modules.data_extractor.DataExtractor._get_replay_data",
         return_value=sample_replay_data_ToastNoButter_json,
     )
     mocker.patch(
-        "log_handler.LogHandler.feed_log",
+        "modules.log_handler.LogHandler.feed_log",
         return_value=True,
     )
     mocker.patch(
-        "log_handler.LogHandler.parse_team",
+        "modules.log_handler.LogHandler.parse_team",
         return_value=[],
     )
 

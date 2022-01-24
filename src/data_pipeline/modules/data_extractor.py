@@ -4,19 +4,19 @@ import re
 import time
 import requests
 import pymongo
-from base_logger import logger
+from utils.base_logger import logger
 from bs4 import BeautifulSoup
-from constants import (
+from utils.constants import (
     MAX_USERS,
     NUM_TEAMS,
 )
-from db_utils import (
+from utils.db_utils import (
     write_pokemon_teams_snapshots_collection,
     write_pokemon_usage_snapshots_collection,
 )
-from model_transformer import ModelTransformer
-from replay_metadata import ReplayMetadata, ParsedUserReplay
-from log_handler import LogHandler
+from modules.model_transformer import ModelTransformer
+from models.replay_metadata import ReplayMetadata, ParsedUserReplay
+from modules.log_handler import LogHandler
 
 
 LADDER_BASE_URL = "https://pokemonshowdown.com/ladder/"

@@ -1,9 +1,9 @@
 """ Models for the storage layer """
 from typing import List
-from constants import (
+from utils.constants import (
     TEAM_SIZE,
 )
-from base_logger import logger
+from utils.base_logger import logger
 
 
 class PokemonTeam:

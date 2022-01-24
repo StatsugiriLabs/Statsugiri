@@ -50,4 +50,4 @@ jobs:
 
             - name: Run Pytest
               run: |
-                  ./test_scripts/run_data_pipeline_tests.sh
+                  make drilbur-test

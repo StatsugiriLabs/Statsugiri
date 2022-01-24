@@ -2,7 +2,7 @@
 import os
 import json
 import pytest
-from log_handler import LogHandler
+from modules.log_handler import LogHandler
 
 
 @pytest.fixture(name="log_handler_under_test")
