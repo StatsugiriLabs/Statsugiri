@@ -1,7 +1,7 @@
 """ Unit tests for models (ie. getters / setters with non-trivial logic)"""
 import pytest
-from models import PokemonTeamsSnapshot, PokemonUsageSnapshot, PokemonTeam
-from constants import TEAM_SIZE
+from models.db_models import PokemonTeamsSnapshot, PokemonUsageSnapshot, PokemonTeam
+from utils.constants import TEAM_SIZE
 
 
 @pytest.fixture(name="pokemon_team_snapshot_under_test")

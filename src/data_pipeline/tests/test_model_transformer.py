@@ -1,9 +1,9 @@
 """Unit tests for `ModelTransformer` class"""
 import pytest
-from models import PokemonTeamsSnapshot, PokemonTeam, PokemonUsageSnapshot
-from replay_metadata import ParsedUserReplay, ReplayMetadata
-from model_transformer import ModelTransformer
-from utils import convert_unix_timestamp_to_str
+from models.db_models import PokemonTeamsSnapshot, PokemonTeam, PokemonUsageSnapshot
+from models.replay_metadata import ParsedUserReplay, ReplayMetadata
+from modules.model_transformer import ModelTransformer
+from utils.time_utils import convert_unix_timestamp_to_str
 
 DATE = 12
 FORMAT = "gen8vgc2021series11"

@@ -16,8 +16,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-// TODO: Convert collection name to constant
-var teamCollection *mongo.Collection = configs.GetCollection(configs.DB, "DEV_pokemon_teams_snapshots")
+var teamCollection *mongo.Collection = configs.GetCollection(configs.DB, utils.PokemonTeamSnapshotsCollectionName)
 
 // Returns handler for retrieving all team snapshots.
 // Can filter teams by Pokémon query parameter.
@@ -51,7 +50,7 @@ func GetTeamSnapshotsByFormat() http.HandlerFunc {
 				primitive.E{
 					Key: "$match", Value: bson.D{
 						primitive.E{
-							Key: "format_id", Value: format,
+							Key: "FormatId", Value: format,
 						},
 					},
 				},
@@ -80,7 +79,7 @@ func GetTeamSnapshotsByFormatAndDate() http.HandlerFunc {
 				primitive.E{
 					Key: "$match", Value: bson.D{
 						primitive.E{
-							Key: "format_id", Value: format,
+							Key: "FormatId", Value: format,
 						},
 					},
 				},
@@ -90,7 +89,7 @@ func GetTeamSnapshotsByFormatAndDate() http.HandlerFunc {
 				primitive.E{
 					Key: "$match", Value: bson.D{
 						primitive.E{
-							Key: "date", Value: date,
+							Key: "Date", Value: date,
 						},
 					},
 				},

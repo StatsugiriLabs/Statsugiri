@@ -15,7 +15,7 @@ The backend architecture processes the time-series usage and global ranking snap
 
 # Database Models
 
-Document tables are separated by formats. For instance, if there are 5 formats supported, there will be 10 tables total.
+Document tables are separated by team and usage snapshots.
 
 ## Pokémon Team Snapshots
 
@@ -23,13 +23,13 @@ Document for daily team snapshots and ranking metadata.
 
 ```javascript
 {
-    date: str,                 // Primary Key: yyyy-mm-dd
-    format_id: str,            // Secondary Key
-    teams: [
+    Date: str,                  // Primary Key: yyyy-mm-dd
+    FormatId: str,              // Secondary Key
+    Teams: [
         {
-            pokemon_roster: [str],
-            rating: int,
-            replay_upload_date: datetime //yyyy-mm-dd
+            PokemonRoster: [str],
+            Rating: int,
+            ReplayUploadDate: str //yyyy-mm-dd
         }
     ]
 }
@@ -41,17 +41,17 @@ Document for individual Pokémon usage data out of all ranked teams.
 
 ```javascript
 {
-    date: str,                  // Primary Key: yyyy-mm-dd
-    format_id: str,             // Secondary Key
-    pokemon_usage: {            // List of Pokémon usage as number of appearances
+    Date: str,                  // Primary Key: yyyy-mm-dd
+    FormatId: str,              // Secondary Key
+    PokemonUsage: {             // List of Pokémon usage as number of appearances
         str: int
     },
-    pokemon_partner_usage: {
+    PokemonPartnerUsage: {
         str: {              // List of Pokémon recorded
             str: int        // Denotes Pokémon's partners as number of appearances
         }
     },
-    pokemon_average_rating_usage: {     // Denotes Pokémon's average rating normalized by number of appearances
+    PokemonAverageRatingUsage: {     // Denotes Pokémon's average rating normalized by number of appearances
         str: int
     }
 }
@@ -72,7 +72,9 @@ curl /api/health
 ### Response
 
 ```console
-200 OK
+{
+    "status": "up and running"
+}
 ```
 
 ## `GET api/formats`
@@ -93,73 +95,164 @@ curl /api/formats
 }
 ```
 
+## `GET /api/teams`
+
+Get all recorded teams for every available format.
+Add `limit` and `offset` query params for pagination.
+Add `pokemon` query param to filter for teams featuring the specified Pokémon.
+
+### Request
+
+```console
+curl /api/teams
+```
+
+### Response
+
+```console
+[
+    {
+        "Date": "2022-01-23",
+        "FormatId": "gen8vgc2021series11",
+        "Teams": {
+        "PokemonRoster": [
+            "Calyrex-Shadow",
+            "Whimsicott",
+            "Urshifu",
+            "Tapu Lele",
+            "Thundurus",
+            "Chandelure"
+        ],
+        "Rating": 1725,
+        "ReplayUploadDate": "2022-01-09"
+        },
+    },
+    {
+        "Date": "2022-01-22",
+        "FormatId": "gen8ou",
+        "Teams": {
+        "PokemonRoster": [
+            "Skarmory",
+            "Clefable",
+            "Hippowdon",
+            "Tornadus-Therian",
+            "Blissey",
+            "Slowbro"
+        ],
+        "Rating": 1976,
+        "ReplayUploadDate": "2021-07-17"
+        },
+    },
+    {
+        ...
+    }
+]
+```
+
+## `GET /api/teams/{format}`
+
+Get all recorded teams for a specific format.
+Add `limit` and `offset` query params for pagination.
+Add `pokemon` query param to filter for teams featuring the specified Pokémon.
+
+### Request
+
+```console
+curl /api/teams/gen8vgc2021series11
+```
+
+### Response
+
+```console
+[
+    {
+        "Date": "2022-01-23",
+        "FormatId": "gen8vgc2021series11",
+        "Teams": {
+        "PokemonRoster": [
+            "Calyrex-Shadow",
+            "Whimsicott",
+            "Urshifu",
+            "Tapu Lele",
+            "Thundurus",
+            "Chandelure"
+        ],
+        "Rating": 1725,
+        "ReplayUploadDate": "2022-01-09"
+        },
+    },
+    {
+        "Date": "2022-01-22",
+        "FormatId": "gen8vgc2021series11",
+        "Teams": {
+        "PokemonRoster": [
+            "Naganadel",
+            "Tornadus",
+            "Dracovish",
+            "Mienshao",
+            "Chandelure",
+            "Tsareena"
+        ],
+        "Rating": 1708,
+        "ReplayUploadDate": "2022-01-16"
+        },
+    },
+    {
+        ...
+    }
+]
+```
+
 ## `GET /api/teams/{format}/{date}`
 
-Get most recent recorded teams for specific format.
-Defaults to recent VGC format if format not provided (eg. `gen8vgc2021`).
-Defaults to most recent if date is not given.
-
+Get all recorded teams for a specific format and date.
 Add `limit` and `offset` query params for pagination.
+Add `pokemon` query param to filter for teams featuring the specified Pokémon.
 
 ### Request
 
 ```console
-curl /api/teams/gen8ou/2021-12-15
+curl /api/teams/gen8vgc2021series11/2022-01-22?pokemon=Urshifu
 ```
 
 ### Response
 
 ```console
-{
-    date: 2021-12-15,
-    format: gen8ou,
-    teams: {
-        {
-            pokemon_list: ["Chansey", "Landorus-Therian", "Melmetal", "Kartana", "Dragapult", "Kyurem"],
-            rating: 1430,
-            replay_upload_date: 2021-10-19
-        },
-        {
-            ...
-        }
+[
+    {
+        "Date": "2022-01-22",
+        "FormatId": "gen8vgc2021series11",
+        "Teams": {
+        "PokemonRoster": [
+            "Calyrex-Shadow",
+            "Whimsicott",
+            "Urshifu",
+            "Tapu Lele",
+            "Thundurus",
+            "Chandelure"
+        ],
+        "Rating": 1730,
+        "ReplayUploadDate": "2022-01-09"
+    },
+    {
+        "Date": "2022-01-22",
+        "FormatId": "gen8vgc2021series11",
+        "Teams": {
+        "PokemonRoster": [
+            "Rillaboom",
+            "Urshifu",
+            "Coalossal",
+            "Thundurus",
+            "Zacian",
+            "Incineroar"
+        ],
+        "Rating": 1695,
+        "ReplayUploadDate": "2021-12-01"
+    },
+    {
+        ...
     }
-}
-```
-
-Get most recent teams filtered by Pokémon and date.
-
-Add `limit` and `offset` query params for pagination.
-
-### Request
-
-```console
-curl /api/teams/gen8vgc2021/2021-10-09 \
-    -F 'pokemon[]=incineroar' \
-    -F 'pokemon[]=rillaboom'
-```
-
-### Response
-
-```console
-{
-    date: 2021-10-09,
-    format: gen8vgc2021,
-    teams: {
-        {
-            pokemon_list: ["charizard", "incineroar", "gyarados", "rillaboom", "magnezone", "clefairy"],
-            rating: 1430,
-            replay_upload_date: 12-10-19
-        },
-        {
-            pokemon_list: ["incineroar", "togekiss", "rillaboom", "indeedee-F", "cinderace", "urshifu"],
-            rating: 1430,
-            replay_upload_date: 12-10-19
-        },
-        {
-            ...
-        }
-    }
-}
+]
 ```
 
 ## `GET /api/usage/{format}/{date}`

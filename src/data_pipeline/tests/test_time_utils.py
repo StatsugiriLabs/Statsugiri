@@ -1,5 +1,5 @@
 """ Unit tests for utility functions"""
-from utils import convert_unix_timestamp_to_str
+from utils.time_utils import convert_unix_timestamp_to_str
 
 
 def test_convert_unix_timestamp_to_str_happy_path():

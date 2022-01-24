@@ -1,4 +1,4 @@
-"""Utility functions for Drilbur"""
+"""Time utility functions for Drilbur"""
 from datetime import datetime
 
 

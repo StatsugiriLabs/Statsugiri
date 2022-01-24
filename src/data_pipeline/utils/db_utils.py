@@ -1,22 +1,22 @@
 """Database utility functions for managing tables"""
-import os
 from typing import List
 
 import pymongo
-from constants import (
+from utils.env_configs import MONGOURI
+from utils.constants import (
     POKEMON_TEAMS_SNAPSHOTS_COLLECTION_NAME,
     POKEMON_USAGE_SNAPSHOTS_COLLECTION_NAME,
-    DB_CLUSTER_NAME,
 )
-from base_logger import logger
+from utils.env_configs import DB_CLUSTER_NAME
+from utils.base_logger import logger
 
 
 def create_pymongo_client() -> pymongo.MongoClient:
     """Create pymongo client"""
-    mongo_conn_str = os.getenv("MONGO_CONN_STR", "")
+    mongo_conn_str = MONGOURI
     if not mongo_conn_str:
         raise ValueError(
-            "Please set your MongoDB Atlas connection URI as env var, 'MONGO_CONN_STR'"
+            "Please set your MongoDB Atlas connection URI as env var, 'MONGOURI'"
         )
 
     client = pymongo.MongoClient(mongo_conn_str)

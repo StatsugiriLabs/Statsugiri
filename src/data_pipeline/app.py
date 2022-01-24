@@ -1,12 +1,12 @@
 """ Application-level logic for facilitating data pipeline """
 import time
 import json
-from base_logger import logger
+from utils.base_logger import logger
 from lambda_typing.types import LambdaDict, LambdaContext
 
-from data_extractor import DataExtractor
-from db_utils import create_pymongo_client
-from constants import FORMATS, NUM_TEAMS
+from modules.data_extractor import DataExtractor
+from utils.db_utils import create_pymongo_client
+from utils.constants import FORMATS, NUM_TEAMS
 
 
 def lambda_handler(event: LambdaDict, context: LambdaContext) -> dict:

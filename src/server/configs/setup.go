@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/kelvinkoon/babiri_v2/controllers/utils"
 	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -15,7 +16,7 @@ const CONN_TIMEOUT = 10
 // Returns a Mongo client for accessing the instance.
 func ConnectDB() *mongo.Client {
 	// Configure new client
-	client, err := mongo.NewClient(options.Client().ApplyURI(EnvMongoURI()))
+	client, err := mongo.NewClient(options.Client().ApplyURI(utils.MongoUri))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -45,7 +46,6 @@ var DB *mongo.Client = ConnectDB()
 
 // Returns a specified database collection
 func GetCollection(client *mongo.Client, collectionName string) *mongo.Collection {
-	// TODO: Make this an env var
-	collection := client.Database("babiri-dev-cluster").Collection(collectionName)
+	collection := client.Database(utils.DbClusterName).Collection(collectionName)
 	return collection
 }

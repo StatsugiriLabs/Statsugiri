@@ -15,7 +15,7 @@ func MakeTeamQueryPipeline(page int, limit int, pokemon string, intermediateStag
 		primitive.E{
 			Key: "$unwind", Value: bson.D{
 				primitive.E{
-					Key: "path", Value: "$teams",
+					Key: "path", Value: "$Teams",
 				},
 			},
 		},
@@ -25,7 +25,7 @@ func MakeTeamQueryPipeline(page int, limit int, pokemon string, intermediateStag
 		primitive.E{
 			Key: "$sort", Value: bson.D{
 				primitive.E{
-					Key: "date", Value: -1,
+					Key: "Date", Value: -1,
 				},
 			},
 		},
@@ -54,7 +54,7 @@ func MakeTeamQueryPipeline(page int, limit int, pokemon string, intermediateStag
 			primitive.E{
 				Key: "$match", Value: bson.D{
 					primitive.E{
-						Key: "teams.pokemon_roster", Value: pokemon,
+						Key: "Teams.PokemonRoster", Value: pokemon,
 					},
 				},
 			},
