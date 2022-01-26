@@ -10,3 +10,9 @@ func CreateInternalServerErrorResponse(rw http.ResponseWriter, err error) {
 	rw.WriteHeader(http.StatusInternalServerError)
 	json.NewEncoder(rw).Encode(err.Error())
 }
+
+// Generates bad request error response.
+func CreateBadRequestErrorResponse(rw http.ResponseWriter, err error) {
+	rw.WriteHeader(http.StatusBadRequest)
+	json.NewEncoder(rw).Encode(err.Error())
+}

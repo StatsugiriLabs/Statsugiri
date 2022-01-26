@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/kelvinkoon/babiri_v2/cache"
 	"github.com/kelvinkoon/babiri_v2/controllers/utils"
 	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -41,8 +42,11 @@ func ConnectDB() *mongo.Client {
 	return client
 }
 
-// Client instance
+// DB Client instance
 var DB *mongo.Client = ConnectDB()
+
+// Cache instance
+var ResponseCache cache.ResponseCache = cache.NewResponseCache()
 
 // Returns a specified database collection
 func GetCollection(client *mongo.Client, collectionName string) *mongo.Collection {
