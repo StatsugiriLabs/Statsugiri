@@ -59,6 +59,7 @@ func (c *ResponseCache) IsCacheFull() bool {
 	return false
 }
 
+// Put entry into cache given composite key and response.
 func (c *ResponseCache) Put(compositeKey string, response []bson.M) {
 	c.rwLock.Lock()
 	defer c.rwLock.Unlock()

@@ -54,7 +54,7 @@ func GetTeamSnapshotsByFormat() http.HandlerFunc {
 			return
 		}
 		format := mux.Vars(r)["format"]
-		// TODO: Verify format is supported
+		// TODO: https://github.com/kelvinkoon/babiri_v2/issues/89
 		pokemon := r.URL.Query().Get("pokemon")
 
 		// Generate pipeline stages
