@@ -4,12 +4,13 @@ import (
 	"sync"
 	"time"
 
+	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
 const (
-	TTL         = 30   // Cache entry lifetime from last access (seconds)
-	MAX_ENTRIES = 1000 // Maximum number of entries in cache
+	TTL      = 60 // Cache entry lifetime from last access (seconds)
+	CAPACITY = 1000
 )
 
 type CacheEntry struct {
@@ -18,42 +19,45 @@ type CacheEntry struct {
 }
 
 type ResponseCache struct {
-	// Let key be compositeKey
-	cacheMap map[string]*CacheEntry
-	rwLock   *sync.RWMutex
+	// Let map key be compositeKey
+	cacheMap  map[string]*CacheEntry
+	rwLock    *sync.RWMutex
+	scheduler SchedulerInterface
+	capacity  int
 }
 
 // Start daemon for evicting expired cache entries.
 func (c *ResponseCache) startEvictionDaemon() {
+	ticker := c.scheduler.CreateTicker(time.Second)
+	log.Infof("Starting eviction daemon")
 	go func() {
-		for now := range time.Tick(time.Second) {
-			c.rwLock.Lock()
-			for compositeKey, item := range c.cacheMap {
-				// Remove expired entries
-				if now.Unix()-item.lastAccess > int64(TTL) {
-					c.evictCacheEntry(compositeKey)
-				}
-			}
-			c.rwLock.Unlock()
+		for {
+			<-ticker
+			c.evictCacheEntry()
 		}
 	}()
 }
 
 // Evict cache entry.
-func (c *ResponseCache) evictCacheEntry(compositeKey string) {
-	_, exists := c.cacheMap[compositeKey]
+func (c *ResponseCache) evictCacheEntry() {
+	c.rwLock.Lock()
+	defer c.rwLock.Unlock()
 
-	if exists {
-		delete(c.cacheMap, compositeKey)
+	now := c.scheduler.Now()
+
+	for compositeKey, cacheEntry := range c.cacheMap {
+		if now-cacheEntry.lastAccess > int64(TTL) {
+			_, exists := c.cacheMap[compositeKey]
+			if exists {
+				delete(c.cacheMap, compositeKey)
+			}
+		}
 	}
 }
 
 // Check if cache is full denoted by MAX_ENTRIES.
-func (c *ResponseCache) IsCacheFull() bool {
-	c.rwLock.Lock()
-	defer c.rwLock.Unlock()
-
-	if len(c.cacheMap) >= MAX_ENTRIES {
+func (c *ResponseCache) isCacheFull() bool {
+	if len(c.cacheMap) >= c.capacity {
 		return true
 	}
 	return false
@@ -64,13 +68,16 @@ func (c *ResponseCache) Put(compositeKey string, response []bson.M) {
 	c.rwLock.Lock()
 	defer c.rwLock.Unlock()
 
-	_, found := c.cacheMap[compositeKey]
-	if !found {
-		cacheEntry := &CacheEntry{
-			response:   response,
-			lastAccess: time.Now().Unix(),
+	// Write if cache is not full
+	if !c.isCacheFull() {
+		_, found := c.cacheMap[compositeKey]
+		if !found {
+			cacheEntry := &CacheEntry{
+				response:   response,
+				lastAccess: c.scheduler.Now(),
+			}
+			c.cacheMap[compositeKey] = cacheEntry
 		}
-		c.cacheMap[compositeKey] = cacheEntry
 	}
 }
 
@@ -85,18 +92,23 @@ func (c *ResponseCache) Get(compositeKey string) ([]bson.M, bool) {
 	}
 
 	// Update last access time
-	cachedResponse.lastAccess = time.Now().Unix()
+	cachedResponse.lastAccess = c.scheduler.Now()
 	return cachedResponse.response, true
 }
 
 // Create a new response cache, including starting eviction daemon.
-func NewResponseCache() ResponseCache {
+func NewResponseCache(scheduler SchedulerInterface, capacity int) ResponseCache {
 	cacheMap := make(map[string]*CacheEntry)
 	responseCache := ResponseCache{
-		cacheMap: cacheMap,
-		rwLock:   &sync.RWMutex{},
+		cacheMap:  cacheMap,
+		rwLock:    &sync.RWMutex{},
+		scheduler: scheduler,
+		capacity:  capacity,
 	}
 	responseCache.startEvictionDaemon()
 
 	return responseCache
 }
+
+// Cache instance
+var C ResponseCache = NewResponseCache(new(Scheduler), CAPACITY)

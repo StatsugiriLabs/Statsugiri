@@ -7,8 +7,9 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
-	"github.com/kelvinkoon/babiri_v2/configs"
+	"github.com/kelvinkoon/babiri_v2/cache"
 	"github.com/kelvinkoon/babiri_v2/controllers/utils"
+	db "github.com/kelvinkoon/babiri_v2/db"
 	"github.com/kelvinkoon/babiri_v2/errors"
 	"github.com/kelvinkoon/babiri_v2/middleware"
 	log "github.com/sirupsen/logrus"
@@ -16,8 +17,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
-
-var teamCollection *mongo.Collection = configs.GetCollection(configs.DB, utils.PokemonTeamSnapshotsCollectionName)
 
 const (
 	ALL_TEAMS_STR            = "AllTeams"
@@ -130,12 +129,12 @@ func queryTeamsSnapshots(rw http.ResponseWriter, pipeline mongo.Pipeline, compos
 	var found bool
 
 	// Send request if cache is not hit
-	if snapshots, found = configs.ResponseCache.Get(composite_key); !found {
+	if snapshots, found = cache.C.Get(composite_key); !found {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
 
 		// Run query with pipeline
-		cursor, err := teamCollection.Aggregate(ctx, pipeline)
+		cursor, err := db.TeamCollection.Aggregate(ctx, pipeline)
 		if err != nil {
 			errors.CreateInternalServerErrorResponse(rw, err)
 			return
@@ -147,10 +146,9 @@ func queryTeamsSnapshots(rw http.ResponseWriter, pipeline mongo.Pipeline, compos
 			panic(err)
 		}
 
-		// Write to cache if results found and cache not full
-		if len(snapshots) != 0 && !configs.ResponseCache.IsCacheFull() {
-			log.Infof("Putting request into cache")
-			configs.ResponseCache.Put(composite_key, snapshots)
+		// Write to cache if results found
+		if len(snapshots) != 0 {
+			cache.C.Put(composite_key, snapshots)
 		}
 	}
 	// Paginate snapshot results

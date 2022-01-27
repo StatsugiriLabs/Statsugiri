@@ -1,17 +1,22 @@
-package configs
+package db
 
 import (
 	"context"
 	"time"
 
-	"github.com/kelvinkoon/babiri_v2/cache"
 	"github.com/kelvinkoon/babiri_v2/controllers/utils"
 	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-const CONN_TIMEOUT = 10
+const (
+	CONN_TIMEOUT = 10
+)
+
+// DB Client instance
+var DB *mongo.Client = ConnectDB()
+var TeamCollection *mongo.Collection = GetCollection(DB, utils.PokemonTeamSnapshotsCollectionName)
 
 // Connects to the MongoDB database.
 // Returns a Mongo client for accessing the instance.
@@ -41,12 +46,6 @@ func ConnectDB() *mongo.Client {
 	log.Infof("Connected to MongoDB instance")
 	return client
 }
-
-// DB Client instance
-var DB *mongo.Client = ConnectDB()
-
-// Cache instance
-var ResponseCache cache.ResponseCache = cache.NewResponseCache()
 
 // Returns a specified database collection
 func GetCollection(client *mongo.Client, collectionName string) *mongo.Collection {

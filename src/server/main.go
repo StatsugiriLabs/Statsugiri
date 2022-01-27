@@ -1,12 +1,13 @@
 package main
 
 import (
+	"net/http"
+
 	"github.com/gorilla/mux"
-	"github.com/kelvinkoon/babiri_v2/configs"
+	"github.com/kelvinkoon/babiri_v2/db"
 	"github.com/kelvinkoon/babiri_v2/middleware"
 	"github.com/kelvinkoon/babiri_v2/routes"
 	log "github.com/sirupsen/logrus"
-	"net/http"
 )
 
 func main() {
@@ -15,7 +16,7 @@ func main() {
 	router.Use(middleware.HeaderMiddleware)
 
 	// Connect to database
-	configs.ConnectDB()
+	db.ConnectDB()
 
 	// Configure routes
 	routes.TeamRoute(router)
