@@ -1,4 +1,4 @@
-package configs
+package db
 
 import (
 	"context"
@@ -13,6 +13,10 @@ import (
 const (
 	CONN_TIMEOUT = 10
 )
+
+// DB Client instance
+var DB *mongo.Client = ConnectDB()
+var TeamCollection *mongo.Collection = GetCollection(DB, utils.PokemonTeamSnapshotsCollectionName)
 
 // Connects to the MongoDB database.
 // Returns a Mongo client for accessing the instance.
@@ -42,10 +46,6 @@ func ConnectDB() *mongo.Client {
 	log.Infof("Connected to MongoDB instance")
 	return client
 }
-
-// DB Client instance
-var DB *mongo.Client = ConnectDB()
-var TeamCollection *mongo.Collection = GetCollection(DB, utils.PokemonTeamSnapshotsCollectionName)
 
 // Returns a specified database collection
 func GetCollection(client *mongo.Client, collectionName string) *mongo.Collection {

@@ -8,8 +8,8 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/kelvinkoon/babiri_v2/cache"
-	"github.com/kelvinkoon/babiri_v2/configs"
 	"github.com/kelvinkoon/babiri_v2/controllers/utils"
+	db "github.com/kelvinkoon/babiri_v2/db"
 	"github.com/kelvinkoon/babiri_v2/errors"
 	"github.com/kelvinkoon/babiri_v2/middleware"
 	log "github.com/sirupsen/logrus"
@@ -17,8 +17,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
-
-// var teamCollection *mongo.Collection = configs.GetCollection(configs.DB, utils.PokemonTeamSnapshotsCollectionName)
 
 const (
 	ALL_TEAMS_STR            = "AllTeams"
@@ -136,7 +134,7 @@ func queryTeamsSnapshots(rw http.ResponseWriter, pipeline mongo.Pipeline, compos
 		defer cancel()
 
 		// Run query with pipeline
-		cursor, err := configs.TeamCollection.Aggregate(ctx, pipeline)
+		cursor, err := db.TeamCollection.Aggregate(ctx, pipeline)
 		if err != nil {
 			errors.CreateInternalServerErrorResponse(rw, err)
 			return
