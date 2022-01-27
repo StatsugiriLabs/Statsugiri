@@ -54,6 +54,8 @@ jobs:
 
     gotest:
         name: Server Go Tests
+        env:
+            MONGOURI: ${{ secrets.MONGOURI_CI }}
         runs-on: ubuntu-latest
         strategy:
             matrix:

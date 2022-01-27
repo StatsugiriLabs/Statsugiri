@@ -4,7 +4,6 @@ import (
 	"context"
 	"time"
 
-	"github.com/kelvinkoon/babiri_v2/cache"
 	"github.com/kelvinkoon/babiri_v2/controllers/utils"
 	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -13,7 +12,6 @@ import (
 
 const (
 	CONN_TIMEOUT = 10
-	CAPACITY     = 1000
 )
 
 // Connects to the MongoDB database.
@@ -47,9 +45,7 @@ func ConnectDB() *mongo.Client {
 
 // DB Client instance
 var DB *mongo.Client = ConnectDB()
-
-// Cache instance
-var ResponseCache cache.ResponseCache = cache.NewResponseCache(new(cache.Scheduler), CAPACITY)
+var TeamCollection *mongo.Collection = GetCollection(DB, utils.PokemonTeamSnapshotsCollectionName)
 
 // Returns a specified database collection
 func GetCollection(client *mongo.Client, collectionName string) *mongo.Collection {

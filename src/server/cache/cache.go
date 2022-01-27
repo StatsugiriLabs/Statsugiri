@@ -9,7 +9,8 @@ import (
 )
 
 const (
-	TTL = 60 // Cache entry lifetime from last access (seconds)
+	TTL      = 60 // Cache entry lifetime from last access (seconds)
+	CAPACITY = 1000
 )
 
 type CacheEntry struct {
@@ -108,3 +109,6 @@ func NewResponseCache(scheduler SchedulerInterface, capacity int) ResponseCache 
 
 	return responseCache
 }
+
+// Cache instance
+var C ResponseCache = NewResponseCache(new(Scheduler), CAPACITY)
