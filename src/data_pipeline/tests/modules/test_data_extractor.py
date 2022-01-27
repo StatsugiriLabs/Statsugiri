@@ -73,7 +73,7 @@ def fixture_sample_ladder_res_text():
         os.path.join(os.getcwd(), os.path.dirname(__file__))
     )
     return open(
-        os.path.join(__location__, "assets/sample_ladder_res_text.txt"),
+        os.path.join(__location__, "../assets/sample_ladder_res_text.txt"),
         encoding="utf-8",
     ).read()
 
@@ -85,7 +85,9 @@ def fixture_sample_ladder_ToastNoButter_res_text():
         os.path.join(os.getcwd(), os.path.dirname(__file__))
     )
     return open(
-        os.path.join(__location__, "assets/sample_ladder_ToastNoButter_res_text.txt"),
+        os.path.join(
+            __location__, "../assets/sample_ladder_ToastNoButter_res_text.txt"
+        ),
         encoding="utf-8",
     ).read()
 
@@ -97,7 +99,7 @@ def fixture_sample_user_replays_res_text():
         os.path.join(os.getcwd(), os.path.dirname(__file__))
     )
     return open(
-        os.path.join(__location__, "assets/sample_user_replays_res_text.txt"),
+        os.path.join(__location__, "../assets/sample_user_replays_res_text.txt"),
         encoding="utf-8",
     ).read()
 
@@ -110,7 +112,7 @@ def fixture_sample_user_replays_ToastNoButter_res_text():
     )
     return open(
         os.path.join(
-            __location__, "assets/sample_user_replays_ToastNoButter_res_text.txt"
+            __location__, "../assets/sample_user_replays_ToastNoButter_res_text.txt"
         ),
         encoding="utf-8",
     ).read()
@@ -124,7 +126,9 @@ def fixture_sample_replay_data_ToastNoButter_json():
     )
     return json.loads(
         open(
-            os.path.join(__location__, "assets/sample_replay_data_ToastNoButter.json"),
+            os.path.join(
+                __location__, "../assets/sample_replay_data_ToastNoButter.json"
+            ),
             encoding="utf-8",
         ).read()
     )

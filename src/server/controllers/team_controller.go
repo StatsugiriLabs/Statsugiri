@@ -37,7 +37,7 @@ func GetAllTeamSnapshots() http.HandlerFunc {
 		}
 		pokemon := r.URL.Query().Get("pokemon")
 
-		pipeline := utils.MakeTeamQueryPipeline(skip, limit, pokemon, []bson.D{})
+		pipeline := utils.MakeTeamQueryPipeline(pokemon, []bson.D{})
 		composite_key := utils.MakeCompositeKey(ALL_TEAMS_STR, pokemon)
 		queryTeamsSnapshots(rw, pipeline, composite_key, skip, limit)
 	}
@@ -71,7 +71,7 @@ func GetTeamSnapshotsByFormat() http.HandlerFunc {
 			},
 		}
 
-		pipeline := utils.MakeTeamQueryPipeline(skip, limit, pokemon, intermediateStages)
+		pipeline := utils.MakeTeamQueryPipeline(pokemon, intermediateStages)
 		composite_key := utils.MakeCompositeKey(TEAMS_BY_FORMAT_STR, format, pokemon)
 		queryTeamsSnapshots(rw, pipeline, composite_key, skip, limit)
 	}
@@ -115,7 +115,7 @@ func GetTeamSnapshotsByFormatAndDate() http.HandlerFunc {
 			},
 		}
 
-		pipeline := utils.MakeTeamQueryPipeline(skip, limit, pokemon, intermediateStages)
+		pipeline := utils.MakeTeamQueryPipeline(pokemon, intermediateStages)
 		composite_key := utils.MakeCompositeKey(TEAMS_BY_FORMAT_DATE_STR, format, date, pokemon)
 		queryTeamsSnapshots(rw, pipeline, composite_key, skip, limit)
 	}
@@ -154,7 +154,7 @@ func queryTeamsSnapshots(rw http.ResponseWriter, pipeline mongo.Pipeline, compos
 		}
 	}
 	// Paginate snapshot results
-	paginated_snapshots := utils.PaginateResults(snapshots, skip, limit)
+	paginated_snapshots := utils.SliceResults(snapshots, skip, limit)
 
 	log.Infof("%d results returned in %s", len(paginated_snapshots), time.Since(start))
 	rw.WriteHeader(http.StatusOK)

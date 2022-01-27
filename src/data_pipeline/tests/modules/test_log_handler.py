@@ -21,7 +21,7 @@ def fixture_sample_replay_data_json():
     )
     return json.loads(
         open(
-            os.path.join(__location__, "assets/sample_replay_data.json"),
+            os.path.join(__location__, "../assets/sample_replay_data.json"),
             encoding="utf-8",
         ).read()
     )
@@ -35,7 +35,7 @@ def fixture_sample_cleaned_replay_data_json():
     )
     return json.loads(
         open(
-            os.path.join(__location__, "assets/sample_cleaned_replay_data.json"),
+            os.path.join(__location__, "../assets/sample_cleaned_replay_data.json"),
             encoding="utf-8",
         ).read()
     )
@@ -49,7 +49,7 @@ def fixture_sample_replay_data_four_pkmn_json():
     )
     return json.loads(
         open(
-            os.path.join(__location__, "assets/sample_replay_data_four_pkmn.json"),
+            os.path.join(__location__, "../assets/sample_replay_data_four_pkmn.json"),
             encoding="utf-8",
         ).read()
     )
