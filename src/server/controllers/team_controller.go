@@ -147,9 +147,8 @@ func queryTeamsSnapshots(rw http.ResponseWriter, pipeline mongo.Pipeline, compos
 			panic(err)
 		}
 
-		// Write to cache if results found and cache not full
-		if len(snapshots) != 0 && !configs.ResponseCache.IsCacheFull() {
-			log.Infof("Putting request into cache")
+		// Write to cache if results found
+		if len(snapshots) != 0 {
 			configs.ResponseCache.Put(composite_key, snapshots)
 		}
 	}

@@ -11,7 +11,10 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-const CONN_TIMEOUT = 10
+const (
+	CONN_TIMEOUT = 10
+	CAPACITY     = 1000
+)
 
 // Connects to the MongoDB database.
 // Returns a Mongo client for accessing the instance.
@@ -46,7 +49,7 @@ func ConnectDB() *mongo.Client {
 var DB *mongo.Client = ConnectDB()
 
 // Cache instance
-var ResponseCache cache.ResponseCache = cache.NewResponseCache()
+var ResponseCache cache.ResponseCache = cache.NewResponseCache(new(cache.Scheduler), CAPACITY)
 
 // Returns a specified database collection
 func GetCollection(client *mongo.Client, collectionName string) *mongo.Collection {
