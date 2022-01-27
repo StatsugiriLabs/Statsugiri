@@ -3,13 +3,12 @@ package utils
 import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
 )
 
 // Generates a aggregation pipeline for team queries.
 // Prepends team unwinding and reverse chronological sorting.
-// Includes pokemon query if parameter provided.
-func MakeTeamQueryPipeline(page int, limit int, pokemon string, intermediateStages []bson.D) mongo.Pipeline {
+// Includes Pokémon query if parameter provided.
+func MakeTeamQueryPipeline(pokemon string, intermediateStages []bson.D) []bson.D {
 	// Unwind team replay information
 	unwindTeamStage := bson.D{
 		primitive.E{
@@ -83,7 +82,7 @@ func MakeCompositeKey(params ...string) string {
 }
 
 // Paginate aggregation results through slicing.
-func PaginateResults(results []bson.M, skip int, size int) []bson.M {
+func SliceResults(results []bson.M, skip int, size int) []bson.M {
 	// Limit skip to length of results
 	if skip > len(results) {
 		skip = len(results)
