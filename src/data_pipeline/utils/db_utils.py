@@ -6,8 +6,8 @@ from utils.env_configs import MONGOURI
 from utils.constants import (
     POKEMON_TEAMS_SNAPSHOTS_COLLECTION_NAME,
     POKEMON_USAGE_SNAPSHOTS_COLLECTION_NAME,
+    DB_CLUSTER_NAME,
 )
-from utils.env_configs import DB_CLUSTER_NAME
 from utils.base_logger import logger
 
 
