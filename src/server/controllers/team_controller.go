@@ -3,6 +3,7 @@ package controllers
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -53,7 +54,12 @@ func GetTeamSnapshotsByFormat() http.HandlerFunc {
 			return
 		}
 		format := mux.Vars(r)["format"]
-		// TODO: https://github.com/kelvinkoon/babiri_v2/issues/89
+		if !utils.ValidFormat(format) {
+			errors.CreateBadRequestErrorResponse(rw,
+				fmt.Errorf("Format (%s) is not supported", format))
+			return
+		}
+
 		pokemon := r.URL.Query().Get("pokemon")
 
 		// Generate pipeline stages
@@ -87,6 +93,11 @@ func GetTeamSnapshotsByFormatAndDate() http.HandlerFunc {
 			return
 		}
 		format := mux.Vars(r)["format"]
+		if !utils.ValidFormat(format) {
+			errors.CreateBadRequestErrorResponse(rw,
+				fmt.Errorf("Format (%s) is not supported", format))
+			return
+		}
 		date := mux.Vars(r)["date"]
 		pokemon := r.URL.Query().Get("pokemon")
 

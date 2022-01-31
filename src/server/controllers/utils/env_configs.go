@@ -12,8 +12,5 @@ func getEnv(key, fallback string) string {
 	return value
 }
 
-var MongoUri string = getEnv("MONGOURI", "")
-var Env string = getEnv("ENV", "DEV")
-var DbClusterName string = getEnv("DB_CLUSTER_NAME", "")
-var PokemonTeamsSnapshotsCollection string = getEnv("POKEMON_TEAMS_SNAPSHOTS_COLLECTION", "")
-var PokemonUsageSnapshotsCollection string = getEnv("POKEMON_USAGE_SNAPSHOTS_COLLECTION", "")
+var MongoUri string = getEnv("MONGOURI", "mongodb://localhost:27017") // Default to local on Port 27017
+var Env string = getEnv("ENV", "DEV")                                 // Default to DEV environment
