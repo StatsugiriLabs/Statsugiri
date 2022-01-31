@@ -22,7 +22,7 @@ func getExpectedTeamSnapshotsFirstPage() string {
 		log.Fatal(err)
 	}
 
-	return string(result) + "\n"
+	return string(result)
 }
 
 func getExpectedTeamSnapshotsSecondPage() string {
@@ -32,7 +32,7 @@ func getExpectedTeamSnapshotsSecondPage() string {
 		log.Fatal(err)
 	}
 
-	return string(result) + "\n"
+	return string(result)
 }
 
 func getExpectedFormatTeamSnapshots() string {
@@ -42,7 +42,7 @@ func getExpectedFormatTeamSnapshots() string {
 		log.Fatal(err)
 	}
 
-	return string(result) + "\n"
+	return string(result)
 }
 
 func getExpectedFormatAndDateTeamSnapshots() string {
@@ -52,7 +52,7 @@ func getExpectedFormatAndDateTeamSnapshots() string {
 		log.Fatal(err)
 	}
 
-	return string(result) + "\n"
+	return string(result)
 }
 
 // Test retrieving all team snapshots for 1st page.
