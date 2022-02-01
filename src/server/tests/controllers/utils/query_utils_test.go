@@ -153,6 +153,30 @@ func TestMakeTeamQueryPipelineHappyPath(t *testing.T) {
 				},
 			},
 		},
+		{
+			primitive.E{
+				Key: "$project", Value: bson.D{
+					primitive.E{
+						Key: "Date", Value: 1,
+					},
+					primitive.E{
+						Key: "FormatId", Value: 1,
+					},
+					primitive.E{
+						Key: "Teams", Value: 1,
+					},
+					primitive.E{
+						Key: "Rating", Value: 1,
+					},
+					primitive.E{
+						Key: "ReplayUploadDate", Value: 1,
+					},
+					primitive.E{
+						Key: "_id", Value: 0,
+					},
+				},
+			},
+		},
 		intermediateStages,
 		{
 			primitive.E{
@@ -171,6 +195,168 @@ func TestMakeTeamQueryPipelineHappyPath(t *testing.T) {
 	// Generate pipeline without Pokémon filter
 	pipeline = utils.MakeTeamQueryPipeline("", []bson.D{intermediateStages})
 	assert.Equal(t, pipeline, expectedPipeline[:len(expectedPipeline)-1], "Pipelines do not match.")
+}
+
+// Test making query pipelines for usage.
+func TestMakeUsageQueryPipelineUsage(t *testing.T) {
+	intermediateStages := bson.D{
+		primitive.E{Key: "$match", Value: bson.D{
+			primitive.E{
+				Key: "TestKey", Value: "TestValue",
+			},
+		}},
+	}
+
+	expectedPipeline := []bson.D{
+		{
+			primitive.E{
+				Key: "$sort", Value: bson.D{
+					primitive.E{
+						Key: "FormatId", Value: 1,
+					},
+				},
+			},
+		},
+		{
+			primitive.E{
+				Key: "$sort", Value: bson.D{
+					primitive.E{
+						Key: "Date", Value: -1,
+					},
+				},
+			},
+		},
+		{
+			primitive.E{
+				Key: "$project", Value: bson.D{
+					primitive.E{
+						Key: "Date", Value: 1,
+					},
+					primitive.E{
+						Key: "FormatId", Value: 1,
+					},
+					primitive.E{
+						Key: "_id", Value: 0,
+					},
+					primitive.E{
+						Key: "PokemonUsage", Value: 1,
+					},
+				},
+			},
+		},
+		intermediateStages,
+	}
+
+	pipeline := utils.MakeUsageQueryPipeline(utils.Usage, []bson.D{intermediateStages})
+	assert.Equal(t, pipeline, expectedPipeline, "Pipelines do not match.")
+}
+
+// Test making query pipelines for partner usage.
+func TestMakeUsageQueryPipelinePartnerUsage(t *testing.T) {
+	intermediateStages := bson.D{
+		primitive.E{Key: "$match", Value: bson.D{
+			primitive.E{
+				Key: "TestKey", Value: "TestValue",
+			},
+		}},
+	}
+
+	expectedPipeline := []bson.D{
+		{
+			primitive.E{
+				Key: "$sort", Value: bson.D{
+					primitive.E{
+						Key: "FormatId", Value: 1,
+					},
+				},
+			},
+		},
+		{
+			primitive.E{
+				Key: "$sort", Value: bson.D{
+					primitive.E{
+						Key: "Date", Value: -1,
+					},
+				},
+			},
+		},
+		{
+			primitive.E{
+				Key: "$project", Value: bson.D{
+					primitive.E{
+						Key: "Date", Value: 1,
+					},
+					primitive.E{
+						Key: "FormatId", Value: 1,
+					},
+					primitive.E{
+						Key: "_id", Value: 0,
+					},
+					primitive.E{
+						Key: "PokemonPartnerUsage", Value: 1,
+					},
+				},
+			},
+		},
+		intermediateStages,
+	}
+
+	pipeline := utils.MakeUsageQueryPipeline(utils.PartnerUsage, []bson.D{intermediateStages})
+	assert.Equal(t, pipeline, expectedPipeline, "Pipelines do not match.")
+}
+
+// Test making query pipelines for partner usage.
+func TestMakeUsageQueryPipelineAverageRatingUsage(t *testing.T) {
+	intermediateStages := bson.D{
+		primitive.E{Key: "$match", Value: bson.D{
+			primitive.E{
+				Key: "TestKey", Value: "TestValue",
+			},
+		}},
+	}
+
+	expectedPipeline := []bson.D{
+		{
+			primitive.E{
+				Key: "$sort", Value: bson.D{
+					primitive.E{
+						Key: "FormatId", Value: 1,
+					},
+				},
+			},
+		},
+		{
+			primitive.E{
+				Key: "$sort", Value: bson.D{
+					primitive.E{
+						Key: "Date", Value: -1,
+					},
+				},
+			},
+		},
+		{
+			primitive.E{
+				Key: "$project", Value: bson.D{
+					primitive.E{
+						Key: "Date", Value: 1,
+					},
+					primitive.E{
+						Key: "FormatId", Value: 1,
+					},
+					primitive.E{
+						Key: "_id", Value: 0,
+					},
+					primitive.E{
+						Key: "PokemonAverageRatingUsage", Value: 1,
+					},
+				},
+			},
+		},
+		intermediateStages,
+	}
+
+	pipeline := utils.MakeUsageQueryPipeline(utils.RatingUsage, []bson.D{intermediateStages})
+	assert.Equal(t, pipeline, expectedPipeline, "Pipelines do not match.")
 }
 
 // Test creating composite key.
