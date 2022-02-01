@@ -20,7 +20,7 @@ func TestParsePaginationFirstPage(t *testing.T) {
 	req.URL.RawQuery = q.Encode()
 
 	rr := httptest.NewRecorder()
-	skip, limit, err := middleware.ParsePagination(rr, req)
+	skip, limit, err := middleware.ParsePagination(rr, req, 50)
 
 	// Check status code
 	assert.Equal(t, rr.Code, http.StatusOK)
@@ -42,7 +42,7 @@ func TestParsePaginationSkipPage(t *testing.T) {
 	req.URL.RawQuery = q.Encode()
 
 	rr := httptest.NewRecorder()
-	skip, limit, err := middleware.ParsePagination(rr, req)
+	skip, limit, err := middleware.ParsePagination(rr, req, 50)
 
 	// Check status code
 	assert.Equal(t, rr.Code, http.StatusOK)
@@ -57,7 +57,7 @@ func TestParsePaginationSkipPage(t *testing.T) {
 func TestParsePaginationNoParams(t *testing.T) {
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
 	rr := httptest.NewRecorder()
-	skip, limit, err := middleware.ParsePagination(rr, req)
+	skip, limit, err := middleware.ParsePagination(rr, req, 50)
 
 	// Check status code
 	assert.Equal(t, rr.Code, http.StatusOK)
@@ -65,5 +65,5 @@ func TestParsePaginationNoParams(t *testing.T) {
 	assert.Nil(t, err)
 	// Check skip and limit are default
 	assert.Equal(t, skip, 0)
-	assert.Equal(t, limit, middleware.MAX_LIMIT)
+	assert.Equal(t, limit, 50)
 }

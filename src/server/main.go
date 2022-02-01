@@ -20,8 +20,10 @@ func main() {
 
 	// Configure routes
 	routes.TeamRoute(router)
+	routes.UsageRoute(router)
 	routes.FormatRoute(router)
 	routes.HealthRoute(router)
 
+	log.Infof("Server running on Port 3000")
 	log.Fatal(http.ListenAndServe(":3000", router))
 }

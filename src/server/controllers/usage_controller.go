@@ -20,36 +20,33 @@ import (
 )
 
 const (
-	ALL_TEAMS_STR            = "AllTeams"
-	TEAMS_BY_FORMAT_STR      = "TeamsByFormat"
-	TEAMS_BY_FORMAT_DATE_STR = "TeamsByFormatDate"
-	PAGINATION_LIMIT         = 50
+	USAGE_LIMIT              = 10
+	ALL_USAGE_STR            = "AllUsage"
+	USAGE_BY_FORMAT_STR      = "UsageByFormat"
+	USAGE_BY_FORMAT_DATE_STR = "UsageByFormatDate"
 )
 
-// Returns handler for retrieving all team snapshots.
-// Can filter teams by Pokémon query parameter.
-func GetAllTeamSnapshots() http.HandlerFunc {
+// Returns handler for retrieving all usage snapshots.
+func GetAllUsageSnapshots() http.HandlerFunc {
 	return func(rw http.ResponseWriter, r *http.Request) {
 		// Get parameters and pagination options
-		skip, limit, err := middleware.ParsePagination(rw, r, PAGINATION_LIMIT)
+		skip, limit, err := middleware.ParsePagination(rw, r, USAGE_LIMIT)
 		if err != nil {
 			errors.CreateBadRequestErrorResponse(rw, err)
 			return
 		}
-		pokemon := r.URL.Query().Get("pokemon")
 
-		pipeline := utils.MakeTeamQueryPipeline(pokemon, []bson.D{})
-		composite_key := utils.MakeCompositeKey(ALL_TEAMS_STR, pokemon)
-		queryTeamsSnapshots(rw, pipeline, composite_key, skip, limit)
+		pipeline := utils.MakeUsageQueryPipeline(utils.Usage, []bson.D{})
+		composite_key := utils.MakeCompositeKey(ALL_USAGE_STR)
+		queryUsageSnapshots(rw, pipeline, composite_key, skip, limit)
 	}
 }
 
-// Returns handler for retrieving all team snapshots by format.
-// Can filter teams by Pokémon query parameter.
-func GetTeamSnapshotsByFormat() http.HandlerFunc {
+// Returns handler for retrieving all usage snapshots by format.
+func GetUsageSnapshotsByFormat() http.HandlerFunc {
 	return func(rw http.ResponseWriter, r *http.Request) {
 		// Get parameters and pagination options
-		skip, limit, err := middleware.ParsePagination(rw, r, PAGINATION_LIMIT)
+		skip, limit, err := middleware.ParsePagination(rw, r, USAGE_LIMIT)
 		if err != nil {
 			errors.CreateBadRequestErrorResponse(rw, err)
 			return
@@ -60,8 +57,6 @@ func GetTeamSnapshotsByFormat() http.HandlerFunc {
 				fmt.Errorf("Format (%s) is not supported", format))
 			return
 		}
-
-		pokemon := r.URL.Query().Get("pokemon")
 
 		// Generate pipeline stages
 		intermediateStages := []bson.D{
@@ -77,18 +72,17 @@ func GetTeamSnapshotsByFormat() http.HandlerFunc {
 			},
 		}
 
-		pipeline := utils.MakeTeamQueryPipeline(pokemon, intermediateStages)
-		composite_key := utils.MakeCompositeKey(TEAMS_BY_FORMAT_STR, format, pokemon)
-		queryTeamsSnapshots(rw, pipeline, composite_key, skip, limit)
+		pipeline := utils.MakeUsageQueryPipeline(utils.Usage, intermediateStages)
+		composite_key := utils.MakeCompositeKey(USAGE_BY_FORMAT_STR, format)
+		queryUsageSnapshots(rw, pipeline, composite_key, skip, limit)
 	}
 }
 
-// Returns handler for retrieving all team snapshots by format and date.
-// Can filter teams by Pokémon query parameter.
-func GetTeamSnapshotsByFormatAndDate() http.HandlerFunc {
+// Returns handler for retrieving all usage snapshots by format and date.
+func GetUsageSnapshotsByFormatAndDate() http.HandlerFunc {
 	return func(rw http.ResponseWriter, r *http.Request) {
 		// Get parameters and pagination options
-		skip, limit, err := middleware.ParsePagination(rw, r, PAGINATION_LIMIT)
+		skip, limit, err := middleware.ParsePagination(rw, r, USAGE_LIMIT)
 		if err != nil {
 			errors.CreateBadRequestErrorResponse(rw, err)
 			return
@@ -100,7 +94,6 @@ func GetTeamSnapshotsByFormatAndDate() http.HandlerFunc {
 			return
 		}
 		date := mux.Vars(r)["date"]
-		pokemon := r.URL.Query().Get("pokemon")
 
 		// Generate pipeline stages
 		intermediateStages := []bson.D{
@@ -126,15 +119,15 @@ func GetTeamSnapshotsByFormatAndDate() http.HandlerFunc {
 			},
 		}
 
-		pipeline := utils.MakeTeamQueryPipeline(pokemon, intermediateStages)
-		composite_key := utils.MakeCompositeKey(TEAMS_BY_FORMAT_DATE_STR, format, date, pokemon)
-		queryTeamsSnapshots(rw, pipeline, composite_key, skip, limit)
+		pipeline := utils.MakeUsageQueryPipeline(utils.Usage, intermediateStages)
+		composite_key := utils.MakeCompositeKey(USAGE_BY_FORMAT_DATE_STR, format)
+		queryUsageSnapshots(rw, pipeline, composite_key, skip, limit)
 	}
 }
 
-// Queries collection using aggregation pipeline and encode results.
+// Queries usage collection using aggregation pipeline and encode results.
 // Writes to cache if results found.
-func queryTeamsSnapshots(rw http.ResponseWriter, pipeline mongo.Pipeline, composite_key string, skip int, limit int) {
+func queryUsageSnapshots(rw http.ResponseWriter, pipeline mongo.Pipeline, composite_key string, skip int, limit int) {
 	start := time.Now()
 
 	var snapshots []bson.M
@@ -146,7 +139,7 @@ func queryTeamsSnapshots(rw http.ResponseWriter, pipeline mongo.Pipeline, compos
 		defer cancel()
 
 		// Run query with pipeline
-		cursor, err := db.TeamCollection.Aggregate(ctx, pipeline)
+		cursor, err := db.UsageCollection.Aggregate(ctx, pipeline)
 		if err != nil {
 			errors.CreateInternalServerErrorResponse(rw, err)
 			return

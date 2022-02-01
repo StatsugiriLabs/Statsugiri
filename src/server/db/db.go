@@ -17,6 +17,7 @@ const (
 // DB Client instance
 var DB *mongo.Client = ConnectDB()
 var TeamCollection *mongo.Collection = GetCollection(DB, utils.PokemonTeamSnapshotsCollectionName)
+var UsageCollection *mongo.Collection = GetCollection(DB, utils.PokemonUsageSnapshotsCollectionName)
 
 // Connects to the MongoDB database.
 // Returns a Mongo client for accessing the instance.
