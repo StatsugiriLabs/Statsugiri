@@ -59,9 +59,34 @@ func MakeTeamQueryPipeline(pokemon string, intermediateStages []bson.D) []bson.D
 			},
 		},
 	}
+	// Extract necessary fields
+	groupResponseStage := bson.D{
+		primitive.E{
+			Key: "$project", Value: bson.D{
+				primitive.E{
+					Key: "Date", Value: 1,
+				},
+				primitive.E{
+					Key: "FormatId", Value: 1,
+				},
+				primitive.E{
+					Key: "Teams", Value: 1,
+				},
+				primitive.E{
+					Key: "Rating", Value: 1,
+				},
+				primitive.E{
+					Key: "ReplayUploadDate", Value: 1,
+				},
+				primitive.E{
+					Key: "_id", Value: 0,
+				},
+			},
+		},
+	}
 
 	// Initialize pipeline stages
-	pipelineStages := []bson.D{unwindTeamStage, sortByFormatStage, sortByRatingStage, sortByDateStage}
+	pipelineStages := []bson.D{unwindTeamStage, sortByFormatStage, sortByRatingStage, sortByDateStage, groupResponseStage}
 	// Add intermediate aggregation stages
 	pipelineStages = append(pipelineStages, intermediateStages...)
 
@@ -84,6 +109,7 @@ func MakeTeamQueryPipeline(pokemon string, intermediateStages []bson.D) []bson.D
 // Generates a aggregation pipeline for usage queries.
 // Prepends team unwinding and reverse chronological sorting.
 func MakeUsageQueryPipeline(usageType UsageType, intermediateStages []bson.D) []bson.D {
+	// Assign usage field for project stage based on usage type
 	var usageProjectField primitive.E
 	switch usageType {
 	case Usage:
@@ -116,6 +142,7 @@ func MakeUsageQueryPipeline(usageType UsageType, intermediateStages []bson.D) []
 			},
 		},
 	}
+	// Extract necessary fields
 	groupUsageResponseStage := bson.D{
 		primitive.E{
 			Key: "$project", Value: bson.D{
