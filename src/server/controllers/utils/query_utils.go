@@ -5,6 +5,16 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+var pokemonUsageProjectField primitive.E = primitive.E{
+	Key: "PokemonUsage", Value: 1,
+}
+var pokemonPartnerUsageProjectField primitive.E = primitive.E{
+	Key: "PokemonPartnerUsage", Value: 1,
+}
+var pokemonAverageRatingUsageProjectField primitive.E = primitive.E{
+	Key: "PokemonAverageRatingUsage", Value: 1,
+}
+
 // Generates a aggregation pipeline for team queries.
 // Prepends team unwinding and reverse chronological sorting.
 // Includes Pokémon query if parameter provided.
@@ -67,6 +77,66 @@ func MakeTeamQueryPipeline(pokemon string, intermediateStages []bson.D) []bson.D
 			},
 		})
 	}
+
+	return pipelineStages
+}
+
+// Generates a aggregation pipeline for usage queries.
+// Prepends team unwinding and reverse chronological sorting.
+func MakeUsageQueryPipeline(usageType UsageType, intermediateStages []bson.D) []bson.D {
+	var usageProjectField primitive.E
+	switch usageType {
+	case Usage:
+		usageProjectField = pokemonUsageProjectField
+	case PartnerUsage:
+		usageProjectField = pokemonPartnerUsageProjectField
+	case RatingUsage:
+		usageProjectField = pokemonAverageRatingUsageProjectField
+	default:
+		usageProjectField = pokemonUsageProjectField
+	}
+
+	// Sort teams by format
+	sortByFormatStage := bson.D{
+		primitive.E{
+			Key: "$sort", Value: bson.D{
+				primitive.E{
+					Key: "FormatId", Value: 1,
+				},
+			},
+		},
+	}
+	// Sort teams in reverse chronological order
+	sortByDateStage := bson.D{
+		primitive.E{
+			Key: "$sort", Value: bson.D{
+				primitive.E{
+					Key: "Date", Value: -1,
+				},
+			},
+		},
+	}
+	groupUsageResponseStage := bson.D{
+		primitive.E{
+			Key: "$project", Value: bson.D{
+				primitive.E{
+					Key: "Date", Value: 1,
+				},
+				primitive.E{
+					Key: "FormatId", Value: 1,
+				},
+				primitive.E{
+					Key: "_id", Value: 0,
+				},
+				usageProjectField,
+			},
+		},
+	}
+
+	// Initialize pipeline stages
+	pipelineStages := []bson.D{sortByFormatStage, sortByDateStage, groupUsageResponseStage}
+	// Add intermediate aggregation stages
+	pipelineStages = append(pipelineStages, intermediateStages...)
 
 	return pipelineStages
 }

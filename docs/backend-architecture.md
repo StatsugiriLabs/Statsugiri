@@ -97,8 +97,8 @@ curl /api/formats
 
 ## `GET /api/teams`
 
-Get all recorded teams for every available format.
-Add `limit` and `offset` query params for pagination.
+Get all recorded team snapshots for every available format.
+Add `limit` and `offset` query params for pagination. Maximum limit of 50.
 Add `pokemon` query param to filter for teams featuring the specified Pokémon.
 
 ### Request
@@ -151,8 +151,8 @@ curl /api/teams
 
 ## `GET /api/teams/{format}`
 
-Get all recorded teams for a specific format.
-Add `limit` and `offset` query params for pagination.
+Get all recorded team snapshots for a specific format.
+Add `limit` and `offset` query params for pagination. Maximum limit of 50.
 Add `pokemon` query param to filter for teams featuring the specified Pokémon.
 
 ### Request
@@ -205,8 +205,8 @@ curl /api/teams/gen8vgc2021series11
 
 ## `GET /api/teams/{format}/{date}`
 
-Get all recorded teams for a specific format and date.
-Add `limit` and `offset` query params for pagination.
+Get all recorded team snapshots for a specific format and date.
+Add `limit` and `offset` query params for pagination. Maximum limit of 50.
 Add `pokemon` query param to filter for teams featuring the specified Pokémon.
 
 ### Request
@@ -255,33 +255,111 @@ curl /api/teams/gen8vgc2021series11/2022-01-22?pokemon=Urshifu
 ]
 ```
 
-## `GET /api/usage/{format}/{date}`
+## `GET /api/usage`
 
-Get most recent recorded individual Pokémon usage for specific format.
-Defaults to recent VGC format if format not provided (eg. `gen8vgc2021`).
-Defaults to most recent if date is not given.
+Get all recorded usage snapshots for every available format.
+Add `limit` and `offset` query params for pagination. Maximum limit of 10.
 
 ### Request
 
 ```console
-curl /api/usage/gen8vgc2021/2021-12-15
+curl /api/usage
 ```
 
 ### Response
 
 ```console
-{
-    date: 2021-12-15,
-    format: gen8vgc2021,
-    pokemon_usage: {
-        {
-            "incineroar": 47.0,
-            "rillaboom": 37.0,
-            "regieleki": 22.0,
+[
+    {
+        "Date": "2022-01-22",
+        "FormatId": "gen8ou",
+        "PokemonUsage": {
+            "Aegislash": 2,
+            "Blacephalon": 1,
+            "Blissey": 1,
+            "Chansey": 1,
             ...
-        },
+        }
+    },
+    {
+        ...
     }
-}
+]
+```
+
+## `GET /api/usage/{format}`
+
+Get all recorded usage snapshots for a specific format.
+Add `limit` and `offset` query params for pagination. Maximum limit of 10.
+
+### Request
+
+```console
+curl /api/usage/gen8ou
+```
+
+### Response
+
+```console
+[
+    {
+        "Date": "2022-01-27",
+        "FormatId": "gen8ou",
+        "PokemonUsage": {
+            "Arctozolt": 1,
+            "Barraskewda": 1,
+            "Bisharp": 1,
+            "Blacephalon": 1,
+            "Blissey": 2,
+            ...
+        }
+    },
+    {
+        "Date": "2022-01-26",
+        "FormatId": "gen8ou",
+        "PokemonUsage": {
+            "Arctovish": 1,
+            "Arctozolt": 2,
+            "Aurorus": 1,
+            "Barraskewda": 1,
+            "Bisharp": 1,
+            ...
+        }
+    },
+    {
+        ...
+    }
+]
+```
+
+## `GET /api/usage/{format}/{date}`
+
+Get all recorded usage snapshots for a specific format and date.
+Add `limit` and `offset` query params for pagination. Maximum limit of 10.
+
+### Request
+
+```console
+curl /api/usage/gen8ou/2022-01-27
+```
+
+### Response
+
+```console
+[
+    {
+        "Date": "2022-01-27",
+        "FormatId": "gen8ou",
+        "PokemonUsage": {
+            "Arctozolt": 1,
+            "Barraskewda": 1,
+            "Bisharp": 1,
+            "Blacephalon": 1,
+            "Blissey": 2,
+            ...
+        }
+    }
+]
 ```
 
 ## `GET /api/rating-usage/{format}/{date}`
