@@ -305,7 +305,7 @@ func TestMakeUsageQueryPipelinePartnerUsage(t *testing.T) {
 	assert.Equal(t, pipeline, expectedPipeline, "Pipelines do not match.")
 }
 
-// Test making query pipelines for partner usage.
+// Test making query pipelines for average rating usage.
 func TestMakeUsageQueryPipelineAverageRatingUsage(t *testing.T) {
 	intermediateStages := bson.D{
 		primitive.E{Key: "$match", Value: bson.D{
