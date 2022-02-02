@@ -20,109 +20,145 @@ import (
 )
 
 const (
-	USAGE_LIMIT              = 10
-	ALL_USAGE_STR            = "AllUsage"
-	USAGE_BY_FORMAT_STR      = "UsageByFormat"
-	USAGE_BY_FORMAT_DATE_STR = "UsageByFormatDate"
+	USAGE_LIMIT                      = 10
+	ALL_GENERIC_USAGE_STR            = "AllUsage"
+	GENERIC_USAGE_BY_FORMAT_STR      = "UsageByFormat"
+	GENERIC_USAGE_BY_FORMAT_DATE_STR = "UsageByFormatDate"
 )
 
 // Returns handler for retrieving all usage snapshots.
 func GetAllUsageSnapshots() http.HandlerFunc {
 	return func(rw http.ResponseWriter, r *http.Request) {
-		// Get parameters and pagination options
-		skip, limit, err := middleware.ParsePagination(rw, r, USAGE_LIMIT)
-		if err != nil {
-			errors.CreateBadRequestErrorResponse(rw, err)
-			return
-		}
-
-		pipeline := utils.MakeUsageQueryPipeline(utils.Usage, []bson.D{})
-		composite_key := utils.MakeCompositeKey(ALL_USAGE_STR)
-		queryUsageSnapshots(rw, pipeline, composite_key, skip, limit)
+		handleAllGenericUsageSnapshotsParams(rw, r, utils.Usage)
 	}
 }
 
-// Returns handler for retrieving all usage snapshots by format.
+// Returns handler for retrieving all rating usage snapshots.
+func GetAllRatingUsageSnapshots() http.HandlerFunc {
+	return func(rw http.ResponseWriter, r *http.Request) {
+		handleAllGenericUsageSnapshotsParams(rw, r, utils.RatingUsage)
+	}
+}
+
+// Returns handler for retrieving usage snapshots by format.
 func GetUsageSnapshotsByFormat() http.HandlerFunc {
 	return func(rw http.ResponseWriter, r *http.Request) {
-		// Get parameters and pagination options
-		skip, limit, err := middleware.ParsePagination(rw, r, USAGE_LIMIT)
-		if err != nil {
-			errors.CreateBadRequestErrorResponse(rw, err)
-			return
-		}
-		format := mux.Vars(r)["format"]
-		if !utils.ValidFormat(format) {
-			errors.CreateBadRequestErrorResponse(rw,
-				fmt.Errorf("Format (%s) is not supported", format))
-			return
-		}
-
-		// Generate pipeline stages
-		intermediateStages := []bson.D{
-			// Match with format provided
-			{
-				primitive.E{
-					Key: "$match", Value: bson.D{
-						primitive.E{
-							Key: "FormatId", Value: format,
-						},
-					},
-				},
-			},
-		}
-
-		pipeline := utils.MakeUsageQueryPipeline(utils.Usage, intermediateStages)
-		composite_key := utils.MakeCompositeKey(USAGE_BY_FORMAT_STR, format)
-		queryUsageSnapshots(rw, pipeline, composite_key, skip, limit)
+		handleGenericUsageSnapshotsByFormatParams(rw, r, utils.Usage)
 	}
 }
 
-// Returns handler for retrieving all usage snapshots by format and date.
+// Returns handler for retrieving rating usage snapshots by format.
+func GetRatingUsageSnapshotsByFormat() http.HandlerFunc {
+	return func(rw http.ResponseWriter, r *http.Request) {
+		handleGenericUsageSnapshotsByFormatParams(rw, r, utils.RatingUsage)
+	}
+}
+
+// Returns handler for retrieving usage snapshots by format and date.
 func GetUsageSnapshotsByFormatAndDate() http.HandlerFunc {
 	return func(rw http.ResponseWriter, r *http.Request) {
-		// Get parameters and pagination options
-		skip, limit, err := middleware.ParsePagination(rw, r, USAGE_LIMIT)
-		if err != nil {
-			errors.CreateBadRequestErrorResponse(rw, err)
-			return
-		}
-		format := mux.Vars(r)["format"]
-		if !utils.ValidFormat(format) {
-			errors.CreateBadRequestErrorResponse(rw,
-				fmt.Errorf("Format (%s) is not supported", format))
-			return
-		}
-		date := mux.Vars(r)["date"]
-
-		// Generate pipeline stages
-		intermediateStages := []bson.D{
-			// Match with format provided
-			{
-				primitive.E{
-					Key: "$match", Value: bson.D{
-						primitive.E{
-							Key: "FormatId", Value: format,
-						},
-					},
-				},
-			},
-			// Match with date provided
-			{
-				primitive.E{
-					Key: "$match", Value: bson.D{
-						primitive.E{
-							Key: "Date", Value: date,
-						},
-					},
-				},
-			},
-		}
-
-		pipeline := utils.MakeUsageQueryPipeline(utils.Usage, intermediateStages)
-		composite_key := utils.MakeCompositeKey(USAGE_BY_FORMAT_DATE_STR, format)
-		queryUsageSnapshots(rw, pipeline, composite_key, skip, limit)
+		handleGenericUsageSnapshotsByFormatAndDateParams(rw, r, utils.Usage)
 	}
+}
+
+// Returns handler for retrieving rating usage snapshots by format and date.
+func GetRatingUsageSnapshotsByFormatAndDate() http.HandlerFunc {
+	return func(rw http.ResponseWriter, r *http.Request) {
+		handleGenericUsageSnapshotsByFormatAndDateParams(rw, r, utils.RatingUsage)
+	}
+}
+
+// Handles generating parameters such as pagination and pipeline stages for retrieving all usage snapshots.
+func handleAllGenericUsageSnapshotsParams(rw http.ResponseWriter, r *http.Request, usageType utils.UsageType) {
+	// Get parameters and pagination options
+	skip, limit, err := middleware.ParsePagination(rw, r, USAGE_LIMIT)
+	if err != nil {
+		errors.CreateBadRequestErrorResponse(rw, err)
+		return
+	}
+	pipeline := utils.MakeUsageQueryPipeline(usageType, []bson.D{})
+	composite_key := utils.MakeCompositeKey(ALL_GENERIC_USAGE_STR, usageType.String())
+	queryUsageSnapshots(rw, pipeline, composite_key, skip, limit)
+}
+
+// Handles generating parameters such as pagination and pipeline stages for retrieving usage snapshots by format.
+func handleGenericUsageSnapshotsByFormatParams(rw http.ResponseWriter, r *http.Request, usageType utils.UsageType) {
+	// Get parameters and pagination options
+	skip, limit, err := middleware.ParsePagination(rw, r, USAGE_LIMIT)
+	if err != nil {
+		errors.CreateBadRequestErrorResponse(rw, err)
+		return
+	}
+	format := mux.Vars(r)["format"]
+	if !utils.ValidFormat(format) {
+		errors.CreateBadRequestErrorResponse(rw,
+			fmt.Errorf("Format (%s) is not supported", format))
+		return
+	}
+
+	// Generate pipeline stages
+	intermediateStages := []bson.D{
+		// Match with format provided
+		{
+			primitive.E{
+				Key: "$match", Value: bson.D{
+					primitive.E{
+						Key: "FormatId", Value: format,
+					},
+				},
+			},
+		},
+	}
+
+	pipeline := utils.MakeUsageQueryPipeline(utils.Usage, intermediateStages)
+	composite_key := utils.MakeCompositeKey(GENERIC_USAGE_BY_FORMAT_STR, usageType.String(), format)
+	queryUsageSnapshots(rw, pipeline, composite_key, skip, limit)
+}
+
+// Handles generating parameters such as pagination and pipeline stages for retrieving usage snapshots by format and date.
+func handleGenericUsageSnapshotsByFormatAndDateParams(rw http.ResponseWriter, r *http.Request, usageType utils.UsageType) {
+	// Get parameters and pagination options
+	skip, limit, err := middleware.ParsePagination(rw, r, USAGE_LIMIT)
+	if err != nil {
+		errors.CreateBadRequestErrorResponse(rw, err)
+		return
+	}
+	format := mux.Vars(r)["format"]
+	if !utils.ValidFormat(format) {
+		errors.CreateBadRequestErrorResponse(rw,
+			fmt.Errorf("Format (%s) is not supported", format))
+		return
+	}
+	// TODO: https://github.com/kelvinkoon/babiri_v2/issues/104
+	date := mux.Vars(r)["date"]
+
+	// Generate pipeline stages
+	intermediateStages := []bson.D{
+		// Match with format provided
+		{
+			primitive.E{
+				Key: "$match", Value: bson.D{
+					primitive.E{
+						Key: "FormatId", Value: format,
+					},
+				},
+			},
+		},
+		// Match with date provided
+		{
+			primitive.E{
+				Key: "$match", Value: bson.D{
+					primitive.E{
+						Key: "Date", Value: date,
+					},
+				},
+			},
+		},
+	}
+
+	pipeline := utils.MakeUsageQueryPipeline(utils.Usage, intermediateStages)
+	composite_key := utils.MakeCompositeKey(GENERIC_USAGE_BY_FORMAT_DATE_STR, usageType.String(), format, date)
+	queryUsageSnapshots(rw, pipeline, composite_key, skip, limit)
 }
 
 // Queries usage collection using aggregation pipeline and encode results.

@@ -12,6 +12,11 @@ const (
 	RatingUsage  UsageType = iota
 )
 
+// Function for converting usage type enum to string
+func (utype UsageType) String() string {
+	return [...]string{"Usage", "PartnerUsage", "RatingUsage"}[utype]
+}
+
 // DB terms
 var DbClusterName string = "babiri-dev-cluster"
 var PokemonTeamsSnapshotsCollection string = "pokemon_teams_snapshots"
