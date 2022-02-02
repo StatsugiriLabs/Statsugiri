@@ -100,6 +100,11 @@ func GetTeamSnapshotsByFormatAndDate() http.HandlerFunc {
 			return
 		}
 		date := mux.Vars(r)["date"]
+		if !utils.ValidDateFormat(date) {
+			errors.CreateBadRequestErrorResponse(rw,
+				fmt.Errorf("Date (%s) must match 'yyyy-mm-dd' format", date))
+			return
+		}
 		pokemon := r.URL.Query().Get("pokemon")
 
 		// Generate pipeline stages

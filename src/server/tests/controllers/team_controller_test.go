@@ -186,3 +186,27 @@ func TestGetTeamSnapshotsByFormatInvalidFormat(t *testing.T) {
 	assert.Equal(t, rr.Code, http.StatusBadRequest)
 	assert.Equal(t, string(body), "{\"error\":\"Format (not_a_real_format) is not supported\"}\n")
 }
+
+// Test providing an invalid date to endpoint.
+func TestGetTeamSnapshotsByFormatDateInvalidDate(t *testing.T) {
+	rr := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "/", nil)
+
+	// Set URL params
+	vars := map[string]string{
+		"format": "gen8ou",
+		"date":   "2021-1-31",
+	}
+	req = mux.SetURLVars(req, vars)
+
+	handler := http.HandlerFunc(controllers.GetTeamSnapshotsByFormatAndDate())
+	handler.ServeHTTP(rr, req)
+	body, err := io.ReadAll(rr.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Check status code
+	assert.Equal(t, rr.Code, http.StatusBadRequest)
+	assert.Equal(t, string(body), "{\"error\":\"Date (2021-1-31) must match 'yyyy-mm-dd' format\"}\n")
+}
