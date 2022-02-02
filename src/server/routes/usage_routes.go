@@ -10,7 +10,9 @@ func UsageRoute(router *mux.Router) {
 	router.HandleFunc("/usage", controllers.GetAllUsageSnapshots()).Methods("GET")
 	router.HandleFunc("/usage/{format}", controllers.GetUsageSnapshotsByFormat()).Methods("GET")
 	router.HandleFunc("/usage/{format}/{date}", controllers.GetUsageSnapshotsByFormatAndDate()).Methods("GET")
-	// router.HandleFunc("/rating-usage", controllers.GetAllUsageSnapshots()).Methods("GET")
+	router.HandleFunc("/rating-usage", controllers.GetAllRatingUsageSnapshots()).Methods("GET")
+	router.HandleFunc("/rating-usage/{format}", controllers.GetRatingUsageSnapshotsByFormat()).Methods("GET")
+	router.HandleFunc("/rating-usage/{format}/{date}", controllers.GetRatingUsageSnapshotsByFormatAndDate()).Methods("GET")
 	// router.HandleFunc("/partners-usage", controllers.GetAllUsageSnapshots()).Methods("GET")
 	// router.HandleFunc("/time-usage", controllers.GetAllUsageSnapshots()).Methods("GET")
 }
