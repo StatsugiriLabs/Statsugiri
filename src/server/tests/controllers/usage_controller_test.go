@@ -35,6 +35,16 @@ func getExpectedRatingUsageSnapshots() string {
 	return string(result)
 }
 
+func getExpectedPartnerUsageSnapshots() string {
+	jsonFile, err := os.Open("../assets/all_partner_usage_snapshots_test_res.txt")
+	result, err := ioutil.ReadAll(jsonFile)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return string(result)
+}
+
 func getExpectedUsageSnapshotsByFormat() string {
 	jsonFile, err := os.Open("../assets/format_usage_snapshots_test_res.txt")
 	result, err := ioutil.ReadAll(jsonFile)
@@ -55,6 +65,16 @@ func getExpectedRatingUsageSnapshotsByFormat() string {
 	return string(result)
 }
 
+func getExpectedPartnerUsageSnapshotsByFormat() string {
+	jsonFile, err := os.Open("../assets/format_partner_usage_snapshots_test_res.txt")
+	result, err := ioutil.ReadAll(jsonFile)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return string(result)
+}
+
 func getExpectedUsageSnapshotsByFormatDate() string {
 	jsonFile, err := os.Open("../assets/format_date_usage_snapshots_test_res.txt")
 	result, err := ioutil.ReadAll(jsonFile)
@@ -67,6 +87,16 @@ func getExpectedUsageSnapshotsByFormatDate() string {
 
 func getExpectedRatingUsageSnapshotsByFormatDate() string {
 	jsonFile, err := os.Open("../assets/format_date_rating_usage_snapshots_test_res.txt")
+	result, err := ioutil.ReadAll(jsonFile)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return string(result)
+}
+
+func getExpectedPartnerUsageSnapshotsByFormatDate() string {
+	jsonFile, err := os.Open("../assets/format_date_partner_usage_snapshots_test_res.txt")
 	result, err := ioutil.ReadAll(jsonFile)
 	if err != nil {
 		log.Fatal(err)
@@ -99,7 +129,7 @@ func TestGetAllUsageSnapshotsHappyPath(t *testing.T) {
 	assert.Equal(t, string(body), getExpectedUsageSnapshots())
 }
 
-// Test retrieving all usage snapshots.
+// Test retrieving all rating usage snapshots.
 func TestGetAllRatingUsageSnapshotsHappyPath(t *testing.T) {
 	rr := httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
@@ -121,6 +151,30 @@ func TestGetAllRatingUsageSnapshotsHappyPath(t *testing.T) {
 	assert.Equal(t, rr.Code, http.StatusOK)
 	// Check response body
 	assert.Equal(t, string(body), getExpectedRatingUsageSnapshots())
+}
+
+// Test retrieving all partner usage snapshots.
+func TestGetAllPartnerUsageSnapshotsHappyPath(t *testing.T) {
+	rr := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "/", nil)
+
+	// Set query params
+	q := req.URL.Query()
+	q.Add("page", "1")
+	q.Add("limit", "5")
+	req.URL.RawQuery = q.Encode()
+
+	handler := http.HandlerFunc(controllers.GetAllPartnerUsageSnapshots())
+	handler.ServeHTTP(rr, req)
+	body, err := io.ReadAll(rr.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Check status code
+	assert.Equal(t, rr.Code, http.StatusOK)
+	// Check response body
+	assert.Equal(t, string(body), getExpectedPartnerUsageSnapshots())
 }
 
 // Test retrieving usage snapshots by format.
@@ -183,6 +237,36 @@ func TestGetRatingUsageSnapshotsByFormatHappyPath(t *testing.T) {
 	assert.Equal(t, string(body), getExpectedRatingUsageSnapshotsByFormat())
 }
 
+// Test retrieving partner usage snapshots by format.
+func TestGetPartnerUsageSnapshotsByFormatHappyPath(t *testing.T) {
+	rr := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "/", nil)
+
+	// Set URL params
+	vars := map[string]string{
+		"format": "gen8ou",
+	}
+	req = mux.SetURLVars(req, vars)
+
+	// Set query params
+	q := req.URL.Query()
+	q.Add("page", "1")
+	q.Add("limit", "5")
+	req.URL.RawQuery = q.Encode()
+
+	handler := http.HandlerFunc(controllers.GetPartnerUsageSnapshotsByFormat())
+	handler.ServeHTTP(rr, req)
+	body, err := io.ReadAll(rr.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Check status code
+	assert.Equal(t, rr.Code, http.StatusOK)
+	// Check response body
+	assert.Equal(t, string(body), getExpectedPartnerUsageSnapshotsByFormat())
+}
+
 // Test retrieving usage snapshots by format and date.
 func TestGetUsageSnapshotsByFormatDateHappyPath(t *testing.T) {
 	rr := httptest.NewRecorder()
@@ -243,4 +327,82 @@ func TestGetRatingUsageSnapshotsByFormatDateHappyPath(t *testing.T) {
 	assert.Equal(t, rr.Code, http.StatusOK)
 	// Check response body
 	assert.Equal(t, string(body), getExpectedRatingUsageSnapshotsByFormatDate())
+}
+
+// Test retrieving partner usage snapshots by format and date.
+func TestGetPartnerUsageSnapshotsByFormatDateHappyPath(t *testing.T) {
+	rr := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "/", nil)
+
+	// Set URL params
+	vars := map[string]string{
+		"format": "gen8ou",
+		"date":   "2022-01-26",
+	}
+	req = mux.SetURLVars(req, vars)
+
+	// Set query params
+	q := req.URL.Query()
+	q.Add("page", "1")
+	q.Add("limit", "5")
+	req.URL.RawQuery = q.Encode()
+
+	handler := http.HandlerFunc(controllers.GetPartnerUsageSnapshotsByFormatAndDate())
+	handler.ServeHTTP(rr, req)
+	body, err := io.ReadAll(rr.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Check status code
+	assert.Equal(t, rr.Code, http.StatusOK)
+	// Check response body
+	assert.Equal(t, string(body), getExpectedPartnerUsageSnapshotsByFormatDate())
+}
+
+// Test providing an invalid format to endpoint.
+func TestGetUsageSnapshotsByFormatInvalidFormat(t *testing.T) {
+	rr := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "/", nil)
+
+	// Set URL params
+	vars := map[string]string{
+		"format": "not_a_real_format",
+	}
+	req = mux.SetURLVars(req, vars)
+
+	handler := http.HandlerFunc(controllers.GetUsageSnapshotsByFormat())
+	handler.ServeHTTP(rr, req)
+	body, err := io.ReadAll(rr.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Check status code
+	assert.Equal(t, rr.Code, http.StatusBadRequest)
+	assert.Equal(t, string(body), "{\"error\":\"Format (not_a_real_format) is not supported\"}\n")
+}
+
+// Test providing an invalid date to endpoint.
+func TestGetUsageSnapshotsByFormatDateInvalidDate(t *testing.T) {
+	rr := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "/", nil)
+
+	// Set URL params
+	vars := map[string]string{
+		"format": "gen8ou",
+		"date":   "2021-1-31",
+	}
+	req = mux.SetURLVars(req, vars)
+
+	handler := http.HandlerFunc(controllers.GetUsageSnapshotsByFormatAndDate())
+	handler.ServeHTTP(rr, req)
+	body, err := io.ReadAll(rr.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Check status code
+	assert.Equal(t, rr.Code, http.StatusBadRequest)
+	assert.Equal(t, string(body), "{\"error\":\"Date (2021-1-31) must match 'yyyy-mm-dd' format\"}\n")
 }

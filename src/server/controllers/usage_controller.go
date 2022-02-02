@@ -26,6 +26,8 @@ const (
 	GENERIC_USAGE_BY_FORMAT_DATE_STR = "UsageByFormatDate"
 )
 
+// Handlers for router
+
 // Returns handler for retrieving all usage snapshots.
 func GetAllUsageSnapshots() http.HandlerFunc {
 	return func(rw http.ResponseWriter, r *http.Request) {
@@ -37,6 +39,13 @@ func GetAllUsageSnapshots() http.HandlerFunc {
 func GetAllRatingUsageSnapshots() http.HandlerFunc {
 	return func(rw http.ResponseWriter, r *http.Request) {
 		handleAllGenericUsageSnapshotsParams(rw, r, utils.RatingUsage)
+	}
+}
+
+// Returns handler for retrieving all partner usage snapshots.
+func GetAllPartnerUsageSnapshots() http.HandlerFunc {
+	return func(rw http.ResponseWriter, r *http.Request) {
+		handleAllGenericUsageSnapshotsParams(rw, r, utils.PartnerUsage)
 	}
 }
 
@@ -54,6 +63,13 @@ func GetRatingUsageSnapshotsByFormat() http.HandlerFunc {
 	}
 }
 
+// Returns handler for retrieving partner usage snapshots by format.
+func GetPartnerUsageSnapshotsByFormat() http.HandlerFunc {
+	return func(rw http.ResponseWriter, r *http.Request) {
+		handleGenericUsageSnapshotsByFormatParams(rw, r, utils.PartnerUsage)
+	}
+}
+
 // Returns handler for retrieving usage snapshots by format and date.
 func GetUsageSnapshotsByFormatAndDate() http.HandlerFunc {
 	return func(rw http.ResponseWriter, r *http.Request) {
@@ -65,6 +81,13 @@ func GetUsageSnapshotsByFormatAndDate() http.HandlerFunc {
 func GetRatingUsageSnapshotsByFormatAndDate() http.HandlerFunc {
 	return func(rw http.ResponseWriter, r *http.Request) {
 		handleGenericUsageSnapshotsByFormatAndDateParams(rw, r, utils.RatingUsage)
+	}
+}
+
+// Returns handler for retrieving partner usage snapshots by format and date.
+func GetPartnerUsageSnapshotsByFormatAndDate() http.HandlerFunc {
+	return func(rw http.ResponseWriter, r *http.Request) {
+		handleGenericUsageSnapshotsByFormatAndDateParams(rw, r, utils.PartnerUsage)
 	}
 }
 
@@ -110,7 +133,7 @@ func handleGenericUsageSnapshotsByFormatParams(rw http.ResponseWriter, r *http.R
 		},
 	}
 
-	pipeline := utils.MakeUsageQueryPipeline(utils.Usage, intermediateStages)
+	pipeline := utils.MakeUsageQueryPipeline(usageType, intermediateStages)
 	composite_key := utils.MakeCompositeKey(GENERIC_USAGE_BY_FORMAT_STR, usageType.String(), format)
 	queryUsageSnapshots(rw, pipeline, composite_key, skip, limit)
 }
@@ -129,8 +152,12 @@ func handleGenericUsageSnapshotsByFormatAndDateParams(rw http.ResponseWriter, r 
 			fmt.Errorf("Format (%s) is not supported", format))
 		return
 	}
-	// TODO: https://github.com/kelvinkoon/babiri_v2/issues/104
 	date := mux.Vars(r)["date"]
+	if !utils.ValidDateFormat(date) {
+		errors.CreateBadRequestErrorResponse(rw,
+			fmt.Errorf("Date (%s) must match 'yyyy-mm-dd' format", date))
+		return
+	}
 
 	// Generate pipeline stages
 	intermediateStages := []bson.D{
@@ -156,7 +183,7 @@ func handleGenericUsageSnapshotsByFormatAndDateParams(rw http.ResponseWriter, r 
 		},
 	}
 
-	pipeline := utils.MakeUsageQueryPipeline(utils.Usage, intermediateStages)
+	pipeline := utils.MakeUsageQueryPipeline(usageType, intermediateStages)
 	composite_key := utils.MakeCompositeKey(GENERIC_USAGE_BY_FORMAT_DATE_STR, usageType.String(), format, date)
 	queryUsageSnapshots(rw, pipeline, composite_key, skip, limit)
 }
