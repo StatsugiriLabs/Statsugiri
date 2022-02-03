@@ -23,7 +23,7 @@ const (
 	ALL_TEAMS_STR            = "AllTeams"
 	TEAMS_BY_FORMAT_STR      = "TeamsByFormat"
 	TEAMS_BY_FORMAT_DATE_STR = "TeamsByFormatDate"
-	PAGINATION_LIMIT         = 50
+	PAGINATION_LIMIT         = 10
 )
 
 // Returns handler for retrieving all team snapshots.

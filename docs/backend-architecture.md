@@ -11,7 +11,6 @@ The backend architecture processes the time-series usage and global ranking snap
 -   AWS Elastic Container Registry
 -   AWS Cloudwatch
 -   AWS EventBridge
--   Redis
 
 # Database Models
 
