@@ -11,7 +11,6 @@ The backend architecture processes the time-series usage and global ranking snap
 -   AWS Elastic Container Registry
 -   AWS Cloudwatch
 -   AWS EventBridge
--   Redis
 
 # Database Models
 
@@ -98,7 +97,7 @@ curl /api/formats
 ## `GET /api/teams`
 
 Get all recorded team snapshots for every available format.
-Add `limit` and `offset` query params for pagination. Maximum limit of 50.
+Add `limit` and `offset` query params for pagination. Maximum limit of 10.
 Add `pokemon` query param to filter for teams featuring the specified Pokémon.
 
 ### Request
@@ -152,7 +151,7 @@ curl /api/teams
 ## `GET /api/teams/{format}`
 
 Get all recorded team snapshots for a specific format.
-Add `limit` and `offset` query params for pagination. Maximum limit of 50.
+Add `limit` and `offset` query params for pagination. Maximum limit of 10.
 Add `pokemon` query param to filter for teams featuring the specified Pokémon.
 
 ### Request
@@ -206,7 +205,7 @@ curl /api/teams/gen8vgc2021series11
 ## `GET /api/teams/{format}/{date}`
 
 Get all recorded team snapshots for a specific format and date.
-Add `limit` and `offset` query params for pagination. Maximum limit of 50.
+Add `limit` and `offset` query params for pagination. Maximum limit of 10.
 Add `pokemon` query param to filter for teams featuring the specified Pokémon.
 
 ### Request
