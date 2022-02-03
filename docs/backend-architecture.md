@@ -362,93 +362,255 @@ curl /api/usage/gen8ou/2022-01-27
 ]
 ```
 
+## `GET /api/rating-usage`
+
+Get all recorded rating-to-usage snapshots for every available format.
+Add `limit` and `offset` query params for pagination. Maximum limit of 10.
+
+### Request
+
+```console
+curl /api/rating-usage
+```
+
+### Response
+
+```console
+[
+    {
+        "Date": "2022-01-26",
+        "FormatId": "gen8ou",
+        "PokemonAverageRatingUsage": {
+            "Arctovish": 1900,
+            "Arctozolt": 1889,
+            "Aurorus": 1900,
+            "Barraskewda": 1958,
+            "Bisharp": 1860,
+            ...
+        }
+    },
+    {
+        ...
+    }
+]
+```
+
+## `GET /api/rating-usage/{format}`
+
+Get all recorded rating-to-usage snapshots for a specific format.
+Add `limit` and `offset` query params for pagination. Maximum limit of 10.
+
+### Request
+
+```console
+curl /api/rating-usage/gen8ou
+```
+
+### Response
+
+```console
+[
+    {
+        "Date": "2022-01-25",
+        "FormatId": "gen8ou",
+        "PokemonAverageRatingUsage": {
+            "Arctovish": 1911,
+            "Arctozolt": 1900,
+            "Aurorus": 1911,
+            "Barraskewda": 1957,
+            "Blacephalon": 1980,
+            ...
+        }
+    },
+    {
+        "Date": "2022-01-24",
+        "FormatId": "gen8ou",
+        "PokemonAverageRatingUsage": {
+            "Aegislash": 1906,
+            "Arctovish": 1891,
+            "Arctozolt": 1895,
+            "Aurorus": 1891,
+            "Azumarill": 1938,
+            ...
+        }
+    },
+    {
+        ...
+    }
+]
+```
+
 ## `GET /api/rating-usage/{format}/{date}`
 
-Get most recent recorded Pokémon rating to usage ratio for specific format.
-Filter by Pokémon using `-F pokemon[]={pokemon}`.
-Defaults to recent VGC format if format not provided (eg. `gen8vgc2021`).
-Defaults to most recent if date is not given.
+Get all recorded rating-to-usage snapshots for a specific format and date.
+Add `limit` and `offset` query params for pagination. Maximum limit of 10.
 
 ### Request
 
 ```console
-curl /api/rating-usage/gen8vgc2021/2021-12-15
+curl /api/rating-usage/gen8ou/2022-01-27
 ```
 
 ### Response
 
 ```console
-{
-    date: 2021-12-15,
-    format: gen8vgc2021,
-    rating_usage_ratio: {
-        {
-            "incineroar": 35.4,
-            "rillaboom": 21.3,
+[
+    {
+        "Date": "2022-01-27",
+        "FormatId": "gen8ou",
+        "PokemonAverageRatingUsage": {
+            "Arctozolt": 1869,
+            "Barraskewda": 1965,
+            "Bisharp": 1891,
+            "Blacephalon": 1940,
+            "Blissey": 1884,
             ...
-        },
+        }
     }
-}
+]
 ```
 
-## `GET /api/core-usage/{date}`
+## `GET /api/partner-usage`
 
-Get most recent recorded Pokémon core combinations of 3. Exclusive to current VGC format.
-Filter by Pokémon using `-F pokemon[]={pokemon}`.
-Defaults to most recent if date is not given.
-
-Add `limit` and `offset` query params for pagination.
+Get all recorded partner usage snapshots for every available format.
+Add `limit` and `offset` query params for pagination. Maximum limit of 10.
 
 ### Request
 
 ```console
-curl /api/core-usage/2021-12-15
+curl /api/partner-usage
 ```
 
 ### Response
 
 ```console
-{
-    date: 2021-12-15,
-    format: gen8vgc2021,
-    core_usage: {
-        {
-            ["incineroar", "rillaboom", "regieleki"]: 11,
-            ["torkoal", "venusaur", "incineroar"]: 8,
+[
+    {
+        "Date": "2022-01-24",
+        "FormatId": "gen8vgc2021series11",
+        "PokemonPartnerUsage": {
+        "Calyrex-Ice": {
+            "Incineroar": 1,
+            "Kyogre": 1,
+            "Mimikyu": 1,
+            "Regieleki": 1,
+            "Venusaur": 1
+        },
+        "Calyrex-Shadow": {
+            "Chandelure": 1,
+            "Tapu Lele": 1,
+            "Thundurus": 1,
+            "Urshifu": 1,
+            "Whimsicott": 1
+        },
+        ...
+    },
+    {
+        ...
+    }
+]
+```
+
+## `GET /api/partner-usage/{format}`
+
+Get all recorded partner usage snapshots for a specific format.
+Add `limit` and `offset` query params for pagination. Maximum limit of 10.
+
+### Request
+
+```console
+curl /api/partner-usage/gen8vgc2021series11
+```
+
+### Response
+
+```console
+[
+    {
+        "Date": "2022-01-23",
+        "FormatId": "gen8vgc2021series11",
+        "PokemonPartnerUsage": {
+            "Calyrex-Ice": {
+                "Incineroar": 1,
+                "Kyogre": 1,
+                "Mimikyu": 1,
+                "Regieleki": 1,
+                "Venusaur": 1
+            },
+            "Calyrex-Shadow": {
+                "Chandelure": 1,
+                "Tapu Lele": 1,
+                "Thundurus": 1,
+                "Urshifu": 1,
+                "Whimsicott": 1
+            },
             ...
-        },
+        }
+    },
+    {
+        "Date": "2022-01-22",
+        "FormatId": "gen8vgc2021series11",
+        "PokemonPartnerUsage": {
+            "Araquanid": {
+                "Bronzong": 1,
+                "Incineroar": 1,
+                "Kyogre": 1,
+                "Porygon2": 1,
+                "Tapu Koko": 1
+            },
+            "Bronzong": {
+                "Araquanid": 1,
+                "Incineroar": 1,
+                "Kyogre": 1,
+                "Porygon2": 1,
+                "Tapu Koko": 1
+            },
+            ...
+        }
+    },
+    {
+        ...
     }
-}
+]
 ```
 
-## `GET /api/partners/{pokemon}/{date}`
+## `GET /api/partner-usage/{format}/{date}`
 
-Get Pokémon's top 5 partners. Exclusive to current VGC format.
-Defaults to most recent if date is not given.
+Get all recorded partner usage snapshots for a specific format and date.
+Add `limit` and `offset` query params for pagination. Maximum limit of 10.
 
 ### Request
 
 ```console
-curl /api/core-usage/2021-12-15
+curl /api/rating-usage/gen8vgc2021series11/2022-01-27
 ```
 
 ### Response
 
 ```console
-{
-    date: 2021-12-15,
-    format: gen8vgc2021,
-    pokemon: "togekiss",
-    partners: {
-        {
-            incineroar: 27,
-            rillaboom: 25,
-            whimsicott: 16,
-            regieleki: 15,
-            amoonguss: 11,
-        },
+[
+    {
+        "Date": "2022-01-27",
+        "FormatId": "gen8vgc2021series11",
+        "PokemonPartnerUsage": {
+            "Araquanid": {
+                "Bronzong": 1,
+                "Incineroar": 1,
+                "Kyogre": 1,
+                "Porygon2": 1,
+                "Tapu Koko": 1
+            },
+            "Bronzong": {
+                "Araquanid": 1,
+                "Incineroar": 1,
+                "Kyogre": 1,
+                "Porygon2": 1,
+                "Tapu Koko": 1
+            },
+            ...
+        }
     }
-}
+]
 ```
 
 ## `GET /api/timeseries-usage/{format}/{pokemon}`
