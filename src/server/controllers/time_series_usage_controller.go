@@ -12,7 +12,7 @@ import (
 	db "github.com/kelvinkoon/babiri_v2/db"
 	"github.com/kelvinkoon/babiri_v2/errors"
 	"github.com/kelvinkoon/babiri_v2/models"
-	"github.com/kelvinkoon/babiri_v2/responses"
+	"github.com/kelvinkoon/babiri_v2/transformers"
 	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -84,45 +84,8 @@ func queryTimeSeriesData(rw http.ResponseWriter, pipeline mongo.Pipeline, pokemo
 		panic(err)
 	}
 
-	// TODO: Move into helper function to convert to response
-	// Filter for unique formats in results
-	formatIdList := make(map[string]bool)
-	for _, snapshot := range snapshots {
-		if _, found := formatIdList[snapshot.FormatId]; !found {
-			formatIdList[snapshot.FormatId] = true
-		}
-	}
-
-	// Create formatUsageSnapshots from formatIdList
-	var formatUsageSnapshots []responses.FormatUsageSnapshot
-	for formatId := range formatIdList {
-		// Create record of time series usage snapshots
-		var timeSeriesUsageSnapshots []responses.TimeSeriesUsageSnapshot
-		for _, snapshot := range snapshots {
-			if snapshot.FormatId == formatId {
-				var timeSeriesUsageSnapshot responses.TimeSeriesUsageSnapshot
-				timeSeriesUsageSnapshot.Date = snapshot.Date
-				usage, found := snapshot.PokemonUsage[pokemon]
-				if found {
-					timeSeriesUsageSnapshot.Usage = usage
-				} else {
-					timeSeriesUsageSnapshot.Usage = 0
-				}
-				timeSeriesUsageSnapshots = append(timeSeriesUsageSnapshots, timeSeriesUsageSnapshot)
-			}
-		}
-
-		// Create FormatUsageSnapshot
-		var formatUsageSnapshot responses.FormatUsageSnapshot
-		formatUsageSnapshot.FormatId = formatId
-		formatUsageSnapshot.TimeSeriesUsageSnapshots = timeSeriesUsageSnapshots
-		formatUsageSnapshots = append(formatUsageSnapshots, formatUsageSnapshot)
-	}
-
-	// Create response
-	var response responses.TimeSeriesUsageResponse
-	response.Pokemon = pokemon
-	response.FormatUsageSnapshots = formatUsageSnapshots
+	// Transform snapshots to response
+	response := transformers.TransformUsageSnapshotsToResponse(pokemon, snapshots)
 
 	log.Infof("Results returned in %s", time.Since(start))
 	rw.WriteHeader(http.StatusOK)
