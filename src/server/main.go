@@ -19,10 +19,11 @@ func main() {
 	db.ConnectDB()
 
 	// Configure routes
+	routes.HealthRoute(router)
+	routes.FormatRoute(router)
 	routes.TeamRoute(router)
 	routes.UsageRoute(router)
-	routes.FormatRoute(router)
-	routes.HealthRoute(router)
+	routes.TimeSeriesUsageRoute(router)
 
 	log.Infof("Server running on Port 3000")
 	log.Fatal(http.ListenAndServe(":3000", router))

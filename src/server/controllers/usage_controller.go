@@ -20,7 +20,6 @@ import (
 )
 
 const (
-	USAGE_LIMIT                      = 10
 	ALL_GENERIC_USAGE_STR            = "AllUsage"
 	GENERIC_USAGE_BY_FORMAT_STR      = "UsageByFormat"
 	GENERIC_USAGE_BY_FORMAT_DATE_STR = "UsageByFormatDate"
@@ -94,7 +93,7 @@ func GetPartnerUsageSnapshotsByFormatAndDate() http.HandlerFunc {
 // Handles generating parameters such as pagination and pipeline stages for retrieving all usage snapshots.
 func handleAllGenericUsageSnapshotsParams(rw http.ResponseWriter, r *http.Request, usageType utils.UsageType) {
 	// Get parameters and pagination options
-	skip, limit, err := middleware.ParsePagination(rw, r, USAGE_LIMIT)
+	skip, limit, err := middleware.ParsePagination(rw, r, utils.UsageLimit)
 	if err != nil {
 		errors.CreateBadRequestErrorResponse(rw, err)
 		return
@@ -107,7 +106,7 @@ func handleAllGenericUsageSnapshotsParams(rw http.ResponseWriter, r *http.Reques
 // Handles generating parameters such as pagination and pipeline stages for retrieving usage snapshots by format.
 func handleGenericUsageSnapshotsByFormatParams(rw http.ResponseWriter, r *http.Request, usageType utils.UsageType) {
 	// Get parameters and pagination options
-	skip, limit, err := middleware.ParsePagination(rw, r, USAGE_LIMIT)
+	skip, limit, err := middleware.ParsePagination(rw, r, utils.UsageLimit)
 	if err != nil {
 		errors.CreateBadRequestErrorResponse(rw, err)
 		return
@@ -141,7 +140,7 @@ func handleGenericUsageSnapshotsByFormatParams(rw http.ResponseWriter, r *http.R
 // Handles generating parameters such as pagination and pipeline stages for retrieving usage snapshots by format and date.
 func handleGenericUsageSnapshotsByFormatAndDateParams(rw http.ResponseWriter, r *http.Request, usageType utils.UsageType) {
 	// Get parameters and pagination options
-	skip, limit, err := middleware.ParsePagination(rw, r, USAGE_LIMIT)
+	skip, limit, err := middleware.ParsePagination(rw, r, utils.UsageLimit)
 	if err != nil {
 		errors.CreateBadRequestErrorResponse(rw, err)
 		return

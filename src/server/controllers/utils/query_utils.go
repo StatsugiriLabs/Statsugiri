@@ -168,6 +168,47 @@ func MakeUsageQueryPipeline(usageType UsageType, intermediateStages []bson.D) []
 	return pipelineStages
 }
 
+func MakeTimeSeriesUsageQueryPipeline(pokemon string, intermediateStages []bson.D) []bson.D {
+	// Sort usage in reverse chronological order
+	sortByDateStage := bson.D{
+		primitive.E{
+			Key: "$sort", Value: bson.D{
+				primitive.E{
+					Key: "Date", Value: -1,
+				},
+			},
+		},
+	}
+
+	// Extract necessary fields
+	pokemonKey := "PokemonUsage." + pokemon
+	groupUsageResponseStage := bson.D{
+		primitive.E{
+			Key: "$project", Value: bson.D{
+				primitive.E{
+					Key: "Date", Value: 1,
+				},
+				primitive.E{
+					Key: "FormatId", Value: 1,
+				},
+				primitive.E{
+					Key: "_id", Value: 0,
+				},
+				primitive.E{
+					Key: pokemonKey, Value: 1,
+				},
+			},
+		},
+	}
+
+	// Initialize pipeline stages
+	pipelineStages := []bson.D{sortByDateStage, groupUsageResponseStage}
+	// Add intermediate aggregation stages
+	pipelineStages = append(pipelineStages, intermediateStages...)
+
+	return pipelineStages
+}
+
 // Generates cache composite key from request type, Pokémon, and pagination options.
 func MakeCompositeKey(params ...string) string {
 	// Generate composite key
