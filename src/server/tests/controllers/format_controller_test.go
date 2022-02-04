@@ -16,7 +16,7 @@ import (
 // Construct expected format response as string
 func getExpectedFormatResponse() string {
 	formats := utils.Formats
-	responseBody := `{"formats":[`
+	responseBody := `{"Formats":[`
 	for i, format := range formats {
 		responseBody += "\"" + format + "\""
 		// Ignore comma for last format item

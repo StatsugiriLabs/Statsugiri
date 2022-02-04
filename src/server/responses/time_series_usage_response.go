@@ -1,5 +1,6 @@
 package responses
 
+// Response for `time-usage` endpoint.
 type TimeSeriesUsageResponse struct {
 	Pokemon              string
 	FormatUsageSnapshots []FormatUsageSnapshot
