@@ -21,7 +21,7 @@ import (
 
 func GetTimeSeriesUsageByPokemon() http.HandlerFunc {
 	return func(rw http.ResponseWriter, r *http.Request) {
-		// TODO: Parse query params for window of time
+		// TODO: https://github.com/kelvinkoon/babiri_v2/issues/112
 		pokemon := mux.Vars(r)["pokemon"]
 
 		// Generate pipeline stages
@@ -34,7 +34,7 @@ func GetTimeSeriesUsageByPokemon() http.HandlerFunc {
 
 func GetTimeSeriesUsageByPokemonFormat() http.HandlerFunc {
 	return func(rw http.ResponseWriter, r *http.Request) {
-		// TODO: Parse query params for window of time
+		// TODO: https://github.com/kelvinkoon/babiri_v2/issues/112
 		pokemon := mux.Vars(r)["pokemon"]
 		format := mux.Vars(r)["format"]
 		if !utils.ValidFormat(format) {
@@ -79,11 +79,12 @@ func queryTimeSeriesData(rw http.ResponseWriter, pipeline mongo.Pipeline, pokemo
 	}
 	defer cursor.Close(ctx)
 
-	// Iterate and unmarshal through query results 
+	// Iterate and unmarshal through query results
 	if err = cursor.All(ctx, &snapshots); err != nil {
 		panic(err)
 	}
 
+	// TODO: Move into helper function to convert to response
 	// Filter for unique formats in results
 	formatIdList := make(map[string]bool)
 	for _, snapshot := range snapshots {
@@ -91,7 +92,7 @@ func queryTimeSeriesData(rw http.ResponseWriter, pipeline mongo.Pipeline, pokemo
 			formatIdList[snapshot.FormatId] = true
 		}
 	}
-	
+
 	// Create formatUsageSnapshots from formatIdList
 	var formatUsageSnapshots []responses.FormatUsageSnapshot
 	for formatId := range formatIdList {

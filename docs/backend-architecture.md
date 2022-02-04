@@ -612,30 +612,122 @@ curl /api/rating-usage/gen8vgc2021series11/2022-01-27
 ]
 ```
 
-## `GET /api/timeseries-usage/{format}/{pokemon}`
+## `GET /api/time-usage/{pokemon}`
 
-Get Pokémon's time-series usage to present.
-
-Add `limit` and `offset` query params for pagination.
+Get Pokémon's time-series usage to most recent date for all formats.
 
 ### Request
 
 ```console
-curl /api/timeseries-usage/gen8vgc2021/incineroar
+curl /api/time-usage/Landorus-Therian
 ```
 
 ### Response
 
 ```console
 {
-    format: gen8vgc2021,
-    pokemon: togekiss,
-    time-usage: {
-        "2021-12-15": 25,
-        "2021-12-14": 21,
-        "2021-12-13": 23,
-        "2021-12-12": 13,
-        ...
+  "Pokemon": "Landorus-Therian",
+  "FormatUsageSnapshots": [
+    {
+      "FormatId": "gen8ou",
+      "TimeSeriesUsageSnapshots": [
+        {
+          "Date": "2022-01-27",
+          "Usage": 7
+        },
+        {
+          "Date": "2022-01-26",
+          "Usage": 6
+        },
+        {
+          "Date": "2022-01-25",
+          "Usage": 7
+        },
+        {
+          "Date": "2022-01-24",
+          "Usage": 6
+        },
+        {
+          "Date": "2022-01-22",
+          "Usage": 7
+        }
+      ]
+    },
+    {
+      "FormatId": "gen8vgc2021series11",
+      "TimeSeriesUsageSnapshots": [
+        {
+          "Date": "2022-01-27",
+          "Usage": 2
+        },
+        {
+          "Date": "2022-01-26",
+          "Usage": 4
+        },
+        {
+          "Date": "2022-01-25",
+          "Usage": 4
+        },
+        {
+          "Date": "2022-01-24",
+          "Usage": 4
+        },
+        {
+          "Date": "2022-01-23",
+          "Usage": 4
+        },
+        {
+          "Date": "2022-01-22",
+          "Usage": 3
+        }
+      ]
+    },
+    ...
+  ]
+}
+```
+
+## `GET /api/time-usage/{pokemon}/{format}`
+
+Get Pokémon's time-series usage to most recent date for a specific format.
+
+### Request
+
+```console
+curl /api/time-usage/Landorus-Therian/gen8ou
+```
+
+### Response
+
+```console
+{
+  "Pokemon": "Landorus-Therian",
+  "FormatUsageSnapshots": [
+    {
+      "FormatId": "gen8ou",
+      "TimeSeriesUsageSnapshots": [
+        {
+          "Date": "2022-01-27",
+          "Usage": 7
+        },
+        {
+          "Date": "2022-01-26",
+          "Usage": 6
+        },
+        {
+          "Date": "2022-01-25",
+          "Usage": 7
+        },
+        {
+          "Date": "2022-01-24",
+          "Usage": 6
+        },
+        {
+          "Date": "2022-01-22",
+          "Usage": 7
+        }
+      ]
     }
+  ]
 }
 ```

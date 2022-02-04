@@ -1,16 +1,16 @@
 package responses
 
 type TimeSeriesUsageResponse struct {
-	Pokemon string
+	Pokemon              string
 	FormatUsageSnapshots []FormatUsageSnapshot
 }
 
 type FormatUsageSnapshot struct {
-	FormatId string
-	TimeSeriesUsageSnapshots []TimeSeriesUsageSnapshot	
+	FormatId                 string
+	TimeSeriesUsageSnapshots []TimeSeriesUsageSnapshot
 }
 
 type TimeSeriesUsageSnapshot struct {
-	Date string
+	Date  string
 	Usage int
 }
