@@ -8,11 +8,11 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
-	"github.com/kelvinkoon/babiri_v2/cache"
 	"github.com/kelvinkoon/babiri_v2/controllers/utils"
 	db "github.com/kelvinkoon/babiri_v2/db"
 	"github.com/kelvinkoon/babiri_v2/errors"
 	"github.com/kelvinkoon/babiri_v2/middleware"
+	"github.com/kelvinkoon/babiri_v2/models"
 	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -192,34 +192,26 @@ func handleGenericUsageSnapshotsByFormatAndDateParams(rw http.ResponseWriter, r 
 func queryUsageSnapshots(rw http.ResponseWriter, pipeline mongo.Pipeline, composite_key string, skip int, limit int) {
 	start := time.Now()
 
-	var snapshots []bson.M
-	var found bool
+	var snapshots []models.PokemonUsageSnapshot
 
-	// Send request if cache is not hit
-	if snapshots, found = cache.C.Get(composite_key); !found {
-		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-		defer cancel()
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
 
-		// Run query with pipeline
-		cursor, err := db.UsageCollection.Aggregate(ctx, pipeline)
-		if err != nil {
-			errors.CreateInternalServerErrorResponse(rw, err)
-			return
-		}
-		defer cursor.Close(ctx)
-
-		// Iterate through query results
-		if err = cursor.All(ctx, &snapshots); err != nil {
-			panic(err)
-		}
-
-		// Write to cache if results found
-		if len(snapshots) != 0 {
-			cache.C.Put(composite_key, snapshots)
-		}
+	// Run query with pipeline
+	cursor, err := db.UsageCollection.Aggregate(ctx, pipeline)
+	if err != nil {
+		errors.CreateInternalServerErrorResponse(rw, err)
+		return
 	}
+	defer cursor.Close(ctx)
+
+	// Iterate through query results
+	if err = cursor.All(ctx, &snapshots); err != nil {
+		panic(err)
+	}
+
 	// Paginate snapshot results
-	paginated_snapshots := utils.SliceResults(snapshots, skip, limit)
+	paginated_snapshots := utils.SliceUsageSnapshots(snapshots, skip, limit)
 
 	log.Infof("%d results returned in %s", len(paginated_snapshots), time.Since(start))
 	rw.WriteHeader(http.StatusOK)
