@@ -1,6 +1,7 @@
 package responses
 
 type UsageResponse struct {
+	NumResults     int
 	Page           int
 	Limit          int
 	UsageSnapshots []UsageSnapshot
@@ -18,6 +19,7 @@ type PokemonUsage struct {
 }
 
 type RatingUsageResponse struct {
+	NumResults           int
 	Page                 int
 	Limit                int
 	RatingUsageSnapshots []RatingUsageSnapshot

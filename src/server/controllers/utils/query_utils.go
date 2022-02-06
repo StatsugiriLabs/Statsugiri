@@ -6,16 +6,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-var pokemonUsageProjectField primitive.E = primitive.E{
-	Key: "PokemonUsage", Value: 1,
-}
-var pokemonPartnerUsageProjectField primitive.E = primitive.E{
-	Key: "PokemonPartnerUsage", Value: 1,
-}
-var pokemonAverageRatingUsageProjectField primitive.E = primitive.E{
-	Key: "PokemonAverageRatingUsage", Value: 1,
-}
-
 // Generates a aggregation pipeline for team queries.
 // Prepends team unwinding and reverse chronological sorting.
 // Includes Pokémon query if parameter provided.
@@ -59,61 +49,24 @@ func MakeTeamQueryPipeline(pokemon string, intermediateStages []bson.M) []bson.M
 }
 
 // Generates a aggregation pipeline for usage queries.
-// Prepends team unwinding and reverse chronological sorting.
-func MakeUsageQueryPipeline(usageType UsageType, intermediateStages []bson.D) []bson.D {
-	// Assign usage field for project stage based on usage type
-	var usageProjectField primitive.E
-	switch usageType {
-	case Usage:
-		usageProjectField = pokemonUsageProjectField
-	case PartnerUsage:
-		usageProjectField = pokemonPartnerUsageProjectField
-	case RatingUsage:
-		usageProjectField = pokemonAverageRatingUsageProjectField
-	default:
-		usageProjectField = pokemonUsageProjectField
-	}
+func MakeUsageQueryPipeline(usageType UsageType, intermediateStages []bson.M) []bson.M {
+	// Sort team snapshots in reverse chronological order
+	sortByDateStage := bson.M{"$sort": bson.M{"Date": -1}}
 
-	// Sort teams by format
-	sortByFormatStage := bson.D{
-		primitive.E{
-			Key: "$sort", Value: bson.D{
-				primitive.E{
-					Key: "FormatId", Value: 1,
-				},
-			},
-		},
-	}
-	// Sort teams in reverse chronological order
-	sortByDateStage := bson.D{
-		primitive.E{
-			Key: "$sort", Value: bson.D{
-				primitive.E{
-					Key: "Date", Value: -1,
-				},
-			},
-		},
-	}
 	// Extract necessary fields
-	groupUsageResponseStage := bson.D{
-		primitive.E{
-			Key: "$project", Value: bson.D{
-				primitive.E{
-					Key: "Date", Value: 1,
-				},
-				primitive.E{
-					Key: "FormatId", Value: 1,
-				},
-				primitive.E{
-					Key: "_id", Value: 0,
-				},
-				usageProjectField,
-			},
+	groupUsageResponseStage := bson.M{
+		"$project": bson.M{
+			"_id":                       false,
+			"Date":                      1,
+			"FormatId":                  1,
+			"PokemonUsage":              1,
+			"PokemonPartnerUsage":       1,
+			"PokemonAverageRatingUsage": 1,
 		},
 	}
 
 	// Initialize pipeline stages
-	pipelineStages := []bson.D{sortByFormatStage, sortByDateStage, groupUsageResponseStage}
+	pipelineStages := []bson.M{sortByDateStage, groupUsageResponseStage}
 	// Add intermediate aggregation stages
 	pipelineStages = append(pipelineStages, intermediateStages...)
 

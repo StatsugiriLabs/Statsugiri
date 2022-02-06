@@ -156,7 +156,6 @@ func queryTeamsSnapshots(rw http.ResponseWriter, pipeline []bson.M, composite_ke
 		}
 	}
 
-	fmt.Println(limit)
 	paginated_snapshots := utils.SliceTeamSnapshots(snapshots, skip, limit)
 	response := transformers.TransformTeamSnapshotsToResponse(paginated_snapshots, skip, limit)
 

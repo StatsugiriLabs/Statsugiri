@@ -6,7 +6,7 @@ import (
 )
 
 // Convert PokemonUsageSnapshots models to a TimeSeriesUsageResponse.
-func TransformUsageSnapshotsToResponse(pokemon string, snapshots []models.PokemonUsageSnapshot) responses.TimeSeriesUsageResponse {
+func TransformUsageSnapshotsToTimeSeriesResponse(pokemon string, snapshots []models.PokemonUsageSnapshot) responses.TimeSeriesUsageResponse {
 	// Retrieve set of formats
 	formatIdSet := GetFormatIdSet(snapshots)
 

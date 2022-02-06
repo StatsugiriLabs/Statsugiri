@@ -85,7 +85,7 @@ func queryTimeSeriesData(rw http.ResponseWriter, pipeline mongo.Pipeline, pokemo
 	}
 
 	// Transform snapshots to response
-	response := transformers.TransformUsageSnapshotsToResponse(pokemon, snapshots)
+	response := transformers.TransformUsageSnapshotsToTimeSeriesResponse(pokemon, snapshots)
 
 	log.Infof("Results returned in %s", time.Since(start))
 	rw.WriteHeader(http.StatusOK)
