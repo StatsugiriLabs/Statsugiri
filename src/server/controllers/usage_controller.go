@@ -189,22 +189,30 @@ func queryUsageSnapshots(rw http.ResponseWriter, pipeline []bson.M, skip int, li
 	}
 
 	// Paginate snapshot results
-	// TODO: It's not working
 	paginated_snapshots := utils.SliceUsageSnapshots(snapshots, skip, limit)
-	fmt.Println(len(paginated_snapshots))
-	log.Infof("%d results returned in %s", len(paginated_snapshots), time.Since(start))
 
-	if usage == utils.Usage {
+	// Write results to response
+	writeUsageResponse(rw, paginated_snapshots, skip, limit, usage)
+	log.Infof("%d results returned in %s", len(paginated_snapshots), time.Since(start))
+}
+
+// Transform internal models to response models and write to usage response depending on usage type.
+func writeUsageResponse(rw http.ResponseWriter, snapshots []models.PokemonUsageSnapshot, skip int, limit int, usage utils.UsageType) {
+	switch usage {
+	case utils.Usage:
 		response := transformers.TransformUsageSnapshotsToUsageResponse(snapshots, skip, limit)
 		rw.WriteHeader(http.StatusOK)
 		json.NewEncoder(rw).Encode(response)
-	} else if usage == utils.RatingUsage {
+	case utils.RatingUsage:
 		response := transformers.TransformRatingUsageSnapshotsToRatingUsageResponse(snapshots, skip, limit)
 		rw.WriteHeader(http.StatusOK)
 		json.NewEncoder(rw).Encode(response)
-	} else {
-		log.Infof("%d results returned in %s", len(paginated_snapshots), time.Since(start))
+	case utils.PartnerUsage:
+		response := transformers.TransformPartnerUsageSnapshotsToPartnerUsageResponse(snapshots, skip, limit)
 		rw.WriteHeader(http.StatusOK)
-		json.NewEncoder(rw).Encode(paginated_snapshots)
+		json.NewEncoder(rw).Encode(response)
+	default:
+		// TODO: Add an actual error message
+		errors.CreateInternalServerErrorResponse(rw, nil)
 	}
 }

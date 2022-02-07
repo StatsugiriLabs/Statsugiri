@@ -83,7 +83,7 @@ func (c *ResponseCache) Put(compositeKey string, response []models.PokemonTeamsS
 	}
 }
 
-// Retrieve cache entry given composite key. If found, update last access time.
+// Retrieve cache entry given composite key. 
 func (c *ResponseCache) Get(compositeKey string) ([]models.PokemonTeamsSnapshot, bool) {
 	c.rwLock.Lock()
 	defer c.rwLock.Unlock()
@@ -93,8 +93,6 @@ func (c *ResponseCache) Get(compositeKey string) ([]models.PokemonTeamsSnapshot,
 		return []models.PokemonTeamsSnapshot{}, false
 	}
 
-	// Update last access time
-	cachedResponse.lastAccess = c.scheduler.Now()
 	return cachedResponse.response, true
 }
 

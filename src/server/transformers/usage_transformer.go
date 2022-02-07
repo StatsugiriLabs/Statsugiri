@@ -11,59 +11,121 @@ func TransformUsageSnapshotsToUsageResponse(snapshots []models.PokemonUsageSnaps
 	// Create record of time series usage snapshots
 	var usageSnapshots []responses.UsageSnapshot
 	for _, snapshot := range snapshots {
-		var usageSnapshot responses.UsageSnapshot
-		usageSnapshot.Date = snapshot.Date
-		usageSnapshot.FormatId = snapshot.FormatId
 		var pokemonUsages []responses.PokemonUsage
 		for pokemon, usage := range snapshot.PokemonUsage {
-			var pokemonUsage responses.PokemonUsage
-			pokemonUsage.Pokemon = pokemon
-			pokemonUsage.Usage = usage
+			pokemonUsage := responses.PokemonUsage{
+				Pokemon: pokemon,
+				Usage:   usage,
+			}
 			pokemonUsages = append(pokemonUsages, pokemonUsage)
 		}
-		usageSnapshot.PokemonUsages = pokemonUsages
+
+		usageSnapshot := responses.UsageSnapshot{
+			Date:          snapshot.Date,
+			FormatId:      snapshot.FormatId,
+			PokemonUsages: pokemonUsages,
+		}
 		usageSnapshots = append(usageSnapshots, usageSnapshot)
 	}
 
-	var response responses.UsageResponse
-	response.NumResults = len(usageSnapshots)
-	response.Page = utils.SkipToPage(skip, limit)
-	response.Limit = limit
+	// Replace no results with empty snapshot list
+	var responseUsageSnapshots []responses.UsageSnapshot
 	if usageSnapshots == nil {
-		response.UsageSnapshots = []responses.UsageSnapshot{}
+		responseUsageSnapshots = []responses.UsageSnapshot{}
 	} else {
-		response.UsageSnapshots = usageSnapshots
+		responseUsageSnapshots = usageSnapshots
 	}
-	return response
+
+	return responses.UsageResponse{
+		NumResults:     len(usageSnapshots),
+		Page:           utils.SkipToPage(skip, limit),
+		Limit:          limit,
+		UsageSnapshots: responseUsageSnapshots,
+	}
 }
 
 // Convert PokemonUsageSnapshot models to a RatingUsageResponse.
 func TransformRatingUsageSnapshotsToRatingUsageResponse(snapshots []models.PokemonUsageSnapshot, skip int, limit int) responses.RatingUsageResponse {
-	// Create record of time series usage snapshots
+	// Create record of rating usage snapshots
 	var ratingUsageSnapshots []responses.RatingUsageSnapshot
+
+	// Iterate through internal usage snapshots
 	for _, snapshot := range snapshots {
-		var ratingUsageSnapshot responses.RatingUsageSnapshot
-		ratingUsageSnapshot.Date = snapshot.Date
-		ratingUsageSnapshot.FormatId = snapshot.FormatId
 		var pokemonAverageRatingUsages []responses.PokemonAverageRatingUsage
-		for pokemon, ratingUsage := range snapshot.PokemonUsage {
-			var pokemonAverageRatingUsage responses.PokemonAverageRatingUsage
-			pokemonAverageRatingUsage.Pokemon = pokemon
-			pokemonAverageRatingUsage.AverageRatingUsage = ratingUsage
+		for pokemon, avgRatingUsage := range snapshot.PokemonAverageRatingUsage {
+			pokemonAverageRatingUsage := responses.PokemonAverageRatingUsage{
+				Pokemon:            pokemon,
+				AverageRatingUsage: avgRatingUsage,
+			}
 			pokemonAverageRatingUsages = append(pokemonAverageRatingUsages, pokemonAverageRatingUsage)
 		}
-		ratingUsageSnapshot.PokemonAverageRatingUsages = pokemonAverageRatingUsages
+		ratingUsageSnapshot := responses.RatingUsageSnapshot{
+			Date:                       snapshot.Date,
+			FormatId:                   snapshot.FormatId,
+			PokemonAverageRatingUsages: pokemonAverageRatingUsages,
+		}
 		ratingUsageSnapshots = append(ratingUsageSnapshots, ratingUsageSnapshot)
 	}
 
-	var response responses.RatingUsageResponse
-	response.NumResults = len(ratingUsageSnapshots)
-	response.Page = utils.SkipToPage(skip, limit)
-	response.Limit = limit
+	// Replace no results with empty snapshot list
+	var responseRatingUsageSnapshots []responses.RatingUsageSnapshot
 	if ratingUsageSnapshots == nil {
-		response.RatingUsageSnapshots = []responses.RatingUsageSnapshot{}
+		responseRatingUsageSnapshots = []responses.RatingUsageSnapshot{}
 	} else {
-		response.RatingUsageSnapshots = ratingUsageSnapshots
+		responseRatingUsageSnapshots = ratingUsageSnapshots
 	}
-	return response
+
+	return responses.RatingUsageResponse{
+		NumResults:           len(ratingUsageSnapshots),
+		Page:                 utils.SkipToPage(skip, limit),
+		Limit:                limit,
+		RatingUsageSnapshots: responseRatingUsageSnapshots,
+	}
+}
+
+// Convert PartnerUsageSnapshot models to a PartnerUsageResponse.
+func TransformPartnerUsageSnapshotsToPartnerUsageResponse(snapshots []models.PokemonUsageSnapshot, skip int, limit int) responses.PartnerUsageResponse {
+	// Create record of partner usage snapshots
+	var partnerUsageSnapshots []responses.PartnerUsageSnapshot
+
+	// Iterate through internal usage snapshots
+	for _, snapshot := range snapshots {
+		var pokemonPartnerUsages []responses.PokemonPartnerUsage
+		for pokemon, snapshotPartnerUsages := range snapshot.PokemonPartnerUsage {
+			var partnerUsages []responses.PartnerUsage
+			for partner, usage := range snapshotPartnerUsages {
+				partnerUsage := responses.PartnerUsage{
+					Partner: partner,
+					Usage:   usage,
+				}
+				partnerUsages = append(partnerUsages, partnerUsage)
+			}
+			pokemonPartnerUsage := responses.PokemonPartnerUsage{
+				Pokemon:       pokemon,
+				PartnerUsages: partnerUsages,
+			}
+			pokemonPartnerUsages = append(pokemonPartnerUsages, pokemonPartnerUsage)
+		}
+		partnerUsageSnapshot := responses.PartnerUsageSnapshot{
+			Date:                 snapshot.Date,
+			FormatId:             snapshot.FormatId,
+			PokemonPartnerUsages: pokemonPartnerUsages,
+		}
+		partnerUsageSnapshots = append(partnerUsageSnapshots, partnerUsageSnapshot)
+	}
+
+	// Replace no results with empty snapshot list
+	var responsePartnerUsageSnapshots []responses.PartnerUsageSnapshot
+	if partnerUsageSnapshots == nil {
+		responsePartnerUsageSnapshots = []responses.PartnerUsageSnapshot{}
+	} else {
+		responsePartnerUsageSnapshots = partnerUsageSnapshots
+	}
+
+	return responses.PartnerUsageResponse{
+		NumResults:            len(partnerUsageSnapshots),
+		Page:                  utils.SkipToPage(skip, limit),
+		Limit:                 limit,
+		PartnerUsageSnapshots: responsePartnerUsageSnapshots,
+	}
 }

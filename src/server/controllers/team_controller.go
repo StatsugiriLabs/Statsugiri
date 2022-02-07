@@ -157,9 +157,15 @@ func queryTeamsSnapshots(rw http.ResponseWriter, pipeline []bson.M, composite_ke
 	}
 
 	paginated_snapshots := utils.SliceTeamSnapshots(snapshots, skip, limit)
-	response := transformers.TransformTeamSnapshotsToResponse(paginated_snapshots, skip, limit)
 
+	// Write results to response
+	writeTeamResponse(rw, paginated_snapshots, skip, limit)
 	log.Infof("%d results returned in %s", len(paginated_snapshots), time.Since(start))
+}
+
+// Transform internal models to response models and write to teams response.
+func writeTeamResponse(rw http.ResponseWriter, snapshots []models.PokemonTeamsSnapshot, skip int, limit int) {
+	response := transformers.TransformTeamSnapshotsToResponse(snapshots, skip, limit)
 	rw.WriteHeader(http.StatusOK)
 	json.NewEncoder(rw).Encode(response)
 }

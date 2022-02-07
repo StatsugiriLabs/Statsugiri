@@ -84,10 +84,14 @@ func queryTimeSeriesData(rw http.ResponseWriter, pipeline mongo.Pipeline, pokemo
 		panic(err)
 	}
 
-	// Transform snapshots to response
-	response := transformers.TransformUsageSnapshotsToTimeSeriesResponse(pokemon, snapshots)
-
+	// Write results to response
+	writeTimeSeriesResponse(rw, snapshots, pokemon)
 	log.Infof("Results returned in %s", time.Since(start))
+}
+
+// Transform internal models to response models and write to time series response.
+func writeTimeSeriesResponse(rw http.ResponseWriter, snapshots []models.PokemonUsageSnapshot, pokemon string) {
+	response := transformers.TransformUsageSnapshotsToTimeSeriesResponse(pokemon, snapshots)
 	rw.WriteHeader(http.StatusOK)
 	json.NewEncoder(rw).Encode(response)
 }

@@ -37,6 +37,7 @@ type PokemonAverageRatingUsage struct {
 }
 
 type PartnerUsageResponse struct {
+	NumResults            int
 	Page                  int
 	Limit                 int
 	PartnerUsageSnapshots []PartnerUsageSnapshot
