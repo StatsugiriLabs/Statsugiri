@@ -1,6 +1,8 @@
 package transformers
 
 import (
+	"sort"
+
 	"github.com/kelvinkoon/babiri_v2/controllers/utils"
 	"github.com/kelvinkoon/babiri_v2/models"
 	"github.com/kelvinkoon/babiri_v2/responses"
@@ -19,6 +21,10 @@ func TransformUsageSnapshotsToUsageResponse(snapshots []models.PokemonUsageSnaps
 			}
 			pokemonUsages = append(pokemonUsages, pokemonUsage)
 		}
+		// Sort usage by decreasing
+		sort.Slice(pokemonUsages, func(i, j int) bool {
+			return pokemonUsages[i].Usage > pokemonUsages[j].Usage
+		})
 
 		usageSnapshot := responses.UsageSnapshot{
 			Date:          snapshot.Date,
@@ -59,6 +65,12 @@ func TransformRatingUsageSnapshotsToRatingUsageResponse(snapshots []models.Pokem
 			}
 			pokemonAverageRatingUsages = append(pokemonAverageRatingUsages, pokemonAverageRatingUsage)
 		}
+		// Sort rating by decreasing
+		sort.Slice(pokemonAverageRatingUsages, func(i, j int) bool {
+			return pokemonAverageRatingUsages[i].AverageRatingUsage >
+				pokemonAverageRatingUsages[j].AverageRatingUsage
+		})
+
 		ratingUsageSnapshot := responses.RatingUsageSnapshot{
 			Date:                       snapshot.Date,
 			FormatId:                   snapshot.FormatId,
@@ -100,12 +112,27 @@ func TransformPartnerUsageSnapshotsToPartnerUsageResponse(snapshots []models.Pok
 				}
 				partnerUsages = append(partnerUsages, partnerUsage)
 			}
+			// Sort usage by decreasing and name alphabetically
+			sort.Slice(partnerUsages, func(i, j int) bool {
+				if partnerUsages[i].Usage != partnerUsages[j].Usage {
+					return partnerUsages[i].Usage > partnerUsages[j].Usage
+				}
+				return partnerUsages[i].Partner <
+					partnerUsages[j].Partner
+			})
+
 			pokemonPartnerUsage := responses.PokemonPartnerUsage{
 				Pokemon:       pokemon,
 				PartnerUsages: partnerUsages,
 			}
 			pokemonPartnerUsages = append(pokemonPartnerUsages, pokemonPartnerUsage)
 		}
+		// Sort partner usages by alphabetical of main Pokémon
+		sort.Slice(pokemonPartnerUsages, func(i, j int) bool {
+			return pokemonPartnerUsages[i].Pokemon <
+				pokemonPartnerUsages[j].Pokemon
+		})
+
 		partnerUsageSnapshot := responses.PartnerUsageSnapshot{
 			Date:                 snapshot.Date,
 			FormatId:             snapshot.FormatId,

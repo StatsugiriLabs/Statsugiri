@@ -15,9 +15,9 @@ func MakeTeamQueryPipeline(pokemon string, intermediateStages []bson.M) []bson.M
 	// Sort teams by rating
 	sortByRatingStage := bson.M{"$sort": bson.M{"Rating": -1}}
 
-	// // Initialize pipeline stages
+	// Initialize pipeline stages
 	pipelineStages := []bson.M{unwindTeamStage, sortByRatingStage}
-	// // Add intermediate aggregation stages
+	// Add intermediate aggregation stages
 	pipelineStages = append(pipelineStages, intermediateStages...)
 
 	// Match all teams with Pokémon if provided
@@ -41,9 +41,12 @@ func MakeTeamQueryPipeline(pokemon string, intermediateStages []bson.M) []bson.M
 	}
 	pipelineStages = append(pipelineStages, groupTeamSnapshotsStage)
 
-	// Sort team snapshots in reverse chronological order
-	sortByDateStage := bson.M{"$sort": bson.M{"Date": -1}}
-	pipelineStages = append(pipelineStages, sortByDateStage)
+	// Sort team snapshots in reverse chronological order and then by format
+	sortByDateandFormatStage := bson.M{"$sort": bson.D{
+		primitive.E{Key: "Date", Value: -1},
+		primitive.E{Key: "FormatId", Value: -1},
+	}}
+	pipelineStages = append(pipelineStages, sortByDateandFormatStage)
 
 	return pipelineStages
 }
@@ -51,7 +54,10 @@ func MakeTeamQueryPipeline(pokemon string, intermediateStages []bson.M) []bson.M
 // Generates a aggregation pipeline for usage queries.
 func MakeUsageQueryPipeline(usageType UsageType, intermediateStages []bson.M) []bson.M {
 	// Sort team snapshots in reverse chronological order
-	sortByDateStage := bson.M{"$sort": bson.M{"Date": -1}}
+	sortByDateandFormatStage := bson.M{"$sort": bson.D{
+		primitive.E{Key: "Date", Value: -1},
+		primitive.E{Key: "FormatId", Value: -1},
+	}}
 
 	// Extract necessary fields
 	groupUsageResponseStage := bson.M{
@@ -66,15 +72,27 @@ func MakeUsageQueryPipeline(usageType UsageType, intermediateStages []bson.M) []
 	}
 
 	// Initialize pipeline stages
-	pipelineStages := []bson.M{sortByDateStage, groupUsageResponseStage}
+	pipelineStages := []bson.M{sortByDateandFormatStage, groupUsageResponseStage}
 	// Add intermediate aggregation stages
 	pipelineStages = append(pipelineStages, intermediateStages...)
+
+	// // Group Pokémon usage snapshots before unwind
+	// groupTeamSnapshotsStage := bson.M{
+	// 	"$group": bson.M{
+	// 		"_id":      "$_id",
+	// 		"Date":     bson.M{"$first": "$Date"},
+	// 		"FormatId": bson.M{"$first": "$FormatId"},
+	// 		"PokemonPartnerUsages":    bson.M{"$push": "$PokemonPartnerUsages"},
+	// 	},
+	// }
+	// pipelineStages = append(pipelineStages, groupTeamSnapshotsStage)
 
 	return pipelineStages
 }
 
 func MakeTimeSeriesUsageQueryPipeline(pokemon string, intermediateStages []bson.D) []bson.D {
 	// Sort usage in reverse chronological order
+	// TODO: Make sorting by format as well
 	sortByDateStage := bson.D{
 		primitive.E{
 			Key: "$sort", Value: bson.D{
@@ -125,6 +143,7 @@ func MakeCompositeKey(params ...string) string {
 }
 
 // Paginate team snapshot aggregation results through slicing.
+// TODO: Handle 0 page index
 func SliceTeamSnapshots(snapshots []models.PokemonTeamsSnapshot, skip int, size int) []models.PokemonTeamsSnapshot {
 	// Limit skip to length of results
 	if skip > len(snapshots) {

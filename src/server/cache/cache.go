@@ -9,8 +9,8 @@ import (
 )
 
 const (
-	TTL      = 60 // Cache entry lifetime from last access (seconds)
-	CAPACITY = 1000
+	TTL      = 30 // Cache entry lifetime from last access (seconds)
+	CAPACITY = 250
 )
 
 // Cache entries for PokemonTeamsSnapshot responses
@@ -83,7 +83,7 @@ func (c *ResponseCache) Put(compositeKey string, response []models.PokemonTeamsS
 	}
 }
 
-// Retrieve cache entry given composite key. 
+// Retrieve cache entry given composite key.
 func (c *ResponseCache) Get(compositeKey string) ([]models.PokemonTeamsSnapshot, bool) {
 	c.rwLock.Lock()
 	defer c.rwLock.Unlock()

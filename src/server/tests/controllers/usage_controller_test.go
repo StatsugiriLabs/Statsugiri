@@ -8,7 +8,6 @@ import (
 	"os"
 	"testing"
 
-	"github.com/gorilla/mux"
 	"github.com/kelvinkoon/babiri_v2/controllers"
 	log "github.com/sirupsen/logrus"
 
@@ -127,282 +126,283 @@ func TestGetAllUsageSnapshotsHappyPath(t *testing.T) {
 	assert.Equal(t, rr.Code, http.StatusOK)
 	// Check response body
 	assert.Equal(t, string(body), getExpectedUsageSnapshots())
+	// assert.Equal(t, string(body), "")
 }
 
-// Test retrieving all rating usage snapshots.
-func TestGetAllRatingUsageSnapshotsHappyPath(t *testing.T) {
-	rr := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/", nil)
+// // Test retrieving all rating usage snapshots.
+// func TestGetAllRatingUsageSnapshotsHappyPath(t *testing.T) {
+// 	rr := httptest.NewRecorder()
+// 	req := httptest.NewRequest(http.MethodGet, "/", nil)
 
-	// Set query params
-	q := req.URL.Query()
-	q.Add("page", "1")
-	q.Add("limit", "5")
-	req.URL.RawQuery = q.Encode()
+// 	// Set query params
+// 	q := req.URL.Query()
+// 	q.Add("page", "1")
+// 	q.Add("limit", "5")
+// 	req.URL.RawQuery = q.Encode()
 
-	handler := http.HandlerFunc(controllers.GetAllRatingUsageSnapshots())
-	handler.ServeHTTP(rr, req)
-	body, err := io.ReadAll(rr.Body)
-	if err != nil {
-		log.Fatal(err)
-	}
+// 	handler := http.HandlerFunc(controllers.GetAllRatingUsageSnapshots())
+// 	handler.ServeHTTP(rr, req)
+// 	body, err := io.ReadAll(rr.Body)
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
 
-	// Check status code
-	assert.Equal(t, rr.Code, http.StatusOK)
-	// Check response body
-	assert.Equal(t, string(body), getExpectedRatingUsageSnapshots())
-}
+// 	// Check status code
+// 	assert.Equal(t, rr.Code, http.StatusOK)
+// 	// Check response body
+// 	assert.Equal(t, string(body), getExpectedRatingUsageSnapshots())
+// }
 
-// Test retrieving all partner usage snapshots.
-func TestGetAllPartnerUsageSnapshotsHappyPath(t *testing.T) {
-	rr := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/", nil)
+// // Test retrieving all partner usage snapshots.
+// func TestGetAllPartnerUsageSnapshotsHappyPath(t *testing.T) {
+// 	rr := httptest.NewRecorder()
+// 	req := httptest.NewRequest(http.MethodGet, "/", nil)
 
-	// Set query params
-	q := req.URL.Query()
-	q.Add("page", "1")
-	q.Add("limit", "5")
-	req.URL.RawQuery = q.Encode()
+// 	// Set query params
+// 	q := req.URL.Query()
+// 	q.Add("page", "1")
+// 	q.Add("limit", "5")
+// 	req.URL.RawQuery = q.Encode()
 
-	handler := http.HandlerFunc(controllers.GetAllPartnerUsageSnapshots())
-	handler.ServeHTTP(rr, req)
-	body, err := io.ReadAll(rr.Body)
-	if err != nil {
-		log.Fatal(err)
-	}
+// 	handler := http.HandlerFunc(controllers.GetAllPartnerUsageSnapshots())
+// 	handler.ServeHTTP(rr, req)
+// 	body, err := io.ReadAll(rr.Body)
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
 
-	// Check status code
-	assert.Equal(t, rr.Code, http.StatusOK)
-	// Check response body
-	assert.Equal(t, string(body), getExpectedPartnerUsageSnapshots())
-}
+// 	// Check status code
+// 	assert.Equal(t, rr.Code, http.StatusOK)
+// 	// Check response body
+// 	assert.Equal(t, string(body), getExpectedPartnerUsageSnapshots())
+// }
 
-// Test retrieving usage snapshots by format.
-func TestGetUsageSnapshotsByFormatHappyPath(t *testing.T) {
-	rr := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/", nil)
+// // Test retrieving usage snapshots by format.
+// func TestGetUsageSnapshotsByFormatHappyPath(t *testing.T) {
+// 	rr := httptest.NewRecorder()
+// 	req := httptest.NewRequest(http.MethodGet, "/", nil)
 
-	// Set URL params
-	vars := map[string]string{
-		"format": "gen8vgc2021series11",
-	}
-	req = mux.SetURLVars(req, vars)
+// 	// Set URL params
+// 	vars := map[string]string{
+// 		"format": "gen8vgc2021series11",
+// 	}
+// 	req = mux.SetURLVars(req, vars)
 
-	// Set query params
-	q := req.URL.Query()
-	q.Add("page", "1")
-	q.Add("limit", "5")
-	req.URL.RawQuery = q.Encode()
+// 	// Set query params
+// 	q := req.URL.Query()
+// 	q.Add("page", "1")
+// 	q.Add("limit", "5")
+// 	req.URL.RawQuery = q.Encode()
 
-	handler := http.HandlerFunc(controllers.GetUsageSnapshotsByFormat())
-	handler.ServeHTTP(rr, req)
-	body, err := io.ReadAll(rr.Body)
-	if err != nil {
-		log.Fatal(err)
-	}
+// 	handler := http.HandlerFunc(controllers.GetUsageSnapshotsByFormat())
+// 	handler.ServeHTTP(rr, req)
+// 	body, err := io.ReadAll(rr.Body)
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
 
-	// Check status code
-	assert.Equal(t, rr.Code, http.StatusOK)
-	// Check response body
-	assert.Equal(t, string(body), getExpectedUsageSnapshotsByFormat())
-}
+// 	// Check status code
+// 	assert.Equal(t, rr.Code, http.StatusOK)
+// 	// Check response body
+// 	assert.Equal(t, string(body), getExpectedUsageSnapshotsByFormat())
+// }
 
-// Test retrieving rating usage snapshots by format.
-func TestGetRatingUsageSnapshotsByFormatHappyPath(t *testing.T) {
-	rr := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/", nil)
+// // Test retrieving rating usage snapshots by format.
+// func TestGetRatingUsageSnapshotsByFormatHappyPath(t *testing.T) {
+// 	rr := httptest.NewRecorder()
+// 	req := httptest.NewRequest(http.MethodGet, "/", nil)
 
-	// Set URL params
-	vars := map[string]string{
-		"format": "gen8ou",
-	}
-	req = mux.SetURLVars(req, vars)
+// 	// Set URL params
+// 	vars := map[string]string{
+// 		"format": "gen8ou",
+// 	}
+// 	req = mux.SetURLVars(req, vars)
 
-	// Set query params
-	q := req.URL.Query()
-	q.Add("page", "1")
-	q.Add("limit", "5")
-	req.URL.RawQuery = q.Encode()
+// 	// Set query params
+// 	q := req.URL.Query()
+// 	q.Add("page", "1")
+// 	q.Add("limit", "5")
+// 	req.URL.RawQuery = q.Encode()
 
-	handler := http.HandlerFunc(controllers.GetRatingUsageSnapshotsByFormat())
-	handler.ServeHTTP(rr, req)
-	body, err := io.ReadAll(rr.Body)
-	if err != nil {
-		log.Fatal(err)
-	}
+// 	handler := http.HandlerFunc(controllers.GetRatingUsageSnapshotsByFormat())
+// 	handler.ServeHTTP(rr, req)
+// 	body, err := io.ReadAll(rr.Body)
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
 
-	// Check status code
-	assert.Equal(t, rr.Code, http.StatusOK)
-	// Check response body
-	assert.Equal(t, string(body), getExpectedRatingUsageSnapshotsByFormat())
-}
+// 	// Check status code
+// 	assert.Equal(t, rr.Code, http.StatusOK)
+// 	// Check response body
+// 	assert.Equal(t, string(body), getExpectedRatingUsageSnapshotsByFormat())
+// }
 
-// Test retrieving partner usage snapshots by format.
-func TestGetPartnerUsageSnapshotsByFormatHappyPath(t *testing.T) {
-	rr := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/", nil)
+// // Test retrieving partner usage snapshots by format.
+// func TestGetPartnerUsageSnapshotsByFormatHappyPath(t *testing.T) {
+// 	rr := httptest.NewRecorder()
+// 	req := httptest.NewRequest(http.MethodGet, "/", nil)
 
-	// Set URL params
-	vars := map[string]string{
-		"format": "gen8ou",
-	}
-	req = mux.SetURLVars(req, vars)
+// 	// Set URL params
+// 	vars := map[string]string{
+// 		"format": "gen8ou",
+// 	}
+// 	req = mux.SetURLVars(req, vars)
 
-	// Set query params
-	q := req.URL.Query()
-	q.Add("page", "1")
-	q.Add("limit", "5")
-	req.URL.RawQuery = q.Encode()
+// 	// Set query params
+// 	q := req.URL.Query()
+// 	q.Add("page", "1")
+// 	q.Add("limit", "5")
+// 	req.URL.RawQuery = q.Encode()
 
-	handler := http.HandlerFunc(controllers.GetPartnerUsageSnapshotsByFormat())
-	handler.ServeHTTP(rr, req)
-	body, err := io.ReadAll(rr.Body)
-	if err != nil {
-		log.Fatal(err)
-	}
+// 	handler := http.HandlerFunc(controllers.GetPartnerUsageSnapshotsByFormat())
+// 	handler.ServeHTTP(rr, req)
+// 	body, err := io.ReadAll(rr.Body)
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
 
-	// Check status code
-	assert.Equal(t, rr.Code, http.StatusOK)
-	// Check response body
-	assert.Equal(t, string(body), getExpectedPartnerUsageSnapshotsByFormat())
-}
+// 	// Check status code
+// 	assert.Equal(t, rr.Code, http.StatusOK)
+// 	// Check response body
+// 	assert.Equal(t, string(body), getExpectedPartnerUsageSnapshotsByFormat())
+// }
 
-// Test retrieving usage snapshots by format and date.
-func TestGetUsageSnapshotsByFormatDateHappyPath(t *testing.T) {
-	rr := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/", nil)
+// // Test retrieving usage snapshots by format and date.
+// func TestGetUsageSnapshotsByFormatDateHappyPath(t *testing.T) {
+// 	rr := httptest.NewRecorder()
+// 	req := httptest.NewRequest(http.MethodGet, "/", nil)
 
-	// Set URL params
-	vars := map[string]string{
-		"format": "gen8vgc2021series11",
-		"date":   "2022-01-25",
-	}
-	req = mux.SetURLVars(req, vars)
+// 	// Set URL params
+// 	vars := map[string]string{
+// 		"format": "gen8vgc2021series11",
+// 		"date":   "2022-01-25",
+// 	}
+// 	req = mux.SetURLVars(req, vars)
 
-	// Set query params
-	q := req.URL.Query()
-	q.Add("page", "1")
-	q.Add("limit", "5")
-	req.URL.RawQuery = q.Encode()
+// 	// Set query params
+// 	q := req.URL.Query()
+// 	q.Add("page", "1")
+// 	q.Add("limit", "5")
+// 	req.URL.RawQuery = q.Encode()
 
-	handler := http.HandlerFunc(controllers.GetUsageSnapshotsByFormatAndDate())
-	handler.ServeHTTP(rr, req)
-	body, err := io.ReadAll(rr.Body)
-	if err != nil {
-		log.Fatal(err)
-	}
+// 	handler := http.HandlerFunc(controllers.GetUsageSnapshotsByFormatAndDate())
+// 	handler.ServeHTTP(rr, req)
+// 	body, err := io.ReadAll(rr.Body)
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
 
-	// Check status code
-	assert.Equal(t, rr.Code, http.StatusOK)
-	// Check response body
-	assert.Equal(t, string(body), getExpectedUsageSnapshotsByFormatDate())
-}
+// 	// Check status code
+// 	assert.Equal(t, rr.Code, http.StatusOK)
+// 	// Check response body
+// 	assert.Equal(t, string(body), getExpectedUsageSnapshotsByFormatDate())
+// }
 
-// Test retrieving rating usage snapshots by format and date.
-func TestGetRatingUsageSnapshotsByFormatDateHappyPath(t *testing.T) {
-	rr := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/", nil)
+// // Test retrieving rating usage snapshots by format and date.
+// func TestGetRatingUsageSnapshotsByFormatDateHappyPath(t *testing.T) {
+// 	rr := httptest.NewRecorder()
+// 	req := httptest.NewRequest(http.MethodGet, "/", nil)
 
-	// Set URL params
-	vars := map[string]string{
-		"format": "gen8ou",
-		"date":   "2022-01-25",
-	}
-	req = mux.SetURLVars(req, vars)
+// 	// Set URL params
+// 	vars := map[string]string{
+// 		"format": "gen8ou",
+// 		"date":   "2022-01-25",
+// 	}
+// 	req = mux.SetURLVars(req, vars)
 
-	// Set query params
-	q := req.URL.Query()
-	q.Add("page", "1")
-	q.Add("limit", "5")
-	req.URL.RawQuery = q.Encode()
+// 	// Set query params
+// 	q := req.URL.Query()
+// 	q.Add("page", "1")
+// 	q.Add("limit", "5")
+// 	req.URL.RawQuery = q.Encode()
 
-	handler := http.HandlerFunc(controllers.GetRatingUsageSnapshotsByFormatAndDate())
-	handler.ServeHTTP(rr, req)
-	body, err := io.ReadAll(rr.Body)
-	if err != nil {
-		log.Fatal(err)
-	}
+// 	handler := http.HandlerFunc(controllers.GetRatingUsageSnapshotsByFormatAndDate())
+// 	handler.ServeHTTP(rr, req)
+// 	body, err := io.ReadAll(rr.Body)
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
 
-	// Check status code
-	assert.Equal(t, rr.Code, http.StatusOK)
-	// Check response body
-	assert.Equal(t, string(body), getExpectedRatingUsageSnapshotsByFormatDate())
-}
+// 	// Check status code
+// 	assert.Equal(t, rr.Code, http.StatusOK)
+// 	// Check response body
+// 	assert.Equal(t, string(body), getExpectedRatingUsageSnapshotsByFormatDate())
+// }
 
-// Test retrieving partner usage snapshots by format and date.
-func TestGetPartnerUsageSnapshotsByFormatDateHappyPath(t *testing.T) {
-	rr := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/", nil)
+// // Test retrieving partner usage snapshots by format and date.
+// func TestGetPartnerUsageSnapshotsByFormatDateHappyPath(t *testing.T) {
+// 	rr := httptest.NewRecorder()
+// 	req := httptest.NewRequest(http.MethodGet, "/", nil)
 
-	// Set URL params
-	vars := map[string]string{
-		"format": "gen8ou",
-		"date":   "2022-01-26",
-	}
-	req = mux.SetURLVars(req, vars)
+// 	// Set URL params
+// 	vars := map[string]string{
+// 		"format": "gen8ou",
+// 		"date":   "2022-01-26",
+// 	}
+// 	req = mux.SetURLVars(req, vars)
 
-	// Set query params
-	q := req.URL.Query()
-	q.Add("page", "1")
-	q.Add("limit", "5")
-	req.URL.RawQuery = q.Encode()
+// 	// Set query params
+// 	q := req.URL.Query()
+// 	q.Add("page", "1")
+// 	q.Add("limit", "5")
+// 	req.URL.RawQuery = q.Encode()
 
-	handler := http.HandlerFunc(controllers.GetPartnerUsageSnapshotsByFormatAndDate())
-	handler.ServeHTTP(rr, req)
-	body, err := io.ReadAll(rr.Body)
-	if err != nil {
-		log.Fatal(err)
-	}
+// 	handler := http.HandlerFunc(controllers.GetPartnerUsageSnapshotsByFormatAndDate())
+// 	handler.ServeHTTP(rr, req)
+// 	body, err := io.ReadAll(rr.Body)
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
 
-	// Check status code
-	assert.Equal(t, rr.Code, http.StatusOK)
-	// Check response body
-	assert.Equal(t, string(body), getExpectedPartnerUsageSnapshotsByFormatDate())
-}
+// 	// Check status code
+// 	assert.Equal(t, rr.Code, http.StatusOK)
+// 	// Check response body
+// 	assert.Equal(t, string(body), getExpectedPartnerUsageSnapshotsByFormatDate())
+// }
 
-// Test providing an invalid format to endpoint.
-func TestGetUsageSnapshotsByFormatInvalidFormat(t *testing.T) {
-	rr := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/", nil)
+// // Test providing an invalid format to endpoint.
+// func TestGetUsageSnapshotsByFormatInvalidFormat(t *testing.T) {
+// 	rr := httptest.NewRecorder()
+// 	req := httptest.NewRequest(http.MethodGet, "/", nil)
 
-	// Set URL params
-	vars := map[string]string{
-		"format": "not_a_real_format",
-	}
-	req = mux.SetURLVars(req, vars)
+// 	// Set URL params
+// 	vars := map[string]string{
+// 		"format": "not_a_real_format",
+// 	}
+// 	req = mux.SetURLVars(req, vars)
 
-	handler := http.HandlerFunc(controllers.GetUsageSnapshotsByFormat())
-	handler.ServeHTTP(rr, req)
-	body, err := io.ReadAll(rr.Body)
-	if err != nil {
-		log.Fatal(err)
-	}
+// 	handler := http.HandlerFunc(controllers.GetUsageSnapshotsByFormat())
+// 	handler.ServeHTTP(rr, req)
+// 	body, err := io.ReadAll(rr.Body)
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
 
-	// Check status code
-	assert.Equal(t, rr.Code, http.StatusBadRequest)
-	assert.Equal(t, string(body), "{\"error\":\"Format (not_a_real_format) is not supported\"}\n")
-}
+// 	// Check status code
+// 	assert.Equal(t, rr.Code, http.StatusBadRequest)
+// 	assert.Equal(t, string(body), "{\"error\":\"Format (not_a_real_format) is not supported\"}\n")
+// }
 
-// Test providing an invalid date to endpoint.
-func TestGetUsageSnapshotsByFormatDateInvalidDate(t *testing.T) {
-	rr := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/", nil)
+// // Test providing an invalid date to endpoint.
+// func TestGetUsageSnapshotsByFormatDateInvalidDate(t *testing.T) {
+// 	rr := httptest.NewRecorder()
+// 	req := httptest.NewRequest(http.MethodGet, "/", nil)
 
-	// Set URL params
-	vars := map[string]string{
-		"format": "gen8ou",
-		"date":   "2021-1-31",
-	}
-	req = mux.SetURLVars(req, vars)
+// 	// Set URL params
+// 	vars := map[string]string{
+// 		"format": "gen8ou",
+// 		"date":   "2021-1-31",
+// 	}
+// 	req = mux.SetURLVars(req, vars)
 
-	handler := http.HandlerFunc(controllers.GetUsageSnapshotsByFormatAndDate())
-	handler.ServeHTTP(rr, req)
-	body, err := io.ReadAll(rr.Body)
-	if err != nil {
-		log.Fatal(err)
-	}
+// 	handler := http.HandlerFunc(controllers.GetUsageSnapshotsByFormatAndDate())
+// 	handler.ServeHTTP(rr, req)
+// 	body, err := io.ReadAll(rr.Body)
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
 
-	// Check status code
-	assert.Equal(t, rr.Code, http.StatusBadRequest)
-	assert.Equal(t, string(body), "{\"error\":\"Date (2021-1-31) must match 'yyyy-mm-dd' format\"}\n")
-}
+// 	// Check status code
+// 	assert.Equal(t, rr.Code, http.StatusBadRequest)
+// 	assert.Equal(t, string(body), "{\"error\":\"Date (2021-1-31) must match 'yyyy-mm-dd' format\"}\n")
+// }
