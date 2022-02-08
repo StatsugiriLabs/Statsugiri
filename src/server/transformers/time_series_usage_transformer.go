@@ -1,6 +1,8 @@
 package transformers
 
 import (
+	"sort"
+
 	"github.com/kelvinkoon/babiri_v2/models"
 	"github.com/kelvinkoon/babiri_v2/responses"
 )
@@ -16,31 +18,49 @@ func TransformUsageSnapshotsToTimeSeriesResponse(pokemon string, snapshots []mod
 		// Create record of time series usage snapshots
 		var timeSeriesUsageSnapshots []responses.TimeSeriesUsageSnapshot
 		for _, snapshot := range snapshots {
+			// Create record for snapshot matching the format ID
 			if snapshot.FormatId == formatId {
-				var timeSeriesUsageSnapshot responses.TimeSeriesUsageSnapshot
-				timeSeriesUsageSnapshot.Date = snapshot.Date
 				usage, found := snapshot.PokemonUsage[pokemon]
-				if found {
-					timeSeriesUsageSnapshot.Usage = usage
-				} else {
-					timeSeriesUsageSnapshot.Usage = 0
+				// Substitute empty usage with 0
+				if !found {
+					usage = 0
+				}
+
+				timeSeriesUsageSnapshot := responses.TimeSeriesUsageSnapshot{
+					Date:  snapshot.Date,
+					Usage: usage,
 				}
 				timeSeriesUsageSnapshots = append(timeSeriesUsageSnapshots, timeSeriesUsageSnapshot)
 			}
 		}
 
 		// Create FormatUsageSnapshot
-		var formatUsageSnapshot responses.FormatUsageSnapshot
-		formatUsageSnapshot.FormatId = formatId
-		formatUsageSnapshot.TimeSeriesUsageSnapshots = timeSeriesUsageSnapshots
+		formatUsageSnapshot := responses.FormatUsageSnapshot{
+			FormatId:                 formatId,
+			TimeSeriesUsageSnapshots: timeSeriesUsageSnapshots,
+		}
 		formatUsageSnapshots = append(formatUsageSnapshots, formatUsageSnapshot)
 	}
 
-	// Create response
-	var response responses.TimeSeriesUsageResponse
-	response.Pokemon = pokemon
-	response.FormatUsageSnapshots = formatUsageSnapshots
-	return response
+	// Sort snapshots by format alphabetically
+	sort.Slice(formatUsageSnapshots, func(i, j int) bool {
+		return formatUsageSnapshots[i].FormatId <
+			formatUsageSnapshots[j].FormatId
+	})
+
+	// Replace no results with empty snapshot list
+	var responseFormatUsageSnapshots []responses.FormatUsageSnapshot
+	if formatUsageSnapshots == nil {
+		responseFormatUsageSnapshots = []responses.FormatUsageSnapshot{}
+	} else {
+		responseFormatUsageSnapshots = formatUsageSnapshots
+	}
+
+	return responses.TimeSeriesUsageResponse{
+		NumResults:           len(formatUsageSnapshots),
+		Pokemon:              pokemon,
+		FormatUsageSnapshots: responseFormatUsageSnapshots,
+	}
 }
 
 // Create a unique set of format IDs from snapshots.

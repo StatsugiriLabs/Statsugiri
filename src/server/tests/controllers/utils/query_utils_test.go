@@ -80,6 +80,43 @@ func createMockTeamSnapshots() []models.PokemonTeamsSnapshot {
 	}
 }
 
+// Create mock usage snapshots
+func createMockUsageSnapshots() []models.PokemonUsageSnapshot {
+	mockUsage := make(map[string]int)
+	mockPartnerUsage := make(map[string]map[string]int)
+	mockAvgRatingUsage := make(map[string]int)
+	return []models.PokemonUsageSnapshot{
+		{
+			Date:                      "2022-01-01",
+			FormatId:                  "gen8ou",
+			PokemonUsage:              mockUsage,
+			PokemonPartnerUsage:       mockPartnerUsage,
+			PokemonAverageRatingUsage: mockAvgRatingUsage,
+		},
+		{
+			Date:                      "2022-01-02",
+			FormatId:                  "gen8ou",
+			PokemonUsage:              mockUsage,
+			PokemonPartnerUsage:       mockPartnerUsage,
+			PokemonAverageRatingUsage: mockAvgRatingUsage,
+		},
+		{
+			Date:                      "2022-01-03",
+			FormatId:                  "gen8ou",
+			PokemonUsage:              mockUsage,
+			PokemonPartnerUsage:       mockPartnerUsage,
+			PokemonAverageRatingUsage: mockAvgRatingUsage,
+		},
+		{
+			Date:                      "2022-01-04",
+			FormatId:                  "gen8ou",
+			PokemonUsage:              mockUsage,
+			PokemonPartnerUsage:       mockPartnerUsage,
+			PokemonAverageRatingUsage: mockAvgRatingUsage,
+		},
+	}
+}
+
 // Test making query pipelines.
 func TestMakeTeamQueryPipelineHappyPath(t *testing.T) {
 	pokemon := "Pikachu"
@@ -176,15 +213,15 @@ func TestMakeCompositeKeyHappyPath(t *testing.T) {
 }
 
 // Test slicing team results for single page.
-func TestSliceResultsHappyPath(t *testing.T) {
+func TestSliceTeamSnapshotsHappyPath(t *testing.T) {
 	results := createMockTeamSnapshots()
 	expectedPaginatedResults := results[:2]
 	paginatedResults := utils.SliceTeamSnapshots(results, 0, 2)
 	assert.Equal(t, paginatedResults, expectedPaginatedResults, "Paginated results do not match.")
 }
 
-// Test when returning last paginated results with leftover results.
-func TestSliceResultsLastPageNotFull(t *testing.T) {
+// Test when returning last paginated team results with leftover results.
+func TestSliceTeamSnapshotsLastPageNotFull(t *testing.T) {
 	results := createMockTeamSnapshots()
 	// Expect the last result
 	expectedPaginatedResults := results[len(results)-1:]
@@ -193,10 +230,36 @@ func TestSliceResultsLastPageNotFull(t *testing.T) {
 	assert.Equal(t, paginatedResults, expectedPaginatedResults, "Paginated results do not match.")
 }
 
-// Test when page has no results (eg. beyond boundaries).
-func TestSliceResultsInvalidPage(t *testing.T) {
+// Test when page has no team results (eg. beyond boundaries).
+func TestSliceTeamSnapshotsInvalidPage(t *testing.T) {
 	results := createMockTeamSnapshots()
 	// Paginate beyond number of available results
 	paginatedResults := utils.SliceTeamSnapshots(results, len(results)+1, 1)
 	assert.Equal(t, paginatedResults, []models.PokemonTeamsSnapshot{}, "Paginated results do not match.")
+}
+
+// Test slicing usage results for single page.
+func TestSliceUsageResultsHappyPath(t *testing.T) {
+	results := createMockUsageSnapshots()
+	expectedPaginatedResults := results[:2]
+	paginatedResults := utils.SliceUsageSnapshots(results, 0, 2)
+	assert.Equal(t, paginatedResults, expectedPaginatedResults, "Paginated results do not match.")
+}
+
+// Test when returning last paginated usage results with leftover results.
+func TestSliceUsageResultsLastPageNotFull(t *testing.T) {
+	results := createMockUsageSnapshots()
+	// Expect the last result
+	expectedPaginatedResults := results[len(results)-1:]
+	// Skip all but last snapshot with a size of 2, giving 1 snapshot remaining
+	paginatedResults := utils.SliceUsageSnapshots(results, len(results)-1, 2)
+	assert.Equal(t, paginatedResults, expectedPaginatedResults, "Paginated results do not match.")
+}
+
+// Test when page has no usage results (eg. beyond boundaries).
+func TestSliceUsageResultsInvalidPage(t *testing.T) {
+	results := createMockUsageSnapshots()
+	// Paginate beyond number of available results
+	paginatedResults := utils.SliceUsageSnapshots(results, len(results)+1, 1)
+	assert.Equal(t, paginatedResults, []models.PokemonUsageSnapshot{}, "Paginated results do not match.")
 }
