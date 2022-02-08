@@ -21,9 +21,14 @@ func TransformUsageSnapshotsToUsageResponse(snapshots []models.PokemonUsageSnaps
 			}
 			pokemonUsages = append(pokemonUsages, pokemonUsage)
 		}
-		// Sort usage by decreasing
+
+		// Sort usage by decreasing and name alphabetically
 		sort.Slice(pokemonUsages, func(i, j int) bool {
-			return pokemonUsages[i].Usage > pokemonUsages[j].Usage
+			if pokemonUsages[i].Usage != pokemonUsages[j].Usage {
+				return pokemonUsages[i].Usage > pokemonUsages[j].Usage
+			}
+			return pokemonUsages[i].Pokemon <
+				pokemonUsages[j].Pokemon
 		})
 
 		usageSnapshot := responses.UsageSnapshot{
@@ -65,10 +70,14 @@ func TransformRatingUsageSnapshotsToRatingUsageResponse(snapshots []models.Pokem
 			}
 			pokemonAverageRatingUsages = append(pokemonAverageRatingUsages, pokemonAverageRatingUsage)
 		}
-		// Sort rating by decreasing
+
+		// Sort rating by decreasing and name alphabetically
 		sort.Slice(pokemonAverageRatingUsages, func(i, j int) bool {
-			return pokemonAverageRatingUsages[i].AverageRatingUsage >
-				pokemonAverageRatingUsages[j].AverageRatingUsage
+			if pokemonAverageRatingUsages[i].AverageRatingUsage != pokemonAverageRatingUsages[j].AverageRatingUsage {
+				return pokemonAverageRatingUsages[i].AverageRatingUsage > pokemonAverageRatingUsages[j].AverageRatingUsage
+			}
+			return pokemonAverageRatingUsages[i].Pokemon <
+				pokemonAverageRatingUsages[j].Pokemon
 		})
 
 		ratingUsageSnapshot := responses.RatingUsageSnapshot{

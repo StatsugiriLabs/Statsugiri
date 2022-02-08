@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -42,6 +43,10 @@ func ParsePagination(rw http.ResponseWriter, r *http.Request, max_limit int) (in
 		page, err := strconv.Atoi(pageParam)
 		if err != nil {
 			return 0, max_limit, err
+		}
+		// Ensure page is a positive number
+		if page <= 0 {
+			return 0, max_limit, fmt.Errorf("Page must be a positive number.")
 		}
 		skip = utils.PageToSkip(page, limit)
 	}

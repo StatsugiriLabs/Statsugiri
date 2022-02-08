@@ -1,6 +1,7 @@
 package tests
 
 import (
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -66,4 +67,19 @@ func TestParsePaginationNoParams(t *testing.T) {
 	// Check skip and limit are default
 	assert.Equal(t, skip, 0)
 	assert.Equal(t, limit, 50)
+}
+
+// Test parsing pagination when invalid page given.
+func TestParsePaginationInvalidPage(t *testing.T) {
+	req := httptest.NewRequest(http.MethodGet, "/", nil)
+
+	// Set query params
+	q := req.URL.Query()
+	q.Add("page", "0")
+	req.URL.RawQuery = q.Encode()
+
+	rr := httptest.NewRecorder()
+	_, _, err := middleware.ParsePagination(rr, req, 50)
+
+	assert.Equal(t, err, fmt.Errorf("Page must be a positive number."))
 }

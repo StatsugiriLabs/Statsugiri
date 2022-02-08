@@ -76,23 +76,11 @@ func MakeUsageQueryPipeline(usageType UsageType, intermediateStages []bson.M) []
 	// Add intermediate aggregation stages
 	pipelineStages = append(pipelineStages, intermediateStages...)
 
-	// // Group Pokémon usage snapshots before unwind
-	// groupTeamSnapshotsStage := bson.M{
-	// 	"$group": bson.M{
-	// 		"_id":      "$_id",
-	// 		"Date":     bson.M{"$first": "$Date"},
-	// 		"FormatId": bson.M{"$first": "$FormatId"},
-	// 		"PokemonPartnerUsages":    bson.M{"$push": "$PokemonPartnerUsages"},
-	// 	},
-	// }
-	// pipelineStages = append(pipelineStages, groupTeamSnapshotsStage)
-
 	return pipelineStages
 }
 
 func MakeTimeSeriesUsageQueryPipeline(pokemon string, intermediateStages []bson.D) []bson.D {
 	// Sort usage in reverse chronological order
-	// TODO: Make sorting by format as well
 	sortByDateStage := bson.D{
 		primitive.E{
 			Key: "$sort", Value: bson.D{
@@ -143,7 +131,6 @@ func MakeCompositeKey(params ...string) string {
 }
 
 // Paginate team snapshot aggregation results through slicing.
-// TODO: Handle 0 page index
 func SliceTeamSnapshots(snapshots []models.PokemonTeamsSnapshot, skip int, size int) []models.PokemonTeamsSnapshot {
 	// Limit skip to length of results
 	if skip > len(snapshots) {

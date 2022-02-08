@@ -4,102 +4,77 @@ import (
 	"testing"
 
 	"github.com/kelvinkoon/babiri_v2/controllers/utils"
+	"github.com/kelvinkoon/babiri_v2/models"
 	"github.com/stretchr/testify/assert"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 // Create mock team snapshots
-func createMockTeamSnapshots() []bson.M {
-	return []bson.M{
+func createMockTeamSnapshots() []models.PokemonTeamsSnapshot {
+	return []models.PokemonTeamsSnapshot{
 		{
-			"Date":     "2022-01-26",
-			"FormatId": "gen8vgc2021series11",
-			"Teams": bson.M{
-				"PokemonRoster": bson.A{
-					[]string{
-						"Calyrex-Shadow",
-						"Whimsicott",
-						"Urshifu",
-						"Tapu Lele",
-						"Thundurus",
-						"Chandelure",
-					},
+			Date:     "2022-01-01",
+			FormatId: "gen8vgc2021series11",
+			Teams: []models.Team{
+				{
+					PokemonRoster:    []string{"a11", "b11", "c11"},
+					Rating:           1511,
+					ReplayUploadDate: "2022-01-01",
 				},
-			},
-			"Rating":           1710,
-			"ReplayUploadDate": "2022-01-09",
-		},
-		{
-			"Date":     "2022-01-26",
-			"FormatId": "gen8vgc2021series11",
-			"Teams": bson.M{
-				"PokemonRoster": bson.A{
-					[]string{
-						"Naganadel",
-						"Tornadus",
-						"Dracovish",
-						"Mienshao",
-						"Chandelure",
-						"Tsareena",
-					},
+				{
+					PokemonRoster:    []string{"a12", "b12", "c12"},
+					Rating:           1512,
+					ReplayUploadDate: "2022-01-02",
 				},
-				"Rating":           1690,
-				"ReplayUploadDate": "2022-01-16",
 			},
 		},
 		{
-			"Date":     "2022-01-26",
-			"FormatId": "gen8vgc2021series11",
-			"Teams": bson.M{
-				"PokemonRoster": bson.A{
-					[]string{
-						"Rillaboom",
-						"Urshifu",
-						"Coalossal",
-						"Thundurus",
-						"Zacian",
-						"Incineroar",
-					},
+			Date:     "2022-01-02",
+			FormatId: "gen8vgc2021series11",
+			Teams: []models.Team{
+				{
+					PokemonRoster:    []string{"a21", "b21", "c21"},
+					Rating:           1521,
+					ReplayUploadDate: "2022-02-01",
 				},
-				"Rating":           1679,
-				"ReplayUploadDate": "2021-12-01",
+				{
+					PokemonRoster:    []string{"a22", "b22", "c22"},
+					Rating:           1522,
+					ReplayUploadDate: "2022-02-02",
+				},
 			},
 		},
 		{
-			"Date":     "2022-01-26",
-			"FormatId": "gen8vgc2021series11",
-			"Teams": bson.M{
-				"PokemonRoster": bson.A{
-					[]string{
-						"Kyogre",
-						"Calyrex-Ice",
-						"Incineroar",
-						"Mimikyu",
-						"Venusaur",
-						"Regieleki",
-					},
+			Date:     "2022-01-03",
+			FormatId: "gen8vgc2021series11",
+			Teams: []models.Team{
+				{
+					PokemonRoster:    []string{"a31", "b31", "c31"},
+					Rating:           1531,
+					ReplayUploadDate: "2022-03-01",
 				},
-				"Rating":           1651,
-				"ReplayUploadDate": "2022-01-01",
+				{
+					PokemonRoster:    []string{"a32", "b32", "c32"},
+					Rating:           1532,
+					ReplayUploadDate: "2022-03-02",
+				},
 			},
 		},
 		{
-			"Date":     "2022-01-26",
-			"FormatId": "gen8vgc2021series11",
-			"Teams": bson.M{
-				"PokemonRoster": bson.A{
-					[]string{
-						"Zacian",
-						"Lapras",
-						"Thundurus",
-						"Landorus-Therian",
-						"Urshifu",
-						"Incineroar",
-					},
+			Date:     "2022-01-04",
+			FormatId: "gen8vgc2021series11",
+			Teams: []models.Team{
+				{
+					PokemonRoster:    []string{"a41", "b41", "c41"},
+					Rating:           1541,
+					ReplayUploadDate: "2022-04-01",
 				},
-				"Rating":           1646,
-				"ReplayUploadDate": "2021-12-28",
+				{
+					PokemonRoster:    []string{"a42", "b42", "c42"},
+					Rating:           1542,
+					ReplayUploadDate: "2022-04-02",
+				},
 			},
 		},
 	}
@@ -108,254 +83,88 @@ func createMockTeamSnapshots() []bson.M {
 // Test making query pipelines.
 func TestMakeTeamQueryPipelineHappyPath(t *testing.T) {
 	pokemon := "Pikachu"
-	intermediateStages := bson.D{
-		primitive.E{Key: "$match", Value: bson.D{
-			primitive.E{
-				Key: "TestKey", Value: "TestValue",
+	intermediateStages := bson.M{
+		"$match": bson.M{
+			"TestKey": "TestValue",
+		},
+	}
+
+	expectedPipelinePokemonFilter := []bson.M{
+		{"$unwind": "$Teams"},
+		{"$sort": bson.M{"Rating": -1}},
+		intermediateStages,
+		{
+			"$match": bson.M{
+				"Teams.PokemonRoster": pokemon,
 			},
+		},
+		{
+			"$group": bson.M{
+				"_id":      "$_id",
+				"Date":     bson.M{"$first": "$Date"},
+				"FormatId": bson.M{"$first": "$FormatId"},
+				"Teams":    bson.M{"$push": "$Teams"},
+			},
+		},
+		{"$sort": bson.D{
+			primitive.E{Key: "Date", Value: -1},
+			primitive.E{Key: "FormatId", Value: -1},
 		}},
 	}
 
-	expectedPipeline := []bson.D{
-		{
-			primitive.E{
-				Key: "$unwind", Value: bson.D{
-					primitive.E{
-						Key: "path", Value: "$Teams",
-					},
-				},
-			},
-		},
-		{
-			primitive.E{
-				Key: "$sort", Value: bson.D{
-					primitive.E{
-						Key: "FormatId", Value: 1,
-					},
-				},
-			},
-		},
-		{
-			primitive.E{
-				Key: "$sort", Value: bson.D{
-					primitive.E{
-						Key: "Rating", Value: -1,
-					},
-				},
-			},
-		},
-		{
-			primitive.E{
-				Key: "$sort", Value: bson.D{
-					primitive.E{
-						Key: "Date", Value: -1,
-					},
-				},
-			},
-		},
-		{
-			primitive.E{
-				Key: "$project", Value: bson.D{
-					primitive.E{
-						Key: "Date", Value: 1,
-					},
-					primitive.E{
-						Key: "FormatId", Value: 1,
-					},
-					primitive.E{
-						Key: "Teams", Value: 1,
-					},
-					primitive.E{
-						Key: "Rating", Value: 1,
-					},
-					primitive.E{
-						Key: "ReplayUploadDate", Value: 1,
-					},
-					primitive.E{
-						Key: "_id", Value: 0,
-					},
-				},
-			},
-		},
+	expectedPipeline := []bson.M{
+		{"$unwind": "$Teams"},
+		{"$sort": bson.M{"Rating": -1}},
 		intermediateStages,
 		{
-			primitive.E{
-				Key: "$match", Value: bson.D{
-					primitive.E{
-						Key: "Teams.PokemonRoster", Value: pokemon,
-					},
-				},
+			"$group": bson.M{
+				"_id":      "$_id",
+				"Date":     bson.M{"$first": "$Date"},
+				"FormatId": bson.M{"$first": "$FormatId"},
+				"Teams":    bson.M{"$push": "$Teams"},
 			},
 		},
+		{"$sort": bson.D{
+			primitive.E{Key: "Date", Value: -1},
+			primitive.E{Key: "FormatId", Value: -1},
+		}},
 	}
 
 	// Generate pipeline with Pokémon filter
-	pipeline := utils.MakeTeamQueryPipeline(pokemon, []bson.D{intermediateStages})
-	assert.Equal(t, pipeline, expectedPipeline, "Pipelines do not match.")
+	pipeline := utils.MakeTeamQueryPipeline(pokemon, []bson.M{intermediateStages})
+	assert.Equal(t, pipeline, expectedPipelinePokemonFilter, "Pipelines do not match.")
 	// Generate pipeline without Pokémon filter
-	pipeline = utils.MakeTeamQueryPipeline("", []bson.D{intermediateStages})
-	assert.Equal(t, pipeline, expectedPipeline[:len(expectedPipeline)-1], "Pipelines do not match.")
+	pipeline = utils.MakeTeamQueryPipeline("", []bson.M{intermediateStages})
+	assert.Equal(t, pipeline, expectedPipeline, "Pipelines do not match.")
 }
 
-// Test making query pipelines for usage.
+// Test making generic usage query pipelines.
 func TestMakeUsageQueryPipelineUsage(t *testing.T) {
-	intermediateStages := bson.D{
-		primitive.E{Key: "$match", Value: bson.D{
-			primitive.E{
-				Key: "TestKey", Value: "TestValue",
-			},
-		}},
+	intermediateStages := bson.M{
+		"$match": bson.M{
+			"TestKey": "TestValue",
+		},
 	}
 
-	expectedPipeline := []bson.D{
+	expectedPipeline := []bson.M{
+		{"$sort": bson.D{
+			primitive.E{Key: "Date", Value: -1},
+			primitive.E{Key: "FormatId", Value: -1},
+		}},
 		{
-			primitive.E{
-				Key: "$sort", Value: bson.D{
-					primitive.E{
-						Key: "FormatId", Value: 1,
-					},
-				},
-			},
-		},
-		{
-			primitive.E{
-				Key: "$sort", Value: bson.D{
-					primitive.E{
-						Key: "Date", Value: -1,
-					},
-				},
-			},
-		},
-		{
-			primitive.E{
-				Key: "$project", Value: bson.D{
-					primitive.E{
-						Key: "Date", Value: 1,
-					},
-					primitive.E{
-						Key: "FormatId", Value: 1,
-					},
-					primitive.E{
-						Key: "_id", Value: 0,
-					},
-					primitive.E{
-						Key: "PokemonUsage", Value: 1,
-					},
-				},
+			"$project": bson.M{
+				"_id":                       false,
+				"Date":                      1,
+				"FormatId":                  1,
+				"PokemonUsage":              1,
+				"PokemonPartnerUsage":       1,
+				"PokemonAverageRatingUsage": 1,
 			},
 		},
 		intermediateStages,
 	}
 
-	pipeline := utils.MakeUsageQueryPipeline(utils.Usage, []bson.D{intermediateStages})
-	assert.Equal(t, pipeline, expectedPipeline, "Pipelines do not match.")
-}
-
-// Test making query pipelines for partner usage.
-func TestMakeUsageQueryPipelinePartnerUsage(t *testing.T) {
-	intermediateStages := bson.D{
-		primitive.E{Key: "$match", Value: bson.D{
-			primitive.E{
-				Key: "TestKey", Value: "TestValue",
-			},
-		}},
-	}
-
-	expectedPipeline := []bson.D{
-		{
-			primitive.E{
-				Key: "$sort", Value: bson.D{
-					primitive.E{
-						Key: "FormatId", Value: 1,
-					},
-				},
-			},
-		},
-		{
-			primitive.E{
-				Key: "$sort", Value: bson.D{
-					primitive.E{
-						Key: "Date", Value: -1,
-					},
-				},
-			},
-		},
-		{
-			primitive.E{
-				Key: "$project", Value: bson.D{
-					primitive.E{
-						Key: "Date", Value: 1,
-					},
-					primitive.E{
-						Key: "FormatId", Value: 1,
-					},
-					primitive.E{
-						Key: "_id", Value: 0,
-					},
-					primitive.E{
-						Key: "PokemonPartnerUsage", Value: 1,
-					},
-				},
-			},
-		},
-		intermediateStages,
-	}
-
-	pipeline := utils.MakeUsageQueryPipeline(utils.PartnerUsage, []bson.D{intermediateStages})
-	assert.Equal(t, pipeline, expectedPipeline, "Pipelines do not match.")
-}
-
-// Test making query pipelines for average rating usage.
-func TestMakeUsageQueryPipelineAverageRatingUsage(t *testing.T) {
-	intermediateStages := bson.D{
-		primitive.E{Key: "$match", Value: bson.D{
-			primitive.E{
-				Key: "TestKey", Value: "TestValue",
-			},
-		}},
-	}
-
-	expectedPipeline := []bson.D{
-		{
-			primitive.E{
-				Key: "$sort", Value: bson.D{
-					primitive.E{
-						Key: "FormatId", Value: 1,
-					},
-				},
-			},
-		},
-		{
-			primitive.E{
-				Key: "$sort", Value: bson.D{
-					primitive.E{
-						Key: "Date", Value: -1,
-					},
-				},
-			},
-		},
-		{
-			primitive.E{
-				Key: "$project", Value: bson.D{
-					primitive.E{
-						Key: "Date", Value: 1,
-					},
-					primitive.E{
-						Key: "FormatId", Value: 1,
-					},
-					primitive.E{
-						Key: "_id", Value: 0,
-					},
-					primitive.E{
-						Key: "PokemonAverageRatingUsage", Value: 1,
-					},
-				},
-			},
-		},
-		intermediateStages,
-	}
-
-	pipeline := utils.MakeUsageQueryPipeline(utils.RatingUsage, []bson.D{intermediateStages})
+	pipeline := utils.MakeUsageQueryPipeline(utils.Usage, []bson.M{intermediateStages})
 	assert.Equal(t, pipeline, expectedPipeline, "Pipelines do not match.")
 }
 
@@ -366,11 +175,11 @@ func TestMakeCompositeKeyHappyPath(t *testing.T) {
 	assert.Equal(t, compositeKey, expectedCompositeKey, "Composite keys do not match.")
 }
 
-// Test slicing results for single page.
+// Test slicing team results for single page.
 func TestSliceResultsHappyPath(t *testing.T) {
 	results := createMockTeamSnapshots()
 	expectedPaginatedResults := results[:2]
-	paginatedResults := utils.SliceResults(results, 0, 2)
+	paginatedResults := utils.SliceTeamSnapshots(results, 0, 2)
 	assert.Equal(t, paginatedResults, expectedPaginatedResults, "Paginated results do not match.")
 }
 
@@ -380,7 +189,7 @@ func TestSliceResultsLastPageNotFull(t *testing.T) {
 	// Expect the last result
 	expectedPaginatedResults := results[len(results)-1:]
 	// Skip all but last snapshot with a size of 2, giving 1 snapshot remaining
-	paginatedResults := utils.SliceResults(results, len(results)-1, 2)
+	paginatedResults := utils.SliceTeamSnapshots(results, len(results)-1, 2)
 	assert.Equal(t, paginatedResults, expectedPaginatedResults, "Paginated results do not match.")
 }
 
@@ -388,6 +197,6 @@ func TestSliceResultsLastPageNotFull(t *testing.T) {
 func TestSliceResultsInvalidPage(t *testing.T) {
 	results := createMockTeamSnapshots()
 	// Paginate beyond number of available results
-	paginatedResults := utils.SliceResults(results, len(results)+1, 1)
-	assert.Equal(t, paginatedResults, []bson.M{}, "Paginated results do not match.")
+	paginatedResults := utils.SliceTeamSnapshots(results, len(results)+1, 1)
+	assert.Equal(t, paginatedResults, []models.PokemonTeamsSnapshot{}, "Paginated results do not match.")
 }
