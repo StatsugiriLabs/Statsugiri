@@ -212,7 +212,6 @@ func writeUsageResponse(rw http.ResponseWriter, snapshots []models.PokemonUsageS
 		rw.WriteHeader(http.StatusOK)
 		json.NewEncoder(rw).Encode(response)
 	default:
-		// TODO: Add an actual error message
-		errors.CreateInternalServerErrorResponse(rw, nil)
+		errors.CreateInternalServerErrorResponse(rw, fmt.Errorf("Internal error writing response."))
 	}
 }

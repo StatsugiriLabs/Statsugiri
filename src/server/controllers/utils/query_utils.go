@@ -79,41 +79,26 @@ func MakeUsageQueryPipeline(usageType UsageType, intermediateStages []bson.M) []
 	return pipelineStages
 }
 
-func MakeTimeSeriesUsageQueryPipeline(pokemon string, intermediateStages []bson.D) []bson.D {
+func MakeTimeSeriesUsageQueryPipeline(pokemon string, intermediateStages []bson.M) []bson.M {
 	// Sort usage in reverse chronological order
-	sortByDateStage := bson.D{
-		primitive.E{
-			Key: "$sort", Value: bson.D{
-				primitive.E{
-					Key: "Date", Value: -1,
-				},
-			},
-		},
-	}
+	sortByDateStage := bson.M{"$sort": bson.D{
+		primitive.E{Key: "Date", Value: -1},
+	}}
 
 	// Extract necessary fields
 	pokemonKey := "PokemonUsage." + pokemon
-	groupUsageResponseStage := bson.D{
-		primitive.E{
-			Key: "$project", Value: bson.D{
-				primitive.E{
-					Key: "Date", Value: 1,
-				},
-				primitive.E{
-					Key: "FormatId", Value: 1,
-				},
-				primitive.E{
-					Key: "_id", Value: 0,
-				},
-				primitive.E{
-					Key: pokemonKey, Value: 1,
-				},
-			},
+	projectUsageResponseStage := bson.M{
+		"$project": bson.M{
+			"_id":      false,
+			"Date":     1,
+			"FormatId": 1,
+			// Only pass desired Pokémon for usage
+			pokemonKey: 1,
 		},
 	}
 
 	// Initialize pipeline stages
-	pipelineStages := []bson.D{sortByDateStage, groupUsageResponseStage}
+	pipelineStages := []bson.M{sortByDateStage, projectUsageResponseStage}
 	// Add intermediate aggregation stages
 	pipelineStages = append(pipelineStages, intermediateStages...)
 

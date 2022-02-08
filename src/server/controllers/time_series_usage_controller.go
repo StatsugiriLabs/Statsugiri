@@ -15,8 +15,6 @@ import (
 	"github.com/kelvinkoon/babiri_v2/transformers"
 	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
 )
 
 func GetTimeSeriesUsageByPokemon() http.HandlerFunc {
@@ -25,7 +23,7 @@ func GetTimeSeriesUsageByPokemon() http.HandlerFunc {
 		pokemon := mux.Vars(r)["pokemon"]
 
 		// Generate pipeline stages
-		intermediateStages := []bson.D{}
+		intermediateStages := []bson.M{}
 
 		pipeline := utils.MakeTimeSeriesUsageQueryPipeline(pokemon, intermediateStages)
 		queryTimeSeriesData(rw, pipeline, pokemon)
@@ -44,15 +42,11 @@ func GetTimeSeriesUsageByPokemonFormat() http.HandlerFunc {
 		}
 
 		// Generate pipeline stages
-		intermediateStages := []bson.D{
-			// Match usage by format
+		intermediateStages := []bson.M{
+			// Match with format provided
 			{
-				primitive.E{
-					Key: "$match", Value: bson.D{
-						primitive.E{
-							Key: "FormatId", Value: format,
-						},
-					},
+				"$match": bson.M{
+					"FormatId": format,
 				},
 			},
 		}
@@ -63,7 +57,7 @@ func GetTimeSeriesUsageByPokemonFormat() http.HandlerFunc {
 }
 
 // Queries usage collection using aggregation pipeline and encode results.
-func queryTimeSeriesData(rw http.ResponseWriter, pipeline mongo.Pipeline, pokemon string) {
+func queryTimeSeriesData(rw http.ResponseWriter, pipeline []bson.M, pokemon string) {
 	start := time.Now()
 
 	var snapshots []models.PokemonUsageSnapshot

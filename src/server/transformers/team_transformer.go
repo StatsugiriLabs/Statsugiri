@@ -28,7 +28,6 @@ func TransformTeamSnapshotsToResponse(snapshots []models.PokemonTeamsSnapshot, s
 	}
 
 	// Create response
-	// TODO: Wrap response for num results, page, limit
 	var response responses.TeamsResponse
 	response.NumResults = len(pokemonTeamSnapshots)
 	response.Page = utils.SkipToPage(skip, limit)
