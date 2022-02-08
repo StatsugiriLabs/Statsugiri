@@ -24,3 +24,4 @@ var PokemonUsageSnapshotsCollection string = "pokemon_usage_snapshots"
 var DbEnvPrefix string = Env + "_"
 var PokemonTeamSnapshotsCollectionName = DbEnvPrefix + PokemonTeamsSnapshotsCollection
 var PokemonUsageSnapshotsCollectionName = DbEnvPrefix + PokemonUsageSnapshotsCollection
+var UsageLimit int = 10

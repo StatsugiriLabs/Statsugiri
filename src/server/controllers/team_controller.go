@@ -13,17 +13,17 @@ import (
 	db "github.com/kelvinkoon/babiri_v2/db"
 	"github.com/kelvinkoon/babiri_v2/errors"
 	"github.com/kelvinkoon/babiri_v2/middleware"
+	"github.com/kelvinkoon/babiri_v2/models"
+	"github.com/kelvinkoon/babiri_v2/transformers"
 	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
 )
 
 const (
 	ALL_TEAMS_STR            = "AllTeams"
 	TEAMS_BY_FORMAT_STR      = "TeamsByFormat"
 	TEAMS_BY_FORMAT_DATE_STR = "TeamsByFormatDate"
-	PAGINATION_LIMIT         = 10
+	PAGINATION_LIMIT         = 5
 )
 
 // Returns handler for retrieving all team snapshots.
@@ -38,7 +38,7 @@ func GetAllTeamSnapshots() http.HandlerFunc {
 		}
 		pokemon := r.URL.Query().Get("pokemon")
 
-		pipeline := utils.MakeTeamQueryPipeline(pokemon, []bson.D{})
+		pipeline := utils.MakeTeamQueryPipeline(pokemon, []bson.M{})
 		composite_key := utils.MakeCompositeKey(ALL_TEAMS_STR, pokemon)
 		queryTeamsSnapshots(rw, pipeline, composite_key, skip, limit)
 	}
@@ -64,15 +64,11 @@ func GetTeamSnapshotsByFormat() http.HandlerFunc {
 		pokemon := r.URL.Query().Get("pokemon")
 
 		// Generate pipeline stages
-		intermediateStages := []bson.D{
+		intermediateStages := []bson.M{
 			// Match with format provided
 			{
-				primitive.E{
-					Key: "$match", Value: bson.D{
-						primitive.E{
-							Key: "FormatId", Value: format,
-						},
-					},
+				"$match": bson.M{
+					"FormatId": format,
 				},
 			},
 		}
@@ -108,25 +104,17 @@ func GetTeamSnapshotsByFormatAndDate() http.HandlerFunc {
 		pokemon := r.URL.Query().Get("pokemon")
 
 		// Generate pipeline stages
-		intermediateStages := []bson.D{
+		intermediateStages := []bson.M{
 			// Match with format provided
 			{
-				primitive.E{
-					Key: "$match", Value: bson.D{
-						primitive.E{
-							Key: "FormatId", Value: format,
-						},
-					},
+				"$match": bson.M{
+					"FormatId": format,
 				},
 			},
 			// Match with date provided
 			{
-				primitive.E{
-					Key: "$match", Value: bson.D{
-						primitive.E{
-							Key: "Date", Value: date,
-						},
-					},
+				"$match": bson.M{
+					"Date": date,
 				},
 			},
 		}
@@ -139,10 +127,10 @@ func GetTeamSnapshotsByFormatAndDate() http.HandlerFunc {
 
 // Queries collection using aggregation pipeline and encode results.
 // Writes to cache if results found.
-func queryTeamsSnapshots(rw http.ResponseWriter, pipeline mongo.Pipeline, composite_key string, skip int, limit int) {
+func queryTeamsSnapshots(rw http.ResponseWriter, pipeline []bson.M, composite_key string, skip int, limit int) {
 	start := time.Now()
 
-	var snapshots []bson.M
+	var snapshots []models.PokemonTeamsSnapshot
 	var found bool
 
 	// Send request if cache is not hit
@@ -158,7 +146,6 @@ func queryTeamsSnapshots(rw http.ResponseWriter, pipeline mongo.Pipeline, compos
 		}
 		defer cursor.Close(ctx)
 
-		// Iterate through query results
 		if err = cursor.All(ctx, &snapshots); err != nil {
 			panic(err)
 		}
@@ -168,10 +155,17 @@ func queryTeamsSnapshots(rw http.ResponseWriter, pipeline mongo.Pipeline, compos
 			cache.C.Put(composite_key, snapshots)
 		}
 	}
-	// Paginate snapshot results
-	paginated_snapshots := utils.SliceResults(snapshots, skip, limit)
 
+	paginated_snapshots := utils.SliceTeamSnapshots(snapshots, skip, limit)
+
+	// Write results to response
+	writeTeamResponse(rw, paginated_snapshots, skip, limit)
 	log.Infof("%d results returned in %s", len(paginated_snapshots), time.Since(start))
+}
+
+// Transform internal models to response models and write to teams response.
+func writeTeamResponse(rw http.ResponseWriter, snapshots []models.PokemonTeamsSnapshot, skip int, limit int) {
+	response := transformers.TransformTeamSnapshotsToResponse(snapshots, skip, limit)
 	rw.WriteHeader(http.StatusOK)
-	json.NewEncoder(rw).Encode(paginated_snapshots)
+	json.NewEncoder(rw).Encode(response)
 }

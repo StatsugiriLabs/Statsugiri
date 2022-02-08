@@ -8,22 +8,14 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
-	"github.com/kelvinkoon/babiri_v2/cache"
 	"github.com/kelvinkoon/babiri_v2/controllers/utils"
 	db "github.com/kelvinkoon/babiri_v2/db"
 	"github.com/kelvinkoon/babiri_v2/errors"
 	"github.com/kelvinkoon/babiri_v2/middleware"
+	"github.com/kelvinkoon/babiri_v2/models"
+	"github.com/kelvinkoon/babiri_v2/transformers"
 	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
-)
-
-const (
-	USAGE_LIMIT                      = 10
-	ALL_GENERIC_USAGE_STR            = "AllUsage"
-	GENERIC_USAGE_BY_FORMAT_STR      = "UsageByFormat"
-	GENERIC_USAGE_BY_FORMAT_DATE_STR = "UsageByFormatDate"
 )
 
 // Handlers for router
@@ -94,20 +86,19 @@ func GetPartnerUsageSnapshotsByFormatAndDate() http.HandlerFunc {
 // Handles generating parameters such as pagination and pipeline stages for retrieving all usage snapshots.
 func handleAllGenericUsageSnapshotsParams(rw http.ResponseWriter, r *http.Request, usageType utils.UsageType) {
 	// Get parameters and pagination options
-	skip, limit, err := middleware.ParsePagination(rw, r, USAGE_LIMIT)
+	skip, limit, err := middleware.ParsePagination(rw, r, utils.UsageLimit)
 	if err != nil {
 		errors.CreateBadRequestErrorResponse(rw, err)
 		return
 	}
-	pipeline := utils.MakeUsageQueryPipeline(usageType, []bson.D{})
-	composite_key := utils.MakeCompositeKey(ALL_GENERIC_USAGE_STR, usageType.String())
-	queryUsageSnapshots(rw, pipeline, composite_key, skip, limit)
+	pipeline := utils.MakeUsageQueryPipeline(usageType, []bson.M{})
+	queryUsageSnapshots(rw, pipeline, skip, limit, usageType)
 }
 
 // Handles generating parameters such as pagination and pipeline stages for retrieving usage snapshots by format.
 func handleGenericUsageSnapshotsByFormatParams(rw http.ResponseWriter, r *http.Request, usageType utils.UsageType) {
 	// Get parameters and pagination options
-	skip, limit, err := middleware.ParsePagination(rw, r, USAGE_LIMIT)
+	skip, limit, err := middleware.ParsePagination(rw, r, utils.UsageLimit)
 	if err != nil {
 		errors.CreateBadRequestErrorResponse(rw, err)
 		return
@@ -120,28 +111,23 @@ func handleGenericUsageSnapshotsByFormatParams(rw http.ResponseWriter, r *http.R
 	}
 
 	// Generate pipeline stages
-	intermediateStages := []bson.D{
+	intermediateStages := []bson.M{
 		// Match with format provided
 		{
-			primitive.E{
-				Key: "$match", Value: bson.D{
-					primitive.E{
-						Key: "FormatId", Value: format,
-					},
-				},
+			"$match": bson.M{
+				"FormatId": format,
 			},
 		},
 	}
 
 	pipeline := utils.MakeUsageQueryPipeline(usageType, intermediateStages)
-	composite_key := utils.MakeCompositeKey(GENERIC_USAGE_BY_FORMAT_STR, usageType.String(), format)
-	queryUsageSnapshots(rw, pipeline, composite_key, skip, limit)
+	queryUsageSnapshots(rw, pipeline, skip, limit, usageType)
 }
 
 // Handles generating parameters such as pagination and pipeline stages for retrieving usage snapshots by format and date.
 func handleGenericUsageSnapshotsByFormatAndDateParams(rw http.ResponseWriter, r *http.Request, usageType utils.UsageType) {
 	// Get parameters and pagination options
-	skip, limit, err := middleware.ParsePagination(rw, r, USAGE_LIMIT)
+	skip, limit, err := middleware.ParsePagination(rw, r, utils.UsageLimit)
 	if err != nil {
 		errors.CreateBadRequestErrorResponse(rw, err)
 		return
@@ -160,69 +146,73 @@ func handleGenericUsageSnapshotsByFormatAndDateParams(rw http.ResponseWriter, r 
 	}
 
 	// Generate pipeline stages
-	intermediateStages := []bson.D{
+	intermediateStages := []bson.M{
 		// Match with format provided
 		{
-			primitive.E{
-				Key: "$match", Value: bson.D{
-					primitive.E{
-						Key: "FormatId", Value: format,
-					},
-				},
+			"$match": bson.M{
+				"FormatId": format,
 			},
 		},
 		// Match with date provided
 		{
-			primitive.E{
-				Key: "$match", Value: bson.D{
-					primitive.E{
-						Key: "Date", Value: date,
-					},
-				},
+			"$match": bson.M{
+				"Date": date,
 			},
 		},
 	}
 
 	pipeline := utils.MakeUsageQueryPipeline(usageType, intermediateStages)
-	composite_key := utils.MakeCompositeKey(GENERIC_USAGE_BY_FORMAT_DATE_STR, usageType.String(), format, date)
-	queryUsageSnapshots(rw, pipeline, composite_key, skip, limit)
+	queryUsageSnapshots(rw, pipeline, skip, limit, usageType)
 }
 
 // Queries usage collection using aggregation pipeline and encode results.
 // Writes to cache if results found.
-func queryUsageSnapshots(rw http.ResponseWriter, pipeline mongo.Pipeline, composite_key string, skip int, limit int) {
+func queryUsageSnapshots(rw http.ResponseWriter, pipeline []bson.M, skip int, limit int, usage utils.UsageType) {
 	start := time.Now()
 
-	var snapshots []bson.M
-	var found bool
+	var snapshots []models.PokemonUsageSnapshot
 
-	// Send request if cache is not hit
-	if snapshots, found = cache.C.Get(composite_key); !found {
-		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-		defer cancel()
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
 
-		// Run query with pipeline
-		cursor, err := db.UsageCollection.Aggregate(ctx, pipeline)
-		if err != nil {
-			errors.CreateInternalServerErrorResponse(rw, err)
-			return
-		}
-		defer cursor.Close(ctx)
-
-		// Iterate through query results
-		if err = cursor.All(ctx, &snapshots); err != nil {
-			panic(err)
-		}
-
-		// Write to cache if results found
-		if len(snapshots) != 0 {
-			cache.C.Put(composite_key, snapshots)
-		}
+	// Run query with pipeline
+	cursor, err := db.UsageCollection.Aggregate(ctx, pipeline)
+	if err != nil {
+		errors.CreateInternalServerErrorResponse(rw, err)
+		return
 	}
-	// Paginate snapshot results
-	paginated_snapshots := utils.SliceResults(snapshots, skip, limit)
+	defer cursor.Close(ctx)
 
+	// Iterate through query results
+	if err = cursor.All(ctx, &snapshots); err != nil {
+		panic(err)
+	}
+
+	// Paginate snapshot results
+	paginated_snapshots := utils.SliceUsageSnapshots(snapshots, skip, limit)
+
+	// Write results to response
+	writeUsageResponse(rw, paginated_snapshots, skip, limit, usage)
 	log.Infof("%d results returned in %s", len(paginated_snapshots), time.Since(start))
-	rw.WriteHeader(http.StatusOK)
-	json.NewEncoder(rw).Encode(paginated_snapshots)
+}
+
+// Transform internal models to response models and write to usage response depending on usage type.
+func writeUsageResponse(rw http.ResponseWriter, snapshots []models.PokemonUsageSnapshot, skip int, limit int, usage utils.UsageType) {
+	switch usage {
+	case utils.Usage:
+		response := transformers.TransformUsageSnapshotsToUsageResponse(snapshots, skip, limit)
+		rw.WriteHeader(http.StatusOK)
+		json.NewEncoder(rw).Encode(response)
+	case utils.RatingUsage:
+		response := transformers.TransformRatingUsageSnapshotsToRatingUsageResponse(snapshots, skip, limit)
+		rw.WriteHeader(http.StatusOK)
+		json.NewEncoder(rw).Encode(response)
+	case utils.PartnerUsage:
+		response := transformers.TransformPartnerUsageSnapshotsToPartnerUsageResponse(snapshots, skip, limit)
+		rw.WriteHeader(http.StatusOK)
+		json.NewEncoder(rw).Encode(response)
+	default:
+		// TODO: Add an actual error message
+		errors.CreateInternalServerErrorResponse(rw, nil)
+	}
 }

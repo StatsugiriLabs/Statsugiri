@@ -5,9 +5,9 @@ import (
 	"time"
 
 	"github.com/kelvinkoon/babiri_v2/cache"
+	"github.com/kelvinkoon/babiri_v2/models"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"go.mongodb.org/mongo-driver/bson"
 )
 
 const (
@@ -37,7 +37,19 @@ func (m *mockScheduler) Now() int64 {
 func TestCacheGetPutHappyPathAndStaleEviction(t *testing.T) {
 	assert := assert.New(t)
 	compositeKey := "TestCompositeKey"
-	expectedResult := []bson.M{{"TestResultKey": "TestResultValue"}}
+	expectedResult := []models.PokemonTeamsSnapshot{
+		{
+			Date:     "2022-01-31",
+			FormatId: "formatid1",
+			Teams: []models.Team{
+				{
+					PokemonRoster:    []string{"a", "b", "c"},
+					Rating:           1500,
+					ReplayUploadDate: "2022-01-01",
+				},
+			},
+		},
+	}
 
 	// Initialize scheduler
 	scheduler := new(mockScheduler)
@@ -67,9 +79,45 @@ func TestCacheFullShouldNotWrite(t *testing.T) {
 	compositeKey1 := "TestCompositeKey1"
 	compositeKey2 := "TestCompositeKey2"
 	compositeKey3 := "TestCompositeKey3"
-	expectedResult1 := []bson.M{{"TestResultKey1": "TestResultValue1"}}
-	expectedResult2 := []bson.M{{"TestResultKey2": "TestResultValue2"}}
-	result3 := []bson.M{{"TestResultKey3": "TestResultValue3"}}
+	expectedResult1 := []models.PokemonTeamsSnapshot{
+		{
+			Date:     "2022-01-31",
+			FormatId: "formatid1",
+			Teams: []models.Team{
+				{
+					PokemonRoster:    []string{"a", "b", "c"},
+					Rating:           1500,
+					ReplayUploadDate: "2022-01-01",
+				},
+			},
+		},
+	}
+	expectedResult2 := []models.PokemonTeamsSnapshot{
+		{
+			Date:     "2022-02-31",
+			FormatId: "formatid2",
+			Teams: []models.Team{
+				{
+					PokemonRoster:    []string{"a2", "b2", "c2"},
+					Rating:           1503,
+					ReplayUploadDate: "2022-02-01",
+				},
+			},
+		},
+	}
+	result3 := []models.PokemonTeamsSnapshot{
+		{
+			Date:     "2022-03-31",
+			FormatId: "formatid3",
+			Teams: []models.Team{
+				{
+					PokemonRoster:    []string{"a3", "b3", "c3"},
+					Rating:           1503,
+					ReplayUploadDate: "2022-03-01",
+				},
+			},
+		},
+	}
 
 	// Initialize scheduler
 	scheduler := new(mockScheduler)

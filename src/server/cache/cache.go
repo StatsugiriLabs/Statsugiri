@@ -4,17 +4,18 @@ import (
 	"sync"
 	"time"
 
+	"github.com/kelvinkoon/babiri_v2/models"
 	log "github.com/sirupsen/logrus"
-	"go.mongodb.org/mongo-driver/bson"
 )
 
 const (
-	TTL      = 60 // Cache entry lifetime from last access (seconds)
-	CAPACITY = 1000
+	TTL      = 30 // Cache entry lifetime from last access (seconds)
+	CAPACITY = 250
 )
 
+// Cache entries for PokemonTeamsSnapshot responses
 type CacheEntry struct {
-	response   []bson.M
+	response   []models.PokemonTeamsSnapshot
 	lastAccess int64
 }
 
@@ -29,7 +30,7 @@ type ResponseCache struct {
 // Start daemon for evicting expired cache entries.
 func (c *ResponseCache) startEvictionDaemon() {
 	ticker := c.scheduler.CreateTicker(time.Second)
-	log.Infof("Starting eviction daemon")
+	log.Infof("Starting cache eviction daemon")
 	go func() {
 		for {
 			<-ticker
@@ -46,6 +47,7 @@ func (c *ResponseCache) evictCacheEntry() {
 	now := c.scheduler.Now()
 
 	for compositeKey, cacheEntry := range c.cacheMap {
+		// Remove if last access exceeds time-to-live
 		if now-cacheEntry.lastAccess > int64(TTL) {
 			_, exists := c.cacheMap[compositeKey]
 			if exists {
@@ -64,7 +66,7 @@ func (c *ResponseCache) isCacheFull() bool {
 }
 
 // Put entry into cache given composite key and response.
-func (c *ResponseCache) Put(compositeKey string, response []bson.M) {
+func (c *ResponseCache) Put(compositeKey string, response []models.PokemonTeamsSnapshot) {
 	c.rwLock.Lock()
 	defer c.rwLock.Unlock()
 
@@ -81,18 +83,16 @@ func (c *ResponseCache) Put(compositeKey string, response []bson.M) {
 	}
 }
 
-// Retrieve cache entry given composite key. If found, update last access time.
-func (c *ResponseCache) Get(compositeKey string) ([]bson.M, bool) {
+// Retrieve cache entry given composite key.
+func (c *ResponseCache) Get(compositeKey string) ([]models.PokemonTeamsSnapshot, bool) {
 	c.rwLock.Lock()
 	defer c.rwLock.Unlock()
 
 	cachedResponse, found := c.cacheMap[compositeKey]
 	if !found {
-		return []bson.M{}, false
+		return []models.PokemonTeamsSnapshot{}, false
 	}
 
-	// Update last access time
-	cachedResponse.lastAccess = c.scheduler.Now()
 	return cachedResponse.response, true
 }
 

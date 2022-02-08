@@ -1,8 +1,11 @@
 package middleware
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
+
+	"github.com/kelvinkoon/babiri_v2/controllers/utils"
 )
 
 const (
@@ -17,35 +20,35 @@ func ParsePagination(rw http.ResponseWriter, r *http.Request, max_limit int) (in
 	// Retrieve page and limit query parameters
 	pageParam := r.URL.Query().Get(PAGE_QUERY_STR)
 	limitParam := r.URL.Query().Get(LIMIT_QUERY_STR)
-	// Default page and limit params
+	// Default page to first page and max limit params
 	skip := 0
 	limit := max_limit
-	var err error
 
 	// Parse limit query param
 	if limitParam != "" {
-		limit, err = strconv.Atoi(limitParam)
+		rawLimit, err := strconv.Atoi(limitParam)
 		if err != nil {
 			return 0, max_limit, err
 		}
-		// Verify limit is between 1 and MAX_LIMIT
+		// Bound limit to MAX_LIMIT if not between 1 and MAX_LIMIT
 		if limit > max_limit || limit < 1 {
 			limit = max_limit
+		} else {
+			limit = rawLimit
 		}
 	}
 
 	// Parse page query param
 	if pageParam != "" {
-		skip, err = strconv.Atoi(pageParam)
+		page, err := strconv.Atoi(pageParam)
 		if err != nil {
 			return 0, max_limit, err
 		}
-		// Default to no skip for first page
-		if skip == 1 {
-			skip = 0
-		} else {
-			skip = (skip - 1) * limit
+		// Ensure page is a positive number
+		if page <= 0 {
+			return 0, max_limit, fmt.Errorf("Page must be a positive number.")
 		}
+		skip = utils.PageToSkip(page, limit)
 	}
 
 	return skip, limit, nil

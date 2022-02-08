@@ -16,5 +16,4 @@ func UsageRoute(router *mux.Router) {
 	router.HandleFunc("/partner-usage", controllers.GetAllPartnerUsageSnapshots()).Methods("GET")
 	router.HandleFunc("/partner-usage/{format}", controllers.GetPartnerUsageSnapshotsByFormat()).Methods("GET")
 	router.HandleFunc("/partner-usage/{format}/{date}", controllers.GetPartnerUsageSnapshotsByFormatAndDate()).Methods("GET")
-	// router.HandleFunc("/time-usage", controllers.GetAllUsageSnapshots()).Methods("GET")
 }

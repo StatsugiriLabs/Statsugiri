@@ -388,7 +388,7 @@ func TestGetUsageSnapshotsByFormatDateInvalidDate(t *testing.T) {
 	rr := httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
 
-	// Set URL params
+	// Set URL params with invalid date
 	vars := map[string]string{
 		"format": "gen8ou",
 		"date":   "2021-1-31",

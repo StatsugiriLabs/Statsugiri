@@ -25,5 +25,5 @@ func TestGetHealth(t *testing.T) {
 	// Check status code
 	assert.Equal(t, rr.Code, http.StatusOK)
 	// Check response body
-	assert.Equal(t, string(body), `{"status":"up and running"}`+"\n")
+	assert.Equal(t, string(body), `{"Status":"up and running"}`+"\n")
 }
