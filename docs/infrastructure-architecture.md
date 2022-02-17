@@ -2,8 +2,14 @@
 
 The infrastructure is hosted using [Amazon Web Services](https://aws.amazon.com/) (AWS) and their various cloud computing services.
 
-#### Infrastructure Overview Diagram
+## Data Pipeline Infrastructure
 
-![Infrastructure Diagram](images/svg/Serverless_Infrastructure.svg)
+### Invoking Lambda Functions
 
-The architecture is primarily hosted with serverless AWS services. [Cloudfront](https://aws.amazon.com/cloudfront/) and [S3](https://aws.amazon.com/s3/) are responsible for serving front-end content. [API Gateway](https://aws.amazon.com/api-gateway/) and [Lambda](https://aws.amazon.com/lambda/) facilitate the microservices and interface with the [DynamoDB](https://aws.amazon.com/dynamodb/) storage. [Cloudwatch](https://aws.amazon.com/cloudwatch/) maintains all logging.
+The payload for invoking the private lambda function contains a parameter specifying the format to extract information from.
+
+```
+{"format": "gen8vgc2022"}
+```
+
+The lambda function is scheduled with a cron job trigger using AWS EventBridge. The cron expression used is `0 9 * * ? *`, meaning it will trigger at 09:00:00 GMT everyday.
