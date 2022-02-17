@@ -4,8 +4,8 @@ The backend architecture processes the time-series usage and global ranking snap
 
 # Tech Stack
 
--   Go
--   Python
+-   Go 1.17
+-   Python 3.9
 -   MongoDB
 -   AWS Lambda
 -   AWS Elastic Container Registry
