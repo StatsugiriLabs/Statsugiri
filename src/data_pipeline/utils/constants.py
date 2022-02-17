@@ -2,8 +2,17 @@
 from utils.env_configs import ENV
 
 # PS! terms
-FORMATS = ["gen8vgc2021series11", "gen8ou"]
-NUM_TEAMS = 10
+# gen8vgc2021series11 is a legacy format primarily for tests
+FORMATS = [
+    "gen8vgc2021series11",
+    "gen8vgc2022",
+    "gen8doublesou",
+    "gen8ou",
+    "gen8nationaldexag",
+    "gen8nationaldex",
+    "gen8anythinggoes",
+]
+NUM_TEAMS = 50
 MAX_USERS = 500
 NUM_PARTNERS = 5
 TEAM_SIZE = 6

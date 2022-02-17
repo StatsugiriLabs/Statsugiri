@@ -1,7 +1,8 @@
 package utils
 
 // PS! terms
-var Formats []string = []string{"gen8vgc2021series11", "gen8ou"}
+// gen8vgc2021series11 is a legacy format primarily for tests
+var Formats []string = []string{"gen8vgc2021series11", "gen8vgc2022", "gen8doublesou", "gen8ou", "gen8nationaldexag", "gen8nationaldex", "gen8anythinggoes"}
 
 // Usage Pipeline Type Enums
 type UsageType int
