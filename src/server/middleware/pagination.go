@@ -11,6 +11,8 @@ import (
 const (
 	PAGE_QUERY_STR  = "page"
 	LIMIT_QUERY_STR = "limit"
+	START_QUERY_STR = "start"
+	END_QUERY_STR   = "end"
 )
 
 // Returns the skip and limit given the request.
@@ -52,4 +54,31 @@ func ParsePagination(rw http.ResponseWriter, r *http.Request, max_limit int) (in
 	}
 
 	return skip, limit, nil
+}
+
+// Returns the start and end of time-series given the request.
+func ParseStartAndEnd(rw http.ResponseWriter, r *http.Request) (string, string, error) {
+	// Retrieve start and end query parameters
+	startParam := r.URL.Query().Get(START_QUERY_STR)
+	endParam := r.URL.Query().Get(END_QUERY_STR)
+	start := ""
+	end := ""
+
+	// Parse start query param
+	if startParam != "" {
+		if !utils.ValidDateFormat(startParam) {
+			return "", "", fmt.Errorf("Start date must follow 'yyyy-mm-dd' format.")
+		}
+		start = startParam
+	}
+
+	// Parse end query param
+	if endParam != "" {
+		if !utils.ValidDateFormat(endParam) {
+			return "", "", fmt.Errorf("End date must follow 'yyyy-mm-dd' format.")
+		}
+		end = endParam
+	}
+
+	return start, end, nil
 }

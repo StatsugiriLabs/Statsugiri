@@ -11,6 +11,7 @@ import (
 	"github.com/kelvinkoon/babiri_v2/controllers/utils"
 	db "github.com/kelvinkoon/babiri_v2/db"
 	"github.com/kelvinkoon/babiri_v2/errors"
+	"github.com/kelvinkoon/babiri_v2/middleware"
 	"github.com/kelvinkoon/babiri_v2/models"
 	"github.com/kelvinkoon/babiri_v2/transformers"
 	log "github.com/sirupsen/logrus"
@@ -19,11 +20,37 @@ import (
 
 func GetTimeSeriesUsageByPokemon() http.HandlerFunc {
 	return func(rw http.ResponseWriter, r *http.Request) {
-		// TODO: https://github.com/kelvinkoon/babiri_v2/issues/112
+		start, end, err := middleware.ParseStartAndEnd(rw, r)
+		if err != nil {
+			errors.CreateBadRequestErrorResponse(rw, err)
+			return
+		}
+
 		pokemon := mux.Vars(r)["pokemon"]
 
 		// Generate pipeline stages
 		intermediateStages := []bson.M{}
+
+		// Add start and end stages if provided
+		if start != "" {
+			intermediateStages = append(intermediateStages,
+				bson.M{
+					"$match": bson.M{
+						"Date": bson.M{"$gte": start},
+					},
+				},
+			)
+		}
+
+		if end != "" {
+			intermediateStages = append(intermediateStages,
+				bson.M{
+					"$match": bson.M{
+						"Date": bson.M{"$lte": end},
+					},
+				},
+			)
+		}
 
 		pipeline := utils.MakeTimeSeriesUsageQueryPipeline(pokemon, intermediateStages)
 		queryTimeSeriesData(rw, pipeline, pokemon)
@@ -32,7 +59,12 @@ func GetTimeSeriesUsageByPokemon() http.HandlerFunc {
 
 func GetTimeSeriesUsageByPokemonFormat() http.HandlerFunc {
 	return func(rw http.ResponseWriter, r *http.Request) {
-		// TODO: https://github.com/kelvinkoon/babiri_v2/issues/112
+		start, end, err := middleware.ParseStartAndEnd(rw, r)
+		if err != nil {
+			errors.CreateBadRequestErrorResponse(rw, err)
+			return
+		}
+
 		pokemon := mux.Vars(r)["pokemon"]
 		format := mux.Vars(r)["format"]
 		if !utils.ValidFormat(format) {
@@ -49,6 +81,27 @@ func GetTimeSeriesUsageByPokemonFormat() http.HandlerFunc {
 					"FormatId": format,
 				},
 			},
+		}
+
+		// Add start and end stages if provided
+		if start != "" {
+			intermediateStages = append(intermediateStages,
+				bson.M{
+					"$match": bson.M{
+						"Date": bson.M{"$gte": start},
+					},
+				},
+			)
+		}
+
+		if end != "" {
+			intermediateStages = append(intermediateStages,
+				bson.M{
+					"$match": bson.M{
+						"Date": bson.M{"$lte": end},
+					},
+				},
+			)
 		}
 
 		pipeline := utils.MakeTimeSeriesUsageQueryPipeline(pokemon, intermediateStages)

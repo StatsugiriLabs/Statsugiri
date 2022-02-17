@@ -615,6 +615,7 @@ curl /api/rating-usage/gen8vgc2021series11/2022-01-27
 ## `GET /api/time-usage/{pokemon}`
 
 Get Pokémon's time-series usage to most recent date for all formats.
+Add `start` and `end` query params to filter by window.
 
 ### Request
 
@@ -690,11 +691,12 @@ curl /api/time-usage/Landorus-Therian
 ## `GET /api/time-usage/{pokemon}/{format}`
 
 Get Pokémon's time-series usage to most recent date for a specific format.
+Add `start` and `end` query params to filter by window.
 
 ### Request
 
 ```console
-curl /api/time-usage/Landorus-Therian/gen8ou
+curl /api/time-usage/Landorus-Therian/gen8ou?end=2022-01-26
 ```
 
 ### Response
@@ -706,10 +708,6 @@ curl /api/time-usage/Landorus-Therian/gen8ou
     {
       "FormatId": "gen8ou",
       "TimeSeriesUsageSnapshots": [
-        {
-          "Date": "2022-01-27",
-          "Usage": 7
-        },
         {
           "Date": "2022-01-26",
           "Usage": 6
