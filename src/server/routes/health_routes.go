@@ -7,5 +7,5 @@ import (
 
 // Configure router for health-related routes.
 func HealthRoute(router *mux.Router) {
-	router.HandleFunc("/health", controllers.GetHealth()).Methods("GET")
+	router.HandleFunc("/api/health", controllers.GetHealth()).Methods("GET")
 }
