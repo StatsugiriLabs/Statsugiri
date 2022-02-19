@@ -7,6 +7,6 @@ import (
 
 // Configure router for time-series usage-related routes.
 func TimeSeriesUsageRoute(router *mux.Router) {
-	router.HandleFunc("/time-usage/{pokemon}", controllers.GetTimeSeriesUsageByPokemon()).Methods("GET")
-	router.HandleFunc("/time-usage/{pokemon}/{format}", controllers.GetTimeSeriesUsageByPokemonFormat()).Methods("GET")
+	router.HandleFunc("/api/time-usage/{pokemon}", controllers.GetTimeSeriesUsageByPokemon()).Methods("GET")
+	router.HandleFunc("/api/time-usage/{pokemon}/{format}", controllers.GetTimeSeriesUsageByPokemonFormat()).Methods("GET")
 }

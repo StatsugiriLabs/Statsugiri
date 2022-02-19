@@ -7,5 +7,5 @@ import (
 
 // Configure router for format-related routes.
 func FormatRoute(router *mux.Router) {
-	router.HandleFunc("/formats", controllers.GetFormats()).Methods("GET")
+	router.HandleFunc("/api/formats", controllers.GetFormats()).Methods("GET")
 }

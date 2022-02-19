@@ -14,3 +14,7 @@
 ## Server Source Checklist
 
 -   [ ] Verify formats in `constants` is updated
+
+## Miscellaneous Tips
+
+-   To SSH into a container, use `docker exec -it [CONTAINER] sh`

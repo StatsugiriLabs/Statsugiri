@@ -10,6 +10,8 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+const Port = "3000"
+
 func main() {
 	// Configure router
 	router := mux.NewRouter()
@@ -25,6 +27,6 @@ func main() {
 	routes.UsageRoute(router)
 	routes.TimeSeriesUsageRoute(router)
 
-	log.Infof("Server running on Port 3000")
-	log.Fatal(http.ListenAndServe(":3000", router))
+	log.Infof("Server running on Port %s", Port)
+	log.Fatal(http.ListenAndServe(":"+Port, router))
 }
