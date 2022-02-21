@@ -2,16 +2,6 @@
 
 The backend architecture processes the time-series usage and global ranking snapshots from Pokémon Showdown.
 
-# Tech Stack
-
--   Go 1.17
--   Python 3.9
--   MongoDB
--   AWS Lambda
--   AWS Elastic Container Registry
--   AWS Cloudwatch
--   AWS EventBridge
-
 # Database Models
 
 Document tables are separated by team and usage snapshots.
@@ -57,6 +47,16 @@ Document for individual Pokémon usage data out of all ranked teams.
 ```
 
 # Endpoints
+
+Below are shortcuts to each primary endpoint.
+
+-   [`GET api/health`](#get-apihealth)
+-   [`GET api/formats`](#get-apiformats)
+-   [`GET api/teams`](#get-apiteams)
+-   [`GET api/usage`](#get-apiusage)
+-   [`GET api/rating-usage`](#get-apirating-usage)
+-   [`GET api/partner-usage`](#get-apipartner-usage)
+-   [`GET api/time-usage/{pokemon}`](#get-apitime-usagepokemon)
 
 ## `GET api/health`
 
