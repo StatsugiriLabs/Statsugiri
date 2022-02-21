@@ -2,11 +2,26 @@
 
 The backend architecture processes the time-series usage and global ranking snapshots from Pokémon Showdown.
 
-# Database Models
+## Server Modules
+
+The server is organized into the following modules:
+
+-   `cache`: Responsible for cache and scheduling mechanisms
+-   `controllers`: Responsible for application logic
+-   `db`: Responsible for initializing and configuring DB client
+-   `errors`: Responsible for server errors
+-   `middleware`: Responsible for middleware for Mux
+-   `models`: Responsible for modularizing database models
+-   `responses`: Responsible for the server responses
+-   `routes`: Responsible for routing and organizing handlers
+-   `tests`: Responsible for containing tests
+-   `transformers`: Responsible for converting `models` to `responses`
+
+## Database Models
 
 Document tables are separated by team and usage snapshots.
 
-## Pokémon Team Snapshots
+### Pokémon Team Snapshots
 
 Document for daily team snapshots and ranking metadata.
 
@@ -24,7 +39,7 @@ Document for daily team snapshots and ranking metadata.
 }
 ```
 
-## Pokémon Usage Snapshots
+### Pokémon Usage Snapshots
 
 Document for individual Pokémon usage data out of all ranked teams.
 
@@ -46,29 +61,29 @@ Document for individual Pokémon usage data out of all ranked teams.
 }
 ```
 
-# Endpoints
+## Endpoints
 
 Below are shortcuts to each primary endpoint.
 
--   [`GET api/health`](#get-apihealth)
--   [`GET api/formats`](#get-apiformats)
--   [`GET api/teams`](#get-apiteams)
--   [`GET api/usage`](#get-apiusage)
--   [`GET api/rating-usage`](#get-apirating-usage)
--   [`GET api/partner-usage`](#get-apipartner-usage)
--   [`GET api/time-usage/{pokemon}`](#get-apitime-usagepokemon)
+-   [`GET /api/health`](#get-apihealth)
+-   [`GET /api/formats`](#get-apiformats)
+-   [`GET /api/teams`](#get-apiteams)
+-   [`GET /api/usage`](#get-apiusage)
+-   [`GET /api/rating-usage`](#get-apirating-usage)
+-   [`GET /api/partner-usage`](#get-apipartner-usage)
+-   [`GET /api/time-usage/{pokemon}`](#get-apitime-usagepokemon)
 
-## `GET api/health`
+### `GET /api/health`
 
 Get API health status.
 
-### Request
+#### Request
 
 ```console
 curl /api/health
 ```
 
-### Response
+#### Response
 
 ```console
 {
@@ -76,17 +91,17 @@ curl /api/health
 }
 ```
 
-## `GET api/formats`
+### `GET /api/formats`
 
 Get supported formats.
 
-### Request
+#### Request
 
 ```console
 curl /api/formats
 ```
 
-### Response
+#### Response
 
 ```console
 {
@@ -94,19 +109,19 @@ curl /api/formats
 }
 ```
 
-## `GET /api/teams`
+### `GET /api/teams`
 
 Get all recorded team snapshots for every available format.
-Add `limit` and `offset` query params for pagination. Maximum limit of 10.
+Add `limit` and `offset` query params for pagination. Maximum limit of 5.
 Add `pokemon` query param to filter for teams featuring the specified Pokémon.
 
-### Request
+#### Request
 
 ```console
 curl /api/teams
 ```
 
-### Response
+#### Response
 
 ```console
 [
@@ -148,19 +163,19 @@ curl /api/teams
 ]
 ```
 
-## `GET /api/teams/{format}`
+### `GET /api/teams/{format}`
 
 Get all recorded team snapshots for a specific format.
-Add `limit` and `offset` query params for pagination. Maximum limit of 10.
+Add `limit` and `offset` query params for pagination. Maximum limit of 5.
 Add `pokemon` query param to filter for teams featuring the specified Pokémon.
 
-### Request
+#### Request
 
 ```console
 curl /api/teams/gen8vgc2021series11
 ```
 
-### Response
+#### Response
 
 ```console
 [
@@ -202,19 +217,19 @@ curl /api/teams/gen8vgc2021series11
 ]
 ```
 
-## `GET /api/teams/{format}/{date}`
+### `GET /api/teams/{format}/{date}`
 
 Get all recorded team snapshots for a specific format and date.
-Add `limit` and `offset` query params for pagination. Maximum limit of 10.
+Add `limit` and `offset` query params for pagination. Maximum limit of 5.
 Add `pokemon` query param to filter for teams featuring the specified Pokémon.
 
-### Request
+#### Request
 
 ```console
 curl /api/teams/gen8vgc2021series11/2022-01-22?pokemon=Urshifu
 ```
 
-### Response
+#### Response
 
 ```console
 [
@@ -254,18 +269,18 @@ curl /api/teams/gen8vgc2021series11/2022-01-22?pokemon=Urshifu
 ]
 ```
 
-## `GET /api/usage`
+### `GET /api/usage`
 
 Get all recorded usage snapshots for every available format.
-Add `limit` and `offset` query params for pagination. Maximum limit of 10.
+Add `limit` and `offset` query params for pagination. Maximum limit of 5.
 
-### Request
+#### Request
 
 ```console
 curl /api/usage
 ```
 
-### Response
+#### Response
 
 ```console
 [
@@ -286,18 +301,18 @@ curl /api/usage
 ]
 ```
 
-## `GET /api/usage/{format}`
+### `GET /api/usage/{format}`
 
 Get all recorded usage snapshots for a specific format.
-Add `limit` and `offset` query params for pagination. Maximum limit of 10.
+Add `limit` and `offset` query params for pagination. Maximum limit of 5.
 
-### Request
+#### Request
 
 ```console
 curl /api/usage/gen8ou
 ```
 
-### Response
+#### Response
 
 ```console
 [
@@ -331,18 +346,18 @@ curl /api/usage/gen8ou
 ]
 ```
 
-## `GET /api/usage/{format}/{date}`
+### `GET /api/usage/{format}/{date}`
 
 Get all recorded usage snapshots for a specific format and date.
-Add `limit` and `offset` query params for pagination. Maximum limit of 10.
+Add `limit` and `offset` query params for pagination. Maximum limit of 5.
 
-### Request
+#### Request
 
 ```console
 curl /api/usage/gen8ou/2022-01-27
 ```
 
-### Response
+#### Response
 
 ```console
 [
@@ -361,18 +376,18 @@ curl /api/usage/gen8ou/2022-01-27
 ]
 ```
 
-## `GET /api/rating-usage`
+### `GET /api/rating-usage`
 
 Get all recorded rating-to-usage snapshots for every available format.
-Add `limit` and `offset` query params for pagination. Maximum limit of 10.
+Add `limit` and `offset` query params for pagination. Maximum limit of 5.
 
-### Request
+#### Request
 
 ```console
 curl /api/rating-usage
 ```
 
-### Response
+#### Response
 
 ```console
 [
@@ -394,18 +409,18 @@ curl /api/rating-usage
 ]
 ```
 
-## `GET /api/rating-usage/{format}`
+### `GET /api/rating-usage/{format}`
 
 Get all recorded rating-to-usage snapshots for a specific format.
-Add `limit` and `offset` query params for pagination. Maximum limit of 10.
+Add `limit` and `offset` query params for pagination. Maximum limit of 5.
 
-### Request
+#### Request
 
 ```console
 curl /api/rating-usage/gen8ou
 ```
 
-### Response
+#### Response
 
 ```console
 [
@@ -439,18 +454,18 @@ curl /api/rating-usage/gen8ou
 ]
 ```
 
-## `GET /api/rating-usage/{format}/{date}`
+### `GET /api/rating-usage/{format}/{date}`
 
 Get all recorded rating-to-usage snapshots for a specific format and date.
-Add `limit` and `offset` query params for pagination. Maximum limit of 10.
+Add `limit` and `offset` query params for pagination. Maximum limit of 5.
 
-### Request
+#### Request
 
 ```console
 curl /api/rating-usage/gen8ou/2022-01-27
 ```
 
-### Response
+#### Response
 
 ```console
 [
@@ -469,18 +484,18 @@ curl /api/rating-usage/gen8ou/2022-01-27
 ]
 ```
 
-## `GET /api/partner-usage`
+### `GET /api/partner-usage`
 
 Get all recorded partner usage snapshots for every available format.
-Add `limit` and `offset` query params for pagination. Maximum limit of 10.
+Add `limit` and `offset` query params for pagination. Maximum limit of 5.
 
-### Request
+#### Request
 
 ```console
 curl /api/partner-usage
 ```
 
-### Response
+#### Response
 
 ```console
 [
@@ -510,18 +525,18 @@ curl /api/partner-usage
 ]
 ```
 
-## `GET /api/partner-usage/{format}`
+### `GET /api/partner-usage/{format}`
 
 Get all recorded partner usage snapshots for a specific format.
-Add `limit` and `offset` query params for pagination. Maximum limit of 10.
+Add `limit` and `offset` query params for pagination. Maximum limit of 5.
 
-### Request
+#### Request
 
 ```console
 curl /api/partner-usage/gen8vgc2021series11
 ```
 
-### Response
+#### Response
 
 ```console
 [
@@ -573,18 +588,18 @@ curl /api/partner-usage/gen8vgc2021series11
 ]
 ```
 
-## `GET /api/partner-usage/{format}/{date}`
+### `GET /api/partner-usage/{format}/{date}`
 
 Get all recorded partner usage snapshots for a specific format and date.
-Add `limit` and `offset` query params for pagination. Maximum limit of 10.
+Add `limit` and `offset` query params for pagination. Maximum limit of 5.
 
-### Request
+#### Request
 
 ```console
 curl /api/rating-usage/gen8vgc2021series11/2022-01-27
 ```
 
-### Response
+#### Response
 
 ```console
 [
@@ -612,18 +627,18 @@ curl /api/rating-usage/gen8vgc2021series11/2022-01-27
 ]
 ```
 
-## `GET /api/time-usage/{pokemon}`
+### `GET /api/time-usage/{pokemon}`
 
 Get Pokémon's time-series usage to most recent date for all formats.
 Add `start` and `end` query params to filter by window.
 
-### Request
+#### Request
 
 ```console
 curl /api/time-usage/Landorus-Therian
 ```
 
-### Response
+#### Response
 
 ```console
 {
@@ -688,18 +703,18 @@ curl /api/time-usage/Landorus-Therian
 }
 ```
 
-## `GET /api/time-usage/{pokemon}/{format}`
+### `GET /api/time-usage/{pokemon}/{format}`
 
 Get Pokémon's time-series usage to most recent date for a specific format.
 Add `start` and `end` query params to filter by window.
 
-### Request
+#### Request
 
 ```console
 curl /api/time-usage/Landorus-Therian/gen8ou?end=2022-01-26
 ```
 
-### Response
+#### Response
 
 ```console
 {
