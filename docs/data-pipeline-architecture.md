@@ -16,7 +16,7 @@ The core components of the data pipeline are the [DataExtractor](#DataExtractor)
 
 ### Infrastructure
 
-The Data Extraction [Lambda](https://aws.amazon.com/lambda/) is scheduled to run every 24 hours using [CloudWatch](https://aws.amazon.com/cloudwatch/). CloudWatch is also responsible for monitoring errors from the Data Extraction Lamba logs. [Simple Notification Service](https://aws.amazon.com/sns/?whats-new-cards.sort-by=item.additionalFields.postDateTime&whats-new-cards.sort-order=desc) (SNS) will notify the user via email. The Data Extraction Lambda builds are updated through [Elastic Container Registry](https://aws.amazon.com/ecr/) (ECR) deploying the Docker image after pushes to the main branch.
+The Data Extraction [Lambda](https://aws.amazon.com/lambda/) is scheduled to run every 24 hours using [EventBridge](https://aws.amazon.com/eventbridge/). [CloudWatch](https://aws.amazon.com/cloudwatch/) is responsible for monitoring errors from the Lambda function. An alarm will be raised via email should CloudWatch catch an errors. The Data Extraction Lambda builds are updated through [Elastic Container Registry](https://aws.amazon.com/ecr/) (ECR) deploying the Docker image after pushes to the main branch.
 
 ### Main Modules
 
