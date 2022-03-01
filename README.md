@@ -2,7 +2,7 @@
 
 ![Babiri CI](https://github.com/kelvinkoon/babiri_v2/actions/workflows/main.yml/badge.svg)
 
-babiri.net is a competitive Pokémon stats aggregation (and soon) visualization website. The live demo API can be found [here](https://babiri.net/api/health).
+babiri.net is a competitive Pokémon stats aggregation (and soon) visualization website. The live demo API can be found [here](https://babiri.net/api/health). For a technical write-up, please check out [Building babiri.net](https://kelvinkoon.dev/posts/building_babiri/).
 
 ## Getting Started
 
