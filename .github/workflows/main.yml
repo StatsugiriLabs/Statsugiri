@@ -17,10 +17,6 @@ jobs:
               uses: actions/setup-python@v2
               with:
                   python-version: ${{ matrix.python-version }}
-            - name: Set up Go ${{ matrix.go-version }}
-              uses: actions/setup-go@v2
-              with:
-                  go-version: ${{ matrix.go-version }}
 
             - name: Environment Setup
               run: |
@@ -31,7 +27,7 @@ jobs:
                   ./formatting_scripts/check_formatting_ci.sh
 
     pytest:
-        name: Data Pipeline Python Tests
+        name: Data Ingestion Python Tests
         runs-on: ubuntu-latest
         strategy:
             matrix:
@@ -51,28 +47,3 @@ jobs:
             - name: Run Pytest
               run: |
                   make drilbur-test
-
-    gotest:
-        name: Server Go Tests
-        env:
-            MONGOURI: ${{ secrets.MONGOURI_CI }}
-            ENV: QA
-        runs-on: ubuntu-latest
-        strategy:
-            matrix:
-                go-version: ["1.17.2"]
-        steps:
-            # checks-out the repository under $GITHUB_WORKSPACE
-            - uses: actions/checkout@v2
-            - name: Set up Go ${{ matrix.go-version }}
-              uses: actions/setup-go@v2
-              with:
-                  go-version: ${{ matrix.go-version }}
-
-            - name: Environment Setup
-              run: |
-                  "${GITHUB_WORKSPACE}"/environment_setup/setup.sh
-
-            - name: Run Go test
-              run: |
-                  make server-test
