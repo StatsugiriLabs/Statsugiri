@@ -24,7 +24,7 @@ function install_python_dependencies () {
         printf "\n***Pip update failed!***\n\n"
         exit 1
     fi
-    pip install -r $SRC_DIR/data_pipeline/requirements.txt
+    pip install -r $SRC_DIR/data_ingestion/requirements.txt
     if [[ "$?" != 0 ]]; then
         printf "\n***Python dependencies failed to install!***\n\n"
         exit 1

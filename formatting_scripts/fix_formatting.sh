@@ -9,7 +9,7 @@
 
 CURR_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 SRC_DIR="$CURR_DIR/../src"
-LINT_THRESHOLD=9
+LINT_THRESHOLD=8
 
 # Function to check if formatting dependencies are available
 function check_dependencies () {
@@ -52,18 +52,6 @@ function run_pylint_linting () {
     fi
 }
 
-# Function to run gofmt formatting
-function run_gofmt_formatting () {
-    printf "Running gofmt to format Go files...\n\n"
-    # Suppress messages
-    gofmt -s -w $SRC_DIR &>/dev/null
-
-    if [[ "$?" != 0 ]]; then
-        printf "\n***Failed to format Go files!***\n\n"
-        exit 1
-    fi
-}
-
 function run_eof_new_line(){
     printf "Adding missing new lines to end of files...\n\n"
 
@@ -80,7 +68,6 @@ check_dependencies
 # Run formatting
 run_black_formatting
 run_pylint_linting
-run_gofmt_formatting
 run_eof_new_line
 
 exit 0
