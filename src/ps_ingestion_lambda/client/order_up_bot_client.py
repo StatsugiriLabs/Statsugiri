@@ -14,15 +14,14 @@ class OrderUpBotClient:
         self.api_client = api_client
         self.format_id = format_id
 
-    """
-    Tweet a title thread and reply threads with the snapshot
-
-    :param: teams_snapshot
-    :param: snapshot_date
-    :returns: None
-    """
-
     def tweet(self, teams_snapshot: List[TeamSnapshotInfo], snapshot_date: str) -> None:
+        """
+        Tweet a title thread and reply threads with the snapshot
+
+        :param: teams_snapshot
+        :param: snapshot_date
+        :returns: None
+        """
         tweet_ids = []
         try:
             parent_tweet_status = self.api_client.update_status(
@@ -70,27 +69,25 @@ class OrderUpBotClient:
                 raise delete_e
             raise post_e
 
-    """
-    Generate the title tweet for the snapshot thread
-
-    :param: snapshot_date
-    :returns: title tweet message
-    """
-
     def _get_title_tweet(self, snapshot_date: str) -> str:
+        """
+        Generate the title tweet for the snapshot thread
+
+        :param: snapshot_date
+        :returns: title tweet message
+        """
         return "🧵 Thread for Pokémon Showdown Teams\n📅 Date: {date}\n📝 Format: {format}\n✅ Identifier: {uuid}".format(
             date=snapshot_date, format=self.format_id, uuid=str(uuid.uuid4())
         )
 
-    """
-    Generate the team reply tweet for the snapshot thread
-
-    :param: rank
-    :param: team
-    :returns: child tweet message
-    """
-
     def _get_team_tweet(self, rank: int, team: TeamSnapshotInfo) -> str:
+        """
+        Generate the team reply tweet for the snapshot thread
+
+        :param: rank
+        :param: team
+        :returns: child tweet message
+        """
         pkmn_team = "/".join(team.pkmn_team)
         team_tweet = "{rank}.\n{pkmn_team}\n\n📈 Rating: {rating}\n\n📼 Replay: {replay_link}".format(
             rank=str(rank),
@@ -100,23 +97,21 @@ class OrderUpBotClient:
         )
         return team_tweet
 
-    """
-    Generate error tweet, generally when tweet exceeds MAX_TWEET_LENGTH
-
-    :param: rank
-    :returns: error tweet message
-    """
-
     def _get_error_tweet(self, rank: int) -> str:
+        """
+        Generate error tweet, generally when tweet exceeds MAX_TWEET_LENGTH
+
+        :param: rank
+        :returns: error tweet message
+        """
         return "{rank}.\n⚠️ Twitter client error, skipping...".format(rank=str(rank))
 
-    """
-    Generate quote tweet to push message to top of feed
-
-    :returns: quote tweet message
-    """
-
     def _get_quote_tweet(self):
+        """
+        Generate quote tweet to push message to top of feed
+
+        :returns: quote tweet message
+        """
         return "🐟 Order Up! 🐟\n✅ Identifier: {uuid}\n\n#OrderUpVGC".format(
             uuid=str(uuid.uuid4())
         )

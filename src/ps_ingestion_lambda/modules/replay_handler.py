@@ -20,14 +20,13 @@ class ReplayHandler:
         self.format_id = format_id
         self.ladder_retriever = ladder_retriever
 
-    """
-    Retrieve replays from top-rated ladder users
-
-    :param: num_users_to_pull number of users (ie. teams) to retrieve
-    :returns: list of most recent replay from each user
-    """
-
     def extract_replays(self, num_users_to_pull: int = MAX_USERS) -> List[ReplayInfo]:
+        """
+        Retrieve replays from top-rated ladder users
+
+        :param: num_users_to_pull number of users (ie. teams) to retrieve
+        :returns: list of most recent replay from each user
+        """
         # Limit if greater than MAX_USERS
         num_users_to_pull = min(num_users_to_pull, MAX_USERS)
 
@@ -86,15 +85,14 @@ class ReplayHandler:
         ]
         return replay_id[0] if replay_id else ""
 
-    """
-    Retrieve replay metadata info by transforming user info and replay ID
-
-    :param: user_info Associated user metadata
-    :param: replay_id Replay ID to retrieve
-    :returns: ReplayInfo
-    """
-
     def _get_replay_info(self, user_info: LadderUserInfo, replay_id: str) -> ReplayInfo:
+        """
+        Retrieve replay metadata info by transforming user info and replay ID
+
+        :param: user_info Associated user metadata
+        :param: replay_id Replay ID to retrieve
+        :returns: ReplayInfo
+        """
         try:
             replay_json = self._get_replay_json_from_id(replay_id)
             replay_info = ReplayInfo(

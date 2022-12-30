@@ -21,13 +21,12 @@ from utils.constants import (
 from data.ingest_data_info import IngestDataInfo
 from utils.time_utils import convert_unix_timestamp_to_str
 
-"""
-Lambda handler entrypoint
-:returns: HTTP response
-"""
-
 
 def lambda_handler(event: LambdaDict, context: LambdaContext) -> dict:
+    """
+    Lambda handler entrypoint
+    :returns: HTTP response
+    """
     format_to_search = event.get(EVENT_FORMAT_KEY) or ""
     if not format_to_search or format_to_search not in VALID_FORMATS:
         # Handle bad request
@@ -72,13 +71,11 @@ def lambda_handler(event: LambdaDict, context: LambdaContext) -> dict:
     }
 
 
-"""
-Initialize the Twitter API client
-:returns: Authorized Tweepy API client
-"""
-
-
 def init_twitter_api_client() -> tweepy.API:
+    """
+    Initialize the Twitter API client
+    :returns: Authorized Tweepy API client
+    """
     try:
         auth = tweepy.OAuthHandler(TWITTER_API_KEY, TWITTER_API_KEY_SECRET)
         auth.set_access_token(TWITTER_ACCESS_TOKEN, TWITTER_ACCESS_TOKEN_SECRET)

@@ -14,14 +14,13 @@ class PsIngestionClient:
         self.replay_handler = replay_handler
         self.replay_parser = replay_parser
 
-    """
-    Facilitate ETL process for PS teams
-
-    :param: ingest_data_info 
-    :returns: teams_snapshot
-    """
-
     def process(self, ingest_data_info: IngestDataInfo) -> List[TeamSnapshotInfo]:
+        """
+        Facilitate ETL process for PS teams
+
+        :param: ingest_data_info
+        :returns: teams_snapshot
+        """
         replays = self.replay_handler.extract_replays(
             ingest_data_info.num_users_to_pull
         )
