@@ -40,11 +40,11 @@ jobs:
                   python-version: ${{ matrix.python-version }}
 
             - name: PS Ingestion Environment Setup
-              working-directory: ./src/ps_ingestion
+              working-directory: ./src/ps_ingestion_lambda
               run: |
                   pip install -r requirements.txt
 
             - name: Run Pytest
-              working-directory: ./src/ps_ingestion
+              working-directory: ./src/ps_ingestion_lambda
               run: |
                   pytest .
