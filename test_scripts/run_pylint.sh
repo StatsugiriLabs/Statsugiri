@@ -6,10 +6,9 @@
 
 CURR_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 SRC_DIR="$CURR_DIR/../src"
-LINT_THRESHOLD=9
 
 function run_pylint () {
-    pylint --fail-under=$LINT_THRESHOLD $SRC_DIR/**/*.py --rcfile=$CURR_DIR/../.pylintrc
+    pylint $SRC_DIR/**/*.py --rcfile=$CURR_DIR/../.pylintrc
 }
 
 # Run pylint

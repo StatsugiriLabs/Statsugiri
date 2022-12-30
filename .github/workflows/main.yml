@@ -1,4 +1,4 @@
-name: Babiri CI
+name: Statsugiri CI
 
 on: [push]
 
@@ -9,7 +9,6 @@ jobs:
         strategy:
             matrix:
                 python-version: ["3.9"]
-                go-version: ["1.17.2"]
         steps:
             # checks-out the repository under $GITHUB_WORKSPACE
             - uses: actions/checkout@v2
@@ -18,16 +17,16 @@ jobs:
               with:
                   python-version: ${{ matrix.python-version }}
 
-            - name: Environment Setup
+            - name: Root Environment Setup
               run: |
-                  "${GITHUB_WORKSPACE}"/environment_setup/setup.sh
+                  pip install -r ./requirements.txt
 
             - name: Check formatting and linting
               run: |
                   ./formatting_scripts/check_formatting_ci.sh
 
     pytest:
-        name: Data Ingestion Python Tests
+        name: PS Ingestion Tests
         runs-on: ubuntu-latest
         strategy:
             matrix:
@@ -40,10 +39,12 @@ jobs:
               with:
                   python-version: ${{ matrix.python-version }}
 
-            - name: Environment Setup
+            - name: PS Ingestion Environment Setup
+              working-directory: ./src/ps_ingestion
               run: |
-                  "${GITHUB_WORKSPACE}"/environment_setup/setup.sh
+                  pip install -r requirements.txt
 
             - name: Run Pytest
+              working-directory: ./src/ps_ingestion
               run: |
-                  make drilbur-test
+                  pytest .

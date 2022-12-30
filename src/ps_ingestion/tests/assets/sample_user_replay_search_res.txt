@@ -1,0 +1,24 @@
+	<div class="pfx-panel"><div class="pfx-body pfx-body-padded">
+		<h1>Search replays</h1>
+		<form action="/search/" method="get" data-target="replace">
+			<p style="text-align:center">
+				<label><input type="text" name="user" class="textbox" placeholder="Username" size="24" autofocus="autofocus" value="user1" /></label>
+				<button type="submit"><strong>Search</strong></button>
+			</p>
+		</form>
+		<form action="/search/" method="get" data-target="replace">
+			<p style="text-align:center">
+				<label><input type="text" name="format" class="textbox" placeholder="Format" size="24" value="" /></label>
+				<button type="submit"><strong>Search</strong></button>
+			</p>
+		</form>
+		<h1>Search results for "user1"</h1>
+		<ul class="linklist" style="max-width:480px;margin:0 auto;text-align:center">
+<h3>1 week ago</h3>		<li><a href="/test_format-1470016794" data-target="push"><small>[test_format]<br /></small> <strong>random1</strong> vs. <strong>user1</strong></a></li>
+		<li><a href="/test_format-1469830222" data-target="push"><small>[test_format]<br /></small> <strong>user1</strong> vs. <strong>random2</strong></a></li>
+		<li><a href="/wrong_format-1468972576" data-target="push"><small>[wrong_format]<br /></small> <strong>user1</strong> vs. <strong>random3</strong></a></li>
+		<li><a href="/wrong_format-1468955929" data-target="push"><small>[wrong_format]<br /></small> <strong>random4</strong> vs. <strong>user1</strong></a></li>
+		</ul>
+	</div></div>
+
+
