@@ -1,0 +1,3 @@
+tests
+.venv
+.pytest_cache

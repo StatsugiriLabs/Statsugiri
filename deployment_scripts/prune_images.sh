@@ -5,4 +5,3 @@
 #
 
 docker image prune -af
-

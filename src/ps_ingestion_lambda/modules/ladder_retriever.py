@@ -13,13 +13,12 @@ class LadderRetriever:
             "https://replay.pokemonshowdown.com/search/?output=html&user="
         )
 
-    """
-    Retrieve top ladder users based on rating
-
-    :returns: list of ladder users sorted by rating
-    """
-
     def get_users(self, format_id: str) -> List[LadderUserInfo]:
+        """
+        Retrieve top ladder users based on rating
+
+        :returns: list of ladder users sorted by rating
+        """
         ladder_get_url = "{ladder_base_url}/{format_id}".format(
             ladder_base_url=self.ladder_base_url, format_id=format_id
         )
