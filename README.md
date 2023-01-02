@@ -1,6 +1,6 @@
 # Statsugiri
 
-![Statsugiri CI](https://github.com/StatsugiriGG/Statsugiri/actions/workflows/main.yml/badge.svg)
+![Statsugiri CI](https://github.com/StatsugiriGG/Statsugiri/actions/workflows/on-push.yml/badge.svg)
 
 Statsugiri is a project focused on creating competitive Pokémon data tools.
 
