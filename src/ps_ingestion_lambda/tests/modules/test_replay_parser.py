@@ -6,6 +6,7 @@ from data.team_snapshot_info import TeamSnapshotInfo
 from typing import List
 
 GENERIC_LOG_USER = "Bruce_poke"
+STRANGE_CHARS_LOG_USER = "SAHAbatgomba"  # Appears as 'SAHAbatgomba^_^' in log
 INCOMPLETE_TEAM_LOG_USER = "babiri_tester"
 MULTIPLE_FORMS_TEAM = [
     "Zacian",
@@ -14,6 +15,14 @@ MULTIPLE_FORMS_TEAM = [
     "Landorus-Therian",
     "Urshifu",
     "Incineroar",
+]
+STRANGE_CHARS_TEAM = [
+    "Armarouge",
+    "Mimikyu",
+    "Gholdengo",
+    "Murkrow",
+    "Torkoal",
+    "Azumarill",
 ]
 INCOMPLETE_TEAM = ["Groudon", "Yveltal", "Incineroar", "Regieleki", "pkmn4", "pkmn5"]
 REPLAY_ID = 1
@@ -37,6 +46,17 @@ def fixture_sample_replay_log_generic_text():
     )
     return open(
         os.path.join(__location__, "../assets/sample_replay_log_generic.txt"),
+        encoding="utf-8",
+    ).read()
+
+
+@pytest.fixture(name="sample_replay_log_strange_chars")
+def fixture_sample_replay_log_strange_chars():
+    __location__ = os.path.realpath(
+        os.path.join(os.getcwd(), os.path.dirname(__file__))
+    )
+    return open(
+        os.path.join(__location__, "../assets/sample_replay_log_strange_chars.txt"),
         encoding="utf-8",
     ).read()
 
@@ -78,6 +98,19 @@ def test_transform_to_teams_snapshot_multiple_forms_happy_path(
         sample_replay_info_list, SNAPSHOT_DATE
     )
     assert snapshot == init_expected_teams_snapshot([MULTIPLE_FORMS_TEAM])
+
+
+def test_transform_to_teams_snapshot_strange_chars(
+    replay_parser_under_test, sample_replay_log_strange_chars
+):
+    sample_replay_info_list = [
+        init_sample_replay_info(STRANGE_CHARS_LOG_USER, sample_replay_log_strange_chars)
+    ]
+
+    snapshot = replay_parser_under_test.transform_to_teams_snapshot(
+        sample_replay_info_list, SNAPSHOT_DATE
+    )
+    assert snapshot == init_expected_teams_snapshot([STRANGE_CHARS_TEAM])
 
 
 def test_transform_to_teams_snapshot_incomplete_team(

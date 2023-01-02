@@ -59,6 +59,7 @@ class ReplayParser:
         # Identify whether user is `p1` or `p2`
         # Ex. |player|p1|<PLAYER>|265|1546
         alphanumeric_username = self._generate_alphanumeric_username_regex(username)
+        print(alphanumeric_username)
         player_num = re.findall(
             f"\\|player\\|(\w+)\\|{alphanumeric_username}\\|", replay_log, re.IGNORECASE
         )
@@ -95,16 +96,15 @@ class ReplayParser:
     def _generate_alphanumeric_username_regex(self, username: str) -> str:
         """
         Generate username regex ignoring non-alphanumeric characters (eg. whitespace, footstops, etc)
-        https://stackoverflow.com/questions/4590298/
-        how-to-ignore-whitespace-in-a-regular-expression-subject-string
+        https://stackoverflow.com/questions/6053541/regex-every-non-alphanumeric-character-except-white-space-or-colon
 
         :param: username
-        :returns: regex ignoring spaces (eg. 'b _ob' -> '\W*b\s*\W*_\s*\W*b\W*')
+        :returns: regex ignoring special chars
         """
         # PS does not ignore underscores, so an explicit check is required
-        alphanumeric_username = "".join(
-            ch for ch in username if ch.isalnum() or ch == "_"
+        alphanumeric_username = "".join(ch for ch in username if ch.isalnum())
+        return (
+            "[^A-Za-z0-9]*"
+            + "[^A-Za-z0-9]*".join(alphanumeric_username)
+            + "[^A-Za-z0-9]*"
         )
-        # \s* - Capture potential spaces
-        # \W* - Capture non-alphanumeric characters
-        return "\W*" + "\s*\W*".join(alphanumeric_username) + "\W*"
