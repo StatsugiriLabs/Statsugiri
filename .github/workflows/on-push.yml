@@ -3,15 +3,17 @@ name: Statsugiri CI
 on: [push]
 
 jobs:
-    formatting-linting-check:
-        name: Formatting and Linting Check
+    formatting-check:
+        name: Formatting Check
         runs-on: ubuntu-latest
         strategy:
             matrix:
                 python-version: ["3.9"]
         steps:
+            - name: Checkout
+              uses: actions/checkout@v2
+
             # checks-out the repository under $GITHUB_WORKSPACE
-            - uses: actions/checkout@v2
             - name: Set up Python ${{ matrix.python-version }}
               uses: actions/setup-python@v2
               with:
@@ -21,7 +23,7 @@ jobs:
               run: |
                   pip install -r ./requirements.txt
 
-            - name: Check formatting and linting
+            - name: Check formatting
               run: |
                   ./formatting_scripts/check_formatting_ci.sh
 
@@ -32,14 +34,16 @@ jobs:
             matrix:
                 python-version: ["3.9"]
         steps:
+            - name: Checkout
+              uses: actions/checkout@v2
+
             # checks-out the repository under $GITHUB_WORKSPACE
-            - uses: actions/checkout@v2
             - name: Set up Python ${{ matrix.python-version }}
               uses: actions/setup-python@v2
               with:
                   python-version: ${{ matrix.python-version }}
 
-            - name: PS Ingestion Environment Setup
+            - name: PS Ingestion environment setup
               working-directory: ./src/ps_ingestion_lambda
               run: |
                   pip install -r requirements.txt
