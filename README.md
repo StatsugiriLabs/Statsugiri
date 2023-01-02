@@ -2,9 +2,16 @@
 
 ![Statsugiri CI](https://github.com/StatsugiriGG/Statsugiri/actions/workflows/main.yml/badge.svg)
 
-Statsugiri is a project focused on creating competitive Pokémon data aggregation tools.
-Currently, it is under maintenance. Please follow the [Statsugiri Twitter](https://twitter.com/StatsugiriGG)
+Statsugiri is a project focused on creating competitive Pokémon data tools.
+
+Currently, it is under maintenance. Please follow the [@StatsugiriGG](https://twitter.com/StatsugiriGG)
 for updates.
+
+## Projects
+
+| Project           | Link                                |
+| ----------------- | ----------------------------------- |
+| OrderUp Teams Bot | https://twitter.com/OrderUpTeamsBot |
 
 ## Built With
 
