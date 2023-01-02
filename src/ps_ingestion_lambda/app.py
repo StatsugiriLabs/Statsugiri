@@ -32,12 +32,18 @@ def lambda_handler(event: LambdaDict, context: LambdaContext) -> dict:
 
     # Request validation
     if not format_to_search:
-        raise ValueError("'{format_key}' key must be provided or an accepted format.".format(
-            format_key=EVENT_FORMAT_KEY))
+        raise ValueError(
+            "'{format_key}' key must be provided or an accepted format.".format(
+                format_key=EVENT_FORMAT_KEY
+            )
+        )
 
     if format_to_search not in VALID_FORMATS:
-        raise ValueError("'{format}' is not accepted, please try a different format.".format(
-            format=format_to_search))
+        raise ValueError(
+            "'{format}' is not accepted, please try a different format.".format(
+                format=format_to_search
+            )
+        )
 
     # Initialize clients
     order_up_bot_client = OrderUpBotClient(init_twitter_api_client(), format_to_search)
