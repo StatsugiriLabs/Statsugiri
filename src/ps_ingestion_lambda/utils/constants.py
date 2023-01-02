@@ -7,7 +7,7 @@ VALID_FORMATS = [
 ]
 
 EVENT_FORMAT_KEY = "format"
-NUM_USERS_TO_PULL = 3
+NUM_USERS_TO_PULL = 100
 MAX_USERS = 500
 TEAM_SIZE = 6
 REPLAY_BASE_URL = "https://replay.pokemonshowdown.com/"
@@ -18,6 +18,4 @@ TWITTER_ACCESS_TOKEN = os.environ.get("TWITTER_ACCESS_TOKEN")
 TWITTER_ACCESS_TOKEN_SECRET = os.environ.get("TWITTER_ACCESS_TOKEN_SECRET")
 TWITTER_API_KEY = os.environ.get("TWITTER_API_KEY")
 TWITTER_API_KEY_SECRET = os.environ.get("TWITTER_API_KEY_SECRET")
-# Prod: OrderUpTeamsBot
-# Dev: TestOrderUpBot
 TWITTER_DISPLAY_NAME = os.environ.get("TWITTER_DISPLAY_NAME")
