@@ -32,4 +32,4 @@ jobs:
                   ECR_REPOSITORY: ps-ingestion-lambda
               run: |
                   docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
-                  docker push $ECR_REGISTRY/$ECR_REPOSITORY:$
+                  docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
