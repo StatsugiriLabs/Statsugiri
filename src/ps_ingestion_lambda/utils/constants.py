@@ -1,6 +1,6 @@
 import os
 
-CURR_VGC_FORMAT = ("gen9vgc2023series1",)
+CURR_VGC_FORMAT = "gen9vgc2023series1"
 VALID_FORMATS = [
     CURR_VGC_FORMAT,
     "gen9ou",
