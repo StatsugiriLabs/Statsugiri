@@ -28,7 +28,7 @@ jobs:
             - name: Add SHORT_SHA env property with commit short sha
               run: echo "SHORT_SHA=`echo ${GITHUB_SHA} | cut -c1-8`" >> $GITHUB_ENV
 
-            - name: Build and push PS Ingestion image
+            - name: Build and push tagged PS Ingestion image
               working-directory: ./src/ps_ingestion_lambda
               env:
                   ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
