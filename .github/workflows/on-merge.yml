@@ -28,8 +28,9 @@ jobs:
             - name: Build and push PS Ingestion image
               working-directory: ./src/ps_ingestion_lambda
               env:
+                  GIT_HASH: $(git rev-parse --short "$GITHUB_SHA")
                   ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
                   ECR_REPOSITORY: ps-ingestion-lambda
               run: |
-                  docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:prod .
-                  docker push $ECR_REGISTRY/$ECR_REPOSITORY:prod
+                  docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$GIT_HASH .
+                  docker push $ECR_REGISTRY/$ECR_REPOSITORY:$GIT_HASH
