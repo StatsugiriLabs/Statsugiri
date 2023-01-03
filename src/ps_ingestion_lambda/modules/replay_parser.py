@@ -59,7 +59,6 @@ class ReplayParser:
         # Identify whether user is `p1` or `p2`
         # Ex. |player|p1|<PLAYER>|265|1546
         alphanumeric_username = self._generate_alphanumeric_username_regex(username)
-        print(alphanumeric_username)
         player_num = re.findall(
             f"\\|player\\|(\w+)\\|{alphanumeric_username}\\|", replay_log, re.IGNORECASE
         )
