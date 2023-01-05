@@ -1,10 +1,11 @@
 import pytest
 import os
+import requests
+import json
 from modules.replay_handler import ReplayHandler
 from modules.ladder_retriever import LadderRetriever
 from data.ladder_user_info import LadderUserInfo
 from unittest.mock import MagicMock
-from utils.constants import REPLAY_BASE_URL
 from bs4 import BeautifulSoup
 from data.replay_info import ReplayInfo
 from utils.errors import LadderNotFoundException
@@ -39,27 +40,40 @@ def fixture_replay_handler_under_test(mock_ladder_retriever):
     return ReplayHandler(TEST_FORMAT, mock_ladder_retriever)
 
 
-def init_mock_replay_json(id: str, format: str, log: str, uploadtime: int) -> dict:
+def init_mock_replay_res_content(
+    id: str, format: str, log: str, uploadtime: int
+) -> dict:
     return {"id": id, "format": format, "log": log, "uploadtime": uploadtime}
+
+
+def init_mock_replay_json_response(
+    status_code: int, replay_json: dict
+) -> requests.Response:
+    response = requests.Response()
+    response.status_code = status_code
+    response._content = json.dumps(replay_json, indent=2).encode("utf-8")
+    return response
 
 
 def init_expected_replay_info(
     id: str, username: str, rating: int, format: str, log: str, upload_time: int
-):
+) -> ReplayInfo:
     return ReplayInfo(id, username, rating, format, log, upload_time)
 
 
 def test_extract_replays_happy_path(
     mocker,
-    requests_mock,
     sample_user_replay_search_res_text,
     mock_ladder_retriever,
     replay_handler_under_test,
 ):
-    requests_mock.get(
-        REPLAY_BASE_URL + USER1_REPLAY_ID + ".json",
-        json=init_mock_replay_json(
-            USER1_REPLAY_ID, TEST_FORMAT, USER1_TEST_LOG, USER1_UPLOAD_TIME
+    mocker.patch(
+        "modules.replay_handler.get_response_from_url",
+        return_value=init_mock_replay_json_response(
+            200,
+            init_mock_replay_res_content(
+                USER1_REPLAY_ID, TEST_FORMAT, USER1_TEST_LOG, USER1_UPLOAD_TIME
+            ),
         ),
     )
     mocker.patch(
@@ -84,12 +98,15 @@ def test_extract_replays_happy_path(
 
 
 def test_extract_replays_no_replays_found_should_return_empty_list(
-    mocker, requests_mock, mock_ladder_retriever, replay_handler_under_test
+    mocker, mock_ladder_retriever, replay_handler_under_test
 ):
-    requests_mock.get(
-        REPLAY_BASE_URL + USER1_REPLAY_ID + ".json",
-        json=init_mock_replay_json(
-            USER1_REPLAY_ID, TEST_FORMAT, USER1_TEST_LOG, USER1_UPLOAD_TIME
+    mocker.patch(
+        "modules.replay_handler.get_response_from_url",
+        return_value=init_mock_replay_json_response(
+            200,
+            init_mock_replay_res_content(
+                USER1_REPLAY_ID, TEST_FORMAT, USER1_TEST_LOG, USER1_UPLOAD_TIME
+            ),
         ),
     )
     mocker.patch(
@@ -106,12 +123,14 @@ def test_extract_replays_no_replays_found_should_return_empty_list(
 
 def test_extract_replays_key_not_found_should_raise_error(
     mocker,
-    requests_mock,
     sample_user_replay_search_res_text,
     mock_ladder_retriever,
     replay_handler_under_test,
 ):
-    requests_mock.get(REPLAY_BASE_URL + USER1_REPLAY_ID + ".json", json={})
+    mocker.patch(
+        "modules.replay_handler.get_response_from_url",
+        return_value=init_mock_replay_json_response(200, {}),
+    )
     mocker.patch(
         "modules.replay_handler.get_soup_from_url",
         return_value=BeautifulSoup(sample_user_replay_search_res_text, "html.parser"),
@@ -125,7 +144,7 @@ def test_extract_replays_key_not_found_should_raise_error(
 
 
 def test_extract_replays_ladder_not_found_should_raise_exception(
-    mocker, mock_ladder_retriever, replay_handler_under_test
+    mock_ladder_retriever, replay_handler_under_test
 ):
     mock_ladder_retriever.get_users = MagicMock(return_value=None)
 

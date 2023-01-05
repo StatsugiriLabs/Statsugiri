@@ -4,11 +4,13 @@ from utils.base_logger import logger
 from data.replay_info import ReplayInfo
 from data.ladder_user_info import LadderUserInfo
 from modules.ladder_retriever import LadderRetriever
-from utils.soup_utils import get_soup_from_url
-from utils.constants import MAX_USERS, REPLAY_BASE_URL, REQUEST_TIMEOUT
+from utils.request_utils import get_soup_from_url, get_response_from_url
+from utils.constants import MAX_USERS, REPLAY_BASE_URL
 from utils.errors import LadderNotFoundException
 
-REPLAY_SEARCH_BASE_URL = "https://replay.pokemonshowdown.com/search/?output=html&user="
+REPLAY_SEARCH_BASE_URL = (
+    "https://replay.pokemonshowdown.com/search/?output=html&page=1&user="
+)
 
 
 class ReplayHandler:
@@ -67,23 +69,29 @@ class ReplayHandler:
     Retrieve most recent format replay ID given a user
 
     :param: username Username to search replays for
-    :returns: ID of most recent format replay, empty string if not found
+    :returns: ID of most recent format replay, empty string if not found or time out
     """
 
     def _get_most_recent_replay_id(self, username: str) -> str:
         replay_search_url = REPLAY_SEARCH_BASE_URL + username
-        replay_search_soup = get_soup_from_url(replay_search_url)
-        # Assume replays are sorted reverse-chronologically
-        replay_id = [
-            # Remove `/` character for replay ID
-            # eg. <a href="/gen8vgc2020-1197324298" data-target="push"><small>...
-            replay.get("href")[1:]
-            for replay in replay_search_soup.find_all(
-                lambda predicate: predicate.name == "a"
-                and self.format_id in predicate.get("href")
+        try:
+            replay_search_soup = get_soup_from_url(replay_search_url)
+            # Assume replays are sorted reverse-chronologically
+            replay_id = [
+                # Remove `/` character for replay ID
+                # eg. <a href="/gen8vgc2020-1197324298" data-target="push"><small>...
+                replay.get("href")[1:]
+                for replay in replay_search_soup.find_all(
+                    lambda predicate: predicate.name == "a"
+                    and self.format_id in predicate.get("href")
+                )
+            ]
+            return replay_id[0] if replay_id else ""
+        except Exception as e:
+            logger.warning(
+                "Unable to reach server for replays: {err}".format(err=str(e))
             )
-        ]
-        return replay_id[0] if replay_id else ""
+            return ""
 
     def _get_replay_info(self, user_info: LadderUserInfo, replay_id: str) -> ReplayInfo:
         """
@@ -118,7 +126,7 @@ class ReplayHandler:
     def _get_replay_json_from_id(self, replay_id: str) -> dict:
         try:
             replay_data_get_url = REPLAY_BASE_URL + replay_id + ".json"
-            replay_data_res = requests.get(replay_data_get_url, timeout=REQUEST_TIMEOUT)
+            replay_data_res = get_response_from_url(replay_data_get_url)
             return {} if not replay_data_res else replay_data_res.json()
         except requests.exceptions.RequestException as e:
             raise e

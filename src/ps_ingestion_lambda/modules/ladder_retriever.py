@@ -1,6 +1,6 @@
 from data.ladder_user_info import LadderUserInfo
 from typing import List
-from utils.soup_utils import get_soup_from_url
+from utils.request_utils import get_soup_from_url
 from utils.constants import (
     MAX_USERS,
 )
