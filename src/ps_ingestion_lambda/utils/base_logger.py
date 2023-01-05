@@ -1,4 +1,5 @@
 import logging
 
-logging.basicConfig(format="%(asctime)s - %(message)s", level=logging.INFO)
 logger = logging.getLogger()
+logging.basicConfig(format="%(asctime)s - %(message)s")
+logger.setLevel(logging.INFO)
