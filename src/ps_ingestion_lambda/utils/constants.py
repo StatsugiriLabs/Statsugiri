@@ -12,7 +12,7 @@ MAX_USERS = 500
 TEAM_SIZE = 6
 REPLAY_BASE_URL = "https://replay.pokemonshowdown.com/"
 REPLAY_SEARCH_BASE_URL = "https://replay.pokemonshowdown.com/search/?output=html&user="
-REQUEST_TIMEOUT = 120  # [seconds]
+REQUEST_TIMEOUT = 2  # [seconds]
 
 TWITTER_ACCESS_TOKEN = os.environ.get("TWITTER_ACCESS_TOKEN")
 TWITTER_ACCESS_TOKEN_SECRET = os.environ.get("TWITTER_ACCESS_TOKEN_SECRET")
