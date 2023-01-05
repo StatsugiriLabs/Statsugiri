@@ -7,6 +7,8 @@ from utils.time_utils import convert_unix_timestamp_to_str
 from utils.constants import TEAM_SIZE
 
 MULTIPLE_FORM_NOTATION = "-*"
+# PS refers to Maushold Family of Three as default (ie. "Maushold")
+MAUSHOLD_FOUR_FORM_NOTATION = "-Four"
 
 
 class ReplayParser:
@@ -50,8 +52,7 @@ class ReplayParser:
         :param: replay_log
         :returns: team of the user
         """
-        # Sanitize log for Pokémon with multiple forms (ie. remove names appended with '-*')
-        replay_log = replay_log.replace(MULTIPLE_FORM_NOTATION, "")
+        replay_log = self._sanitize_replay(replay_log)
 
         if not username:
             logger.warning("Invalid username, cannot proceed")
@@ -79,6 +80,17 @@ class ReplayParser:
             return self._fill_team()
 
         return self._fill_team(pkmn_team)
+
+    def _sanitize_replay(self, replay_log: str) -> str:
+        """
+        Sanitize replay log for artifacts (eg. ambiguous form notation)
+
+        :param: replay_log
+        :returns: sanitized log
+        """
+        replay_log = replay_log.replace(MULTIPLE_FORM_NOTATION, "")
+        replay_log = replay_log.replace(MAUSHOLD_FOUR_FORM_NOTATION, "")
+        return replay_log
 
     def _fill_team(self, pkmn_team: List[str] = None) -> List[str]:
         """
