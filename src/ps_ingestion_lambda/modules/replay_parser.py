@@ -36,11 +36,6 @@ class ReplayParser:
                 replay_info.format,
             )
             teams_snapshot_list.append(teams_snapshot)
-            logger.info(
-                "{id}: {team}".format(
-                    id=teams_snapshot.id, team=teams_snapshot.pkmn_team
-                )
-            )
 
         return teams_snapshot_list
 
