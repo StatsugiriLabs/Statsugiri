@@ -112,9 +112,11 @@ class ReplayHandler:
                 replay_json["uploadtime"],
             )
             return replay_info
-        except KeyError as e:
+        except KeyError as key_e:
             logger.error("Replay key not found")
-            raise e
+            raise key_e
+        except Exception as e:
+            logger.error("Unable to retrieve replay: {err}".format(err=str(e)))
 
     """
     Retrieve replay JSON from PS servers given an ID
