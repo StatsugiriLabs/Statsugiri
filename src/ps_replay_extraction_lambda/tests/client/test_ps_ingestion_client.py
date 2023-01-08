@@ -35,7 +35,9 @@ def fixture_ps_replay_extraction_client_under_test(mock_replay_extractor):
 
 def init_expected_snapshot():
     return ReplaySnapshot(
-            SNAPSHOT_DATE, FORMAT, [ReplayInfo(REPLAY_ID, USERNAME, RATING, FORMAT, LOG, REPLAY_UPLOAD_DATE)]
+        SNAPSHOT_DATE,
+        FORMAT,
+        [ReplayInfo(REPLAY_ID, USERNAME, RATING, FORMAT, LOG, REPLAY_UPLOAD_DATE)],
     )
 
 
@@ -44,7 +46,9 @@ def test_process_happy_path(
 ):
     mock_replay_extractor.get_replay_snapshot = MagicMock(
         return_value=ReplaySnapshot(
-            SNAPSHOT_DATE, FORMAT, [ReplayInfo(REPLAY_ID, USERNAME, RATING, FORMAT, LOG, REPLAY_UPLOAD_DATE)]
+            SNAPSHOT_DATE,
+            FORMAT,
+            [ReplayInfo(REPLAY_ID, USERNAME, RATING, FORMAT, LOG, REPLAY_UPLOAD_DATE)],
         )
     )
     snapshot = ps_replay_extraction_client_under_test.process()

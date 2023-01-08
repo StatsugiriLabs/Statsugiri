@@ -11,6 +11,7 @@ from data.ps_ingest_config import PsIngestConfig
 from data.replay_info import ReplayInfo
 from data.replay_snapshot import ReplaySnapshot
 from utils.errors import LadderNotFoundException
+
 TEST_FORMAT = "test_format"
 USER_TEST_LOG = "test_log"
 USER_UPLOAD_TIME_TIMESTAMP = 1641035544
@@ -89,26 +90,30 @@ def test_get_replay_snapshot_happy_path(
     )
 
     replays = replay_extractor_under_test.get_replay_snapshot()
-    assert replays == ReplaySnapshot(SNAPSHOT_DATE, TEST_FORMAT, [
-        init_expected_replay_info(
-            USER_REPLAY_ID,
-            USER,
-            RATING,
-            TEST_FORMAT,
-            USER_TEST_LOG,
-            USER_UPLOAD_TIME_STR,
-        )
-    ])
+    assert replays == ReplaySnapshot(
+        SNAPSHOT_DATE,
+        TEST_FORMAT,
+        [
+            init_expected_replay_info(
+                USER_REPLAY_ID,
+                USER,
+                RATING,
+                TEST_FORMAT,
+                USER_TEST_LOG,
+                USER_UPLOAD_TIME_STR,
+            )
+        ],
+    )
+
 
 def test_get_replay_snapshot_no_ladder_ladder_not_found(
     replay_extractor_under_test, mock_ladder_retriever
 ):
-    mock_ladder_retriever.get_users = MagicMock(
-        return_value=[]
-    )
+    mock_ladder_retriever.get_users = MagicMock(return_value=[])
 
     with pytest.raises(LadderNotFoundException):
         replay_extractor_under_test.get_replay_snapshot()
+
 
 def test_get_replay_snapshot_recent_replay_exception_skip_replay(
     mocker,
@@ -127,9 +132,7 @@ def test_get_replay_snapshot_recent_replay_exception_skip_replay(
     mock_ladder_retriever.get_users = MagicMock(
         return_value=[LadderUserInfo(USER, RATING)]
     )
-    mocker.patch(
-        "modules.replay_extractor.get_soup_from_url",
-        return_value=Exception)
+    mocker.patch("modules.replay_extractor.get_soup_from_url", return_value=Exception)
 
     replays = replay_extractor_under_test.get_replay_snapshot()
     assert replays == ReplaySnapshot(SNAPSHOT_DATE, TEST_FORMAT, [])

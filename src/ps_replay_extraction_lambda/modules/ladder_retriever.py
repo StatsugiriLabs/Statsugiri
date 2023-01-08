@@ -7,6 +7,7 @@ from utils.constants import (
 
 LADDER_BASE_URL = "https://pokemonshowdown.com/ladder"
 
+
 class LadderRetriever:
     def get_users(self, format_id: str) -> List[LadderUserInfo]:
         """

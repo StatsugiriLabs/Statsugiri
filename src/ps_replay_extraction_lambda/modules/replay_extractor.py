@@ -18,9 +18,7 @@ REPLAY_SEARCH_BASE_URL = (
 
 class ReplayExtractor:
     def __init__(
-        self,
-        ladder_retriever: LadderRetriever,
-        ps_ingest_config: PsIngestConfig
+        self, ladder_retriever: LadderRetriever, ps_ingest_config: PsIngestConfig
     ):
         self.ladder_retriever = ladder_retriever
         self.ingest_config = ps_ingest_config
@@ -44,7 +42,6 @@ class ReplayExtractor:
 
         replays = self._get_ladder_replays(top_ladder_users)
         return ReplaySnapshot(self.ingest_config.snapshot_date, format_id, replays)
-
 
     def _get_most_recent_replay_id(self, username: str) -> str:
         """
@@ -108,8 +105,8 @@ class ReplayExtractor:
         """
         Transforming user info and replay ID to ReplayInfo
 
-        :param: user_info 
-        :param: replay_id 
+        :param: user_info
+        :param: replay_id
         :returns: ReplayInfo if successful, placeholder ReplayInfo if exception
         """
         try:
@@ -131,15 +128,14 @@ class ReplayExtractor:
                 user_info.rating,
                 self.ingest_config.format_id,
                 "unknown_log",
-                "1970-01-01"
+                "1970-01-01",
             )
-
 
     def _get_replay_json_from_id(self, replay_id: str) -> dict:
         """
         Retrieve replay JSON from PS servers given an ID
 
-        :param: replay_id 
+        :param: replay_id
         :returns: replay metadata JSON
         """
         try:
@@ -149,4 +145,7 @@ class ReplayExtractor:
         except Exception as e:
             logger.error("Unable to retrieve replay JSON: {err}".format(err=str(e)))
             raise ReplayJsonRetrievalException(
-                "Error retrieving replay JSON for '{replay_id}'".format(replay_id=replay_id))
+                "Error retrieving replay JSON for '{replay_id}'".format(
+                    replay_id=replay_id
+                )
+            )

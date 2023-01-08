@@ -5,6 +5,7 @@ from utils.constants import (
     MAX_USERS,
 )
 
+
 class LadderRetriever:
     def __init__(self):
         self.ladder_base_url = "https://pokemonshowdown.com/ladder"

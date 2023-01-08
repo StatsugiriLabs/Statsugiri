@@ -37,7 +37,9 @@ def lambda_handler(event: LambdaDict, context: LambdaContext) -> dict:
         )
 
     ingest_config = PsIngestConfig(
-        convert_unix_timestamp_to_str(int(time.time())), format_to_search, NUM_USERS_TO_PULL
+        convert_unix_timestamp_to_str(int(time.time())),
+        format_to_search,
+        NUM_USERS_TO_PULL,
     )
     ps_replay_extraction_client = PsReplayExtractionClient(
         ReplayExtractor(LadderRetriever(), ingest_config)
