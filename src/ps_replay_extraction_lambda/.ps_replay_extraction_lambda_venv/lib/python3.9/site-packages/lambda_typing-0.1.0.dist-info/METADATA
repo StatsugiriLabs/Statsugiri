@@ -1,0 +1,77 @@
+Metadata-Version: 2.1
+Name: lambda-typing
+Version: 0.1.0
+Summary: Django JSON encoder with numpy support.
+Home-page: https://github.com/illagrenan/lambda-typing
+Author: Vasek Dohnal
+Author-email: vaclav.dohnal@gmail.com
+License: MIT
+Project-URL: Source, https://github.com/illagrenan/lambda-typing
+Project-URL: Tracker, https://github.com/illagrenan/lambda-typing/issues
+Platform: UNKNOWN
+Classifier: Development Status :: 4 - Beta
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Natural Language :: English
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3 :: Only
+Classifier: Programming Language :: Python :: 3.6
+Classifier: Programming Language :: Python :: 3.7
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python :: Implementation :: CPython
+Classifier: Programming Language :: Python :: Implementation :: PyPy
+Requires-Python: ~=3.6
+
+===============
+λ Lambda Typing
+===============
+
+.. image:: https://img.shields.io/pypi/v/lambda-typing.svg
+    :target: https://pypi.python.org/pypi/lambda-typing
+    :alt: PyPi
+
+.. image:: https://img.shields.io/badge/license-MIT-blue.svg
+    :target: https://pypi.python.org/pypi/lambda-typing/
+    :alt: MIT
+
+.. image:: https://img.shields.io/travis/illagrenan/lambda-typing.svg
+    :target: https://travis-ci.org/illagrenan/lambda-typing
+    :alt: TravisCI
+
+.. image:: https://img.shields.io/coveralls/illagrenan/lambda-typing.svg
+    :target: https://coveralls.io/github/illagrenan/lambda-typing?branch=master
+    :alt: Coverage
+
+.. image:: https://img.shields.io/pypi/implementation/lambda-typing.svg
+    :target: https://pypi.python.org/pypi/django_brotli/
+    :alt: Supported Python implementations
+
+.. image:: https://img.shields.io/pypi/pyversions/lambda-typing.svg
+    :target: https://pypi.python.org/pypi/django_brotli/
+    :alt: Supported Python versions
+
+Introduction
+------------
+
+TODO
+
+Installation
+------------
+
+- Supported Python versions are:  ``3.6`` and ``3.7``.
+
+.. code:: shell
+
+    pip install --upgrade lambda-typing
+
+Usage
+-----
+
+TODO
+
+License
+-------
+
+The MIT License (MIT)
+
+

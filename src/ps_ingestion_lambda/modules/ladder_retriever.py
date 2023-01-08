@@ -5,13 +5,9 @@ from utils.constants import (
     MAX_USERS,
 )
 
-
 class LadderRetriever:
     def __init__(self):
         self.ladder_base_url = "https://pokemonshowdown.com/ladder"
-        self.replay_search_base_url = (
-            "https://replay.pokemonshowdown.com/search/?output=html&user="
-        )
 
     def get_users(self, format_id: str) -> List[LadderUserInfo]:
         """
