@@ -10,9 +10,13 @@ def to_dict(obj: any, classkey=None):
     elif hasattr(obj, "__iter__") and not isinstance(obj, str):
         return [to_dict(v, classkey) for v in obj]
     elif hasattr(obj, "__dict__"):
-        data = dict([(key, to_dict(value, classkey)) 
-            for key, value in obj.__dict__.items() 
-            if not callable(value) and not key.startswith('_')])
+        data = dict(
+            [
+                (key, to_dict(value, classkey))
+                for key, value in obj.__dict__.items()
+                if not callable(value) and not key.startswith("_")
+            ]
+        )
         if classkey is not None and hasattr(obj, "__class__"):
             data[classkey] = obj.__class__.__name__
         return data
