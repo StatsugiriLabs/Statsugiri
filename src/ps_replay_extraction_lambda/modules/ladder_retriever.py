@@ -5,11 +5,10 @@ from utils.constants import (
     MAX_USERS,
 )
 
+LADDER_BASE_URL = "https://pokemonshowdown.com/ladder"
+
 
 class LadderRetriever:
-    def __init__(self):
-        self.ladder_base_url = "https://pokemonshowdown.com/ladder"
-
     def get_users(self, format_id: str) -> List[LadderUserInfo]:
         """
         Retrieve top ladder users based on rating
@@ -17,7 +16,7 @@ class LadderRetriever:
         :returns: list of ladder users sorted by rating
         """
         ladder_get_url = "{ladder_base_url}/{format_id}".format(
-            ladder_base_url=self.ladder_base_url, format_id=format_id
+            ladder_base_url=LADDER_BASE_URL, format_id=format_id
         )
         ladder_soup = get_soup_from_url(ladder_get_url)
 
