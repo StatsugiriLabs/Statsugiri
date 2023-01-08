@@ -11,6 +11,7 @@ from utils.constants import (
     NUM_USERS_TO_PULL,
 )
 from utils.time_utils import convert_unix_timestamp_to_str
+from utils.serdes_utils import to_dict
 
 
 def lambda_handler(event: LambdaDict, context: LambdaContext) -> dict:
@@ -46,4 +47,4 @@ def lambda_handler(event: LambdaDict, context: LambdaContext) -> dict:
     )
 
     replay_snapshot = ps_replay_extraction_client.process()
-    return replay_snapshot
+    return to_dict(replay_snapshot)
