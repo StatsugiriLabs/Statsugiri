@@ -1,5 +1,6 @@
 .venv
 .ps_replay_extraction_lambda
+.ps_replay_transformation_lambda
 .DS_Store
 .env
 __pycache__
