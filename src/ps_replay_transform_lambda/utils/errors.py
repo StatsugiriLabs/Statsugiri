@@ -1,0 +1,2 @@
+class NoUserProvidedException(Exception):
+    pass

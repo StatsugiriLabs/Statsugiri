@@ -1,11 +1,11 @@
 import pytest
+from unittest.mock import MagicMock
 from clients.ps_replay_extraction_client import PsReplayExtractionClient
 from modules.replay_extractor import ReplayExtractor
 from modules.ladder_retriever import LadderRetriever
 from data.replay_info import ReplayInfo
 from data.replay_snapshot import ReplaySnapshot
 from data.ps_ingest_config import PsIngestConfig
-from unittest.mock import MagicMock
 
 REPLAY_ID = "id"
 USERNAME = "user"

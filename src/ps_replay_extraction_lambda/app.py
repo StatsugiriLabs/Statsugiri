@@ -17,7 +17,7 @@ from utils.serdes_utils import to_dict
 def lambda_handler(event: LambdaDict, context: LambdaContext) -> dict:
     """
     Lambda handler entrypoint
-    :returns: success
+    :returns: replay snapshot JSON
     """
     format_to_search = event.get(EVENT_FORMAT_KEY) or ""
     logger.info("Incoming request for '{format}".format(format=format_to_search))
