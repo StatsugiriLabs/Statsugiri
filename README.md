@@ -2,9 +2,9 @@
 
 ![Statsugiri CI](https://github.com/StatsugiriGG/Statsugiri/actions/workflows/on-push.yml/badge.svg)
 
-Statsugiri is a project focused on creating competitive Pokémon data tools.
+Statsugiri is a suite of data tools focused on accessible and interpretable competitive Pokémon analytics.
 
-Currently, it is under maintenance. Please follow the [@StatsugiriGG](https://twitter.com/StatsugiriGG)
+Currently, it is under maintenance. Please follow the [@Statsugiri](https://twitter.com/Statsugiri)
 for updates.
 
 ## Projects
@@ -17,6 +17,7 @@ for updates.
 
 -   Python 3.9
 -   AWS Lambda
+-   AWS Step Functions
 -   AWS Elastic Container Registry
 -   AWS Cloudwatch
 -   AWS EventBridge
