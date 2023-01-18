@@ -52,9 +52,9 @@ class TwitterTeamWriter:
                 tweet_ids.append(team_tweet_id)
                 title_tweet_id = team_tweet_id
 
-            # Quote retweet to push to top of feed
+            # Quote retweet title (ie. first) to push to top
             quote_tweet_id = self.write_quote_tweet(
-                self._get_tweet_url(title_tweet_id), self._get_quote_tweet()
+                self._get_tweet_url(tweet_ids[0]), self._get_quote_tweet()
             )
             tweet_ids.append(quote_tweet_id)
             return True
@@ -92,7 +92,7 @@ class TwitterTeamWriter:
         :returns: tweet ID
         """
         try:
-            tweet = self.api_client.update_status(
+            tweet = self.twitter_api_client.update_status(
                 status=msg_content, in_reply_to_status_id=parent_id
             )
             return tweet.id
@@ -102,7 +102,7 @@ class TwitterTeamWriter:
 
     def write_quote_tweet(self, quoted_tweet_url: str, msg_content: str) -> int:
         try:
-            tweet = self.api_client.update_status(
+            tweet = self.twitter_api_client.update_status(
                 status=msg_content, attachment_url=quoted_tweet_url
             )
             return tweet.id
