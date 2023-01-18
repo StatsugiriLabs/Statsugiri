@@ -27,17 +27,17 @@ class TwitterTeamWriter:
         self.twitter_api_client = twitter_api_client
         self.identifier = str(uuid.uuid4())
 
-    def write(self, team_snapshot_event: LambdaDict) -> bool:
+    def write(self, team_snapshot_payload: dict) -> bool:
         """
         Tweet a title thread and reply threads with the snapshot
 
-        :param: teams_snapshot_event
+        :param: teams_snapshot_payload
         :returns: success
         """
         tweet_ids = []
-        snapshot_date = team_snapshot_event[SNAPSHOT_DATE_EVENT_ARG]
-        format_id = team_snapshot_event[FORMAT_ID_EVENT_ARG]
-        team_list = team_snapshot_event[TEAM_LIST_EVENT_ARG]
+        snapshot_date = team_snapshot_payload[SNAPSHOT_DATE_EVENT_ARG]
+        format_id = team_snapshot_payload[FORMAT_ID_EVENT_ARG]
+        team_list = team_snapshot_payload[TEAM_LIST_EVENT_ARG]
 
         try:
             title_tweet_id = self.write_parent_tweet(

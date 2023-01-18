@@ -9,6 +9,7 @@ from utils.constants import (
     TWITTER_ACCESS_TOKEN,
     TWITTER_ACCESS_TOKEN_SECRET,
     FORMAT_ID_EVENT_ARG,
+    PAYLOAD_EVENT_ARG
 )
 
 
@@ -17,14 +18,15 @@ def lambda_handler(event: LambdaDict, context: LambdaContext) -> dict:
     Lambda handler entrypoint
     :returns: success
     """
-    team_snapshot_format = event.get(FORMAT_ID_EVENT_ARG)
+    team_snapshot_payload = event[PAYLOAD_EVENT_ARG]
+    team_snapshot_format = team_snapshot_payload[FORMAT_ID_EVENT_ARG]
     logger.info("Incoming request for '{format}".format(format=team_snapshot_format))
 
     ps_team_twitter_writer_client = PsTeamTwitterWriterClient(
         TwitterTeamWriter(init_twitter_api_client())
     )
 
-    success = ps_team_twitter_writer_client.write(event)
+    success = ps_team_twitter_writer_client.write(team_snapshot_payload)
     return {"success": str(success)}
 
 
