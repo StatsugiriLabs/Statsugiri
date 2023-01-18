@@ -9,7 +9,7 @@ from utils.constants import (
     TWITTER_ACCESS_TOKEN,
     TWITTER_ACCESS_TOKEN_SECRET,
     FORMAT_ID_EVENT_ARG,
-    PAYLOAD_EVENT_ARG
+    PAYLOAD_EVENT_ARG,
 )
 
 
