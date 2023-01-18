@@ -1,3 +1,4 @@
+PAYLOAD_EVENT_ARG = "Payload"
 SNAPSHOT_DATE_EVENT_ARG = "snapshot_date"
 FORMAT_ID_EVENT_ARG = "format_id"
 REPLAY_LIST_EVENT_ARG = "replay_list"
