@@ -32,7 +32,7 @@ jobs:
               working-directory: ./src/ps_ingestion_pipeline/ps_replay_extraction_lambda
               env:
                   ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-                  ECR_REPOSITORY: ps_replay_extraction_lambda
+                  ECR_REPOSITORY: ps-replay-extraction-lambda
               run: |
                   docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:${SHORT_SHA} .
                   docker push $ECR_REGISTRY/$ECR_REPOSITORY:${SHORT_SHA}
@@ -41,7 +41,7 @@ jobs:
               working-directory: ./src/ps_ingestion_pipeline/ps_replay_transform_lambda
               env:
                   ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-                  ECR_REPOSITORY: ps_replay_transform_lambda
+                  ECR_REPOSITORY: ps-replay-transform-lambda
               run: |
                   docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:${SHORT_SHA} .
                   docker push $ECR_REGISTRY/$ECR_REPOSITORY:${SHORT_SHA}
@@ -50,7 +50,7 @@ jobs:
               working-directory: ./src/ps_ingestion_pipeline/ps_team_twitter_writer_lambda
               env:
                   ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-                  ECR_REPOSITORY: ps_team_twitter_writer_lambda
+                  ECR_REPOSITORY: ps-team-twitter-writer-lambda
               run: |
                   docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:${SHORT_SHA} .
                   docker push $ECR_REGISTRY/$ECR_REPOSITORY:${SHORT_SHA}
