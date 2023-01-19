@@ -1,4 +1,3 @@
-import requests
 from typing import List
 from utils.base_logger import logger
 from data.replay_info import ReplayInfo
@@ -9,7 +8,7 @@ from modules.ladder_retriever import LadderRetriever
 from utils.request_utils import get_soup_from_url, get_response_from_url
 from utils.time_utils import convert_unix_timestamp_to_str
 from utils.constants import REPLAY_BASE_URL
-from utils.errors import LadderNotFoundException, ReplayJsonRetrievalException
+from utils.errors import LadderNotFoundException
 
 REPLAY_SEARCH_BASE_URL = (
     "https://replay.pokemonshowdown.com/search/?output=html&page=1&user="
@@ -111,25 +110,37 @@ class ReplayExtractor:
         """
         try:
             replay_json = self._get_replay_json_from_id(replay_id)
-            replay_info = ReplayInfo(
-                replay_json["id"],
-                user_info.username,
-                user_info.rating,
-                self.ingest_config.format_id,
-                replay_json["log"],
-                convert_unix_timestamp_to_str(replay_json["uploadtime"]),
-            )
-            return replay_info
+            if not replay_json:
+                return self._get_placeholder_replay_info(user_info)
+            else:
+                replay_info = ReplayInfo(
+                    replay_json["id"],
+                    user_info.username,
+                    user_info.rating,
+                    self.ingest_config.format_id,
+                    replay_json["log"],
+                    convert_unix_timestamp_to_str(replay_json["uploadtime"]),
+                )
+                return replay_info
         except Exception as e:
             logger.warning("Unable to retrieve replay: {err}".format(err=str(e)))
-            return ReplayInfo(
-                "unknown_id",
-                user_info.username,
-                user_info.rating,
-                self.ingest_config.format_id,
-                "unknown_log",
-                "1970-01-01",
-            )
+            return self._get_placeholder_replay_info(user_info)
+
+    def _get_placeholder_replay_info(self, user_info: LadderUserInfo) -> dict:
+        """
+        Generate placeholder ReplayInfo, likely where replays cannot be retrieved
+
+        :param: user_info
+        :returns: placeholder ReplayInfo
+        """
+        return ReplayInfo(
+            "unknown_id",
+            user_info.username,
+            user_info.rating,
+            self.ingest_config.format_id,
+            "unknown_log",
+            "1970-01-01",
+        )
 
     def _get_replay_json_from_id(self, replay_id: str) -> dict:
         """
@@ -144,8 +155,4 @@ class ReplayExtractor:
             return {} if not replay_data_res else replay_data_res.json()
         except Exception as e:
             logger.error("Unable to retrieve replay JSON: {err}".format(err=str(e)))
-            raise ReplayJsonRetrievalException(
-                "Error retrieving replay JSON for '{replay_id}'".format(
-                    replay_id=replay_id
-                )
-            )
+            return {}

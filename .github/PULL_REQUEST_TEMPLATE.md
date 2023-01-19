@@ -1,6 +1,5 @@
 <!---
 Taken from UBC Thunderbots: https://github.com/UBC-Thunderbots
-This file outlines a list of common things that should be addressed when opening a PR. It's built from previous issues we've seen in a lot of pull requests. If you notice something that's being noted in a lot of PR's, it should probably be added here to help save people time in the future.
 -->
 
 ## Please fill out the following before requesting review on this PR

@@ -27,8 +27,8 @@ jobs:
               run: |
                   ./formatting_scripts/check_formatting_ci.sh
 
-    pytest:
-        name: PS Ingestion Tests
+    ps-replay-extraction-lambda-tests:
+        name: PS Replay Extraction Lambda Tests
         runs-on: ubuntu-latest
         strategy:
             matrix:
@@ -43,12 +43,38 @@ jobs:
               with:
                   python-version: ${{ matrix.python-version }}
 
-            - name: PS Ingestion environment setup
-              working-directory: ./src/ps_ingestion_lambda
+            - name: PS Replay Extraction Lambda environment setup
+              working-directory: ./src/ps_ingestion_pipeline/ps_replay_extraction_lambda
               run: |
                   pip install -r requirements.txt
 
-            - name: Run Pytest
-              working-directory: ./src/ps_ingestion_lambda
+            - name: Run PS Replay Extraction Lambda tests
+              working-directory: ./src/ps_ingestion_pipeline/ps_replay_extraction_lambda
+              run: |
+                  pytest .
+
+    ps-replay-transform-lambda-tests:
+        name: PS Replay Transform Lambda Tests
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                python-version: ["3.9"]
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v2
+
+            # checks-out the repository under $GITHUB_WORKSPACE
+            - name: Set up Python ${{ matrix.python-version }}
+              uses: actions/setup-python@v2
+              with:
+                  python-version: ${{ matrix.python-version }}
+
+            - name: PS Replay Transform Lambda environment setup
+              working-directory: ./src/ps_ingestion_pipeline/ps_replay_transform_lambda
+              run: |
+                  pip install -r requirements.txt
+
+            - name: Run PS Replay Transform Lambda tests
+              working-directory: ./src/ps_ingestion_pipeline/ps_replay_transform_lambda
               run: |
                   pytest .
