@@ -28,11 +28,29 @@ jobs:
             - name: Add SHORT_SHA env property with commit short sha
               run: echo "SHORT_SHA=`echo ${GITHUB_SHA} | cut -c1-7`" >> $GITHUB_ENV
 
-            - name: Build and push tagged PS Ingestion image
-              working-directory: ./src/ps_ingestion_lambda
+            - name: Build and push PS Replay Extraction Lambda image
+              working-directory: ./src/ps_ingestion_pipeline/ps_replay_extraction_lambda
               env:
                   ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-                  ECR_REPOSITORY: ps-ingestion-lambda
+                  ECR_REPOSITORY: ps_replay_extraction_lambda
+              run: |
+                  docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:${SHORT_SHA} .
+                  docker push $ECR_REGISTRY/$ECR_REPOSITORY:${SHORT_SHA}
+
+            - name: Build and push PS Replay Transform Lambda image
+              working-directory: ./src/ps_ingestion_pipeline/ps_replay_transform_lambda
+              env:
+                  ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+                  ECR_REPOSITORY: ps_replay_transform_lambda
+              run: |
+                  docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:${SHORT_SHA} .
+                  docker push $ECR_REGISTRY/$ECR_REPOSITORY:${SHORT_SHA}
+
+            - name: Build and push PS Team Twitter Writer Lambda image
+              working-directory: ./src/ps_ingestion_pipeline/ps_team_twitter_writer_lambda
+              env:
+                  ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+                  ECR_REPOSITORY: ps_team_twitter_writer_lambda
               run: |
                   docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:${SHORT_SHA} .
                   docker push $ECR_REGISTRY/$ECR_REPOSITORY:${SHORT_SHA}
