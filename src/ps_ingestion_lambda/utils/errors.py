@@ -1,2 +1,0 @@
-class LadderNotFoundException(Exception):
-    pass
