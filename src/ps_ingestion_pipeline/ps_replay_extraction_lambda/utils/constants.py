@@ -5,7 +5,7 @@ VALID_FORMATS = [
 ]
 
 EVENT_FORMAT_KEY = "format"
-NUM_USERS_TO_PULL = 100
+NUM_USERS_TO_PULL = 50
 MAX_USERS = 500
 REPLAY_BASE_URL = "https://replay.pokemonshowdown.com/"
 REQUEST_TIMEOUT = 2  # [seconds]
