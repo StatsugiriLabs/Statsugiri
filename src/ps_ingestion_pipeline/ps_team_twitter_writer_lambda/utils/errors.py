@@ -8,3 +8,7 @@ class TwitterPostException(Exception):
 
 class TwitterDeleteException(Exception):
     pass
+
+
+class ReplaysBucketDownloadException(Exception):
+    pass

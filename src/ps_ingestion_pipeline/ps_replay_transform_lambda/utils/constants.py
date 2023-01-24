@@ -1,3 +1,13 @@
+import os
+
+REPLAYS_BUCKET_KEY_ARG = "bucket_key"
+REPLAYS_BUCKET_NAME_ARG = "bucket_name"
+BUCKET_KEY_FIELD = "bucket_key"
+BUCKET_NAME_FIELD = "bucket_name"
+HTTP_BODY_KEY = "body"
+KEY_DELIMITER = "#"
+TEAMS_BUCKET_NAME = os.environ.get("TEAMS_BUCKET_NAME")
+
 PAYLOAD_EVENT_ARG = "Payload"
 SNAPSHOT_DATE_EVENT_ARG = "snapshot_date"
 FORMAT_ID_EVENT_ARG = "format_id"
