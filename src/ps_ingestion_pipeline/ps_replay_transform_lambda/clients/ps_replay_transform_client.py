@@ -18,14 +18,14 @@ class PsReplayTransformClient:
     def __init__(self, replay_parser: ReplayParser):
         self.replay_parser = replay_parser
 
-    def transform(self, replay_snapshot_payload: dict) -> TeamSnapshot:
+    def transform(self, replay_snapshot_dict: dict) -> TeamSnapshot:
         """
-        Transform incoming replay snapshot payload to team snapshot
-        :param: replay_snapshot_payload
+        Transform incoming replay snapshot dict to team snapshot
+        :param: replay_snapshot_dict
         :returns: TeamSnapshot
         """
         team_list = []
-        for replay in replay_snapshot_payload[REPLAY_LIST_EVENT_ARG]:
+        for replay in replay_snapshot_dict[REPLAY_LIST_EVENT_ARG]:
             pkmn_team = self.replay_parser.parse_team(
                 replay[REPLAY_USERNAME_EVENT_ARG], replay[REPLAY_LOG_EVENT_ARG]
             )
@@ -38,8 +38,8 @@ class PsReplayTransformClient:
             team_list.append(team)
 
         team_snapshot = TeamSnapshot(
-            replay_snapshot_payload[SNAPSHOT_DATE_EVENT_ARG],
-            replay_snapshot_payload[FORMAT_ID_EVENT_ARG],
+            replay_snapshot_dict[SNAPSHOT_DATE_EVENT_ARG],
+            replay_snapshot_dict[FORMAT_ID_EVENT_ARG],
             team_list,
         )
         return team_snapshot
