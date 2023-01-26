@@ -27,4 +27,4 @@ class S3ReplaySnapshotReaderClient:
             logger.error(
                 "Cannot download object from replays bucket:{err}".format(err=str(e))
             )
-            raise ReplaysBucketDownloadException()
+            raise ReplaysBucketDownloadException(str(e))
