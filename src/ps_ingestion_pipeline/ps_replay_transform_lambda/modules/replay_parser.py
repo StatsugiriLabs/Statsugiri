@@ -47,7 +47,9 @@ class ReplayParser:
         # Identify the player's team
         # Ex. |poke|p1|<PKMN>, L50, F| or |poke|p1|<PKMN>|
         # '([\w':-]+)' regex for hyphens (eg. Rotom-Heat) and colons (eg. Type:Null)
-        pkmn_team = re.findall(f"\\|poke\\|{player_num[0]}\\|([\\w':-]+)", replay_log)
+        pkmn_team = re.findall(
+            f"\\|poke\\|{player_num[0]}\\|([\\w\\s':-]+)", replay_log
+        )
         if not pkmn_team:
             logger.warning("Cannot parse team in log, team not found")
             return self._fill_team()

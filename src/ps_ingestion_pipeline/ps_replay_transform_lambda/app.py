@@ -18,12 +18,12 @@ from utils.base_logger import logger
 def lambda_handler(event: LambdaDict, context: LambdaContext) -> dict:
     """
     Lambda handler entrypoint
-    :returns: team snapshot JSON
+    :returns: bucket and key payload
     """
     replay_snapshot_payload = event[PAYLOAD_EVENT_ARG]
     replay_snapshot_key = replay_snapshot_payload[REPLAYS_BUCKET_KEY_ARG]
     replay_snapshot_bucket_name = replay_snapshot_payload[REPLAYS_BUCKET_NAME_ARG]
-    logger.info("Incoming request for '{key}".format(format=replay_snapshot_key))
+    logger.info("Incoming request for '{key}".format(key=replay_snapshot_key))
 
     ps_replay_transform_client = PsReplayTransformClient(ReplayParser())
     s3_client = boto3.client("s3")

@@ -1,6 +1,6 @@
 import os
 
-HTTP_BODY_KEY = "body"
+HTTP_BODY_KEY = "Body"
 TEAMS_BUCKET_KEY_ARG = "bucket_key"
 TEAMS_BUCKET_NAME_ARG = "bucket_name"
 BUCKET_KEY_FIELD = "bucket_key"

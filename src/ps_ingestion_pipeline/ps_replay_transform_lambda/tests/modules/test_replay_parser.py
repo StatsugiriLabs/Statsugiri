@@ -22,6 +22,24 @@ STRANGE_CHARS_TEAM = [
     "Torkoal",
     "Azumarill",
 ]
+MAUSHOLD_USER = "iron ball ttar"
+MAUSHOLD_TEAM = [
+    "Flutter Mane",
+    "Maushold",
+    "Gholdengo",
+    "Kingambit",
+    "Volcarona",
+    "Tauros-Paldea-Aqua",
+]
+SPACES_USER = "Leef2"
+SPACES_TEAM = [
+    "Roaring Moon",
+    "Slither Wing",
+    "Flutter Mane",
+    "Torkoal",
+    "Iron Hands",
+    "Iron Bundle",
+]
 
 
 @pytest.fixture(name="sample_replay_log_generic_text")
@@ -57,6 +75,17 @@ def fixture_sample_replay_log_strange_chars_text():
     ).read()
 
 
+@pytest.fixture(name="sample_replay_log_spaces_text")
+def fixture_sample_replay_log_spaces_text():
+    __location__ = os.path.realpath(
+        os.path.join(os.getcwd(), os.path.dirname(__file__))
+    )
+    return open(
+        os.path.join(__location__, "../assets/sample_replay_log_spaces.txt"),
+        encoding="utf-8",
+    ).read()
+
+
 @pytest.fixture(name="replay_parser_under_test")
 def fixture_replay_parser_under_test():
     return ReplayParser()
@@ -80,10 +109,19 @@ def test_replay_parser_parse_team_incomplete_team(
     assert team == INCOMPLETE_TEAM
 
 
-def test_replay_parser_parse_team_strange_chars(
-    sample_replay_log_strange_chars_text, replay_parser_under_test
+def test_replay_parser_parse_team_maushold_team(
+    sample_replay_log_spaces_text, replay_parser_under_test
 ):
     team = replay_parser_under_test.parse_team(
-        STRANGE_CHARS_USER, sample_replay_log_strange_chars_text
+        MAUSHOLD_USER, sample_replay_log_spaces_text
     )
-    assert team == STRANGE_CHARS_TEAM
+    assert team == MAUSHOLD_TEAM
+
+
+def test_replay_parser_parse_team_spaces_team(
+    sample_replay_log_spaces_text, replay_parser_under_test
+):
+    team = replay_parser_under_test.parse_team(
+        SPACES_USER, sample_replay_log_spaces_text
+    )
+    assert team == SPACES_TEAM

@@ -24,7 +24,7 @@ def lambda_handler(event: LambdaDict, context: LambdaContext) -> dict:
     team_snapshot_payload = event[PAYLOAD_EVENT_ARG]
     team_snapshot_key = team_snapshot_payload[TEAMS_BUCKET_KEY_ARG]
     team_snapshot_bucket_name = team_snapshot_payload[TEAMS_BUCKET_NAME_ARG]
-    logger.info("Incoming request for '{key}".format(format=team_snapshot_key))
+    logger.info("Incoming request for '{key}".format(key=team_snapshot_key))
 
     ps_team_twitter_writer_client = PsTeamTwitterWriterClient(
         TwitterTeamWriter(init_twitter_api_client())
