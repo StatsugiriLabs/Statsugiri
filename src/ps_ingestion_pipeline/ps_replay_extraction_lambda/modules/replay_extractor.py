@@ -111,6 +111,11 @@ class ReplayExtractor:
         try:
             replay_json = self._get_replay_json_from_id(replay_id)
             if not replay_json:
+                logger.warning(
+                    "Unable to retrieve {replay_id} replay for {user}".format(
+                        replay_id=replay_id, user=user_info.username
+                    )
+                )
                 return self._get_placeholder_replay_info(user_info)
             else:
                 replay_info = ReplayInfo(
