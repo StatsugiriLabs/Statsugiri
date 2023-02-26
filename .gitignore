@@ -1,7 +1,7 @@
 .venv
 .ps_replay_extraction_lambda
 .ps_replay_transform_lambda
-.ps_team_twitter_writer_lambda
+.ps_teams_ddb_writer_lambda
 .DS_Store
 .env
 __pycache__
