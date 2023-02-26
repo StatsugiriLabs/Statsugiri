@@ -11,9 +11,6 @@ from utils.constants import (
     TABLE_NAME,
 )
 
-# TODO: Get table name from env var
-TABLE_NAME = "PsIngestionTeamsTable-Beta"
-
 
 def lambda_handler(event: LambdaDict, context: LambdaContext) -> dict:
     """
