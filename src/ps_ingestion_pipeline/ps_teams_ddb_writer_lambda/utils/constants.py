@@ -5,6 +5,7 @@ TEAMS_BUCKET_KEY_ARG = "bucket_key"
 TEAMS_BUCKET_NAME_ARG = "bucket_name"
 BUCKET_KEY_FIELD = "bucket_key"
 BUCKET_NAME_FIELD = "bucket_name"
+TABLE_NAME = os.environ.get("TABLE_NAME")
 
 PAYLOAD_EVENT_ARG = "Payload"
 SNAPSHOT_DATE_EVENT_ARG = "snapshot_date"
