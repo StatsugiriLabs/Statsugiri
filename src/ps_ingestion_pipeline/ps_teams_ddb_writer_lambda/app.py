@@ -8,10 +8,8 @@ from utils.constants import (
     PAYLOAD_EVENT_ARG,
     TEAMS_BUCKET_KEY_ARG,
     TEAMS_BUCKET_NAME_ARG,
+    TABLE_NAME
 )
-
-# TODO: Get table name from env var
-TABLE_NAME = "PsIngestionTeamsTable-Beta"
 
 def lambda_handler(event: LambdaDict, context: LambdaContext) -> dict:
     """
@@ -29,13 +27,7 @@ def lambda_handler(event: LambdaDict, context: LambdaContext) -> dict:
     )
 
     ddb_client = boto3.client("dynamodb")
-<<<<<<< HEAD
-    teams_ddb_client = TeamsDdbClient(
-        ddb_client, TABLE_NAME
-    )
-=======
     teams_ddb_client = TeamsDdbClient(ddb_client, TABLE_NAME)
->>>>>>> f997665 (Add DynamoDB write for PS Teams)
     ddb_teams_writer = DdbTeamsWriter(teams_ddb_client)
 
     team_snapshot_dict = s3_team_snapshot_reader_client.read(team_snapshot_key)
