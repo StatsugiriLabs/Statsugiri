@@ -29,9 +29,13 @@ def lambda_handler(event: LambdaDict, context: LambdaContext) -> dict:
     )
 
     ddb_client = boto3.client("dynamodb")
+<<<<<<< HEAD
     teams_ddb_client = TeamsDdbClient(
         ddb_client, TABLE_NAME
     )
+=======
+    teams_ddb_client = TeamsDdbClient(ddb_client, TABLE_NAME)
+>>>>>>> f997665 (Add DynamoDB write for PS Teams)
     ddb_teams_writer = DdbTeamsWriter(teams_ddb_client)
 
     team_snapshot_dict = s3_team_snapshot_reader_client.read(team_snapshot_key)

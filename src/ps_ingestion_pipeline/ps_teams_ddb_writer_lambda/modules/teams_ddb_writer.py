@@ -9,7 +9,7 @@ from utils.constants import (
     PKMN_TEAM_EVENT_ARG,
     RATING_EVENT_ARG,
     ID_EVENT_ARG,
-    REPLAY_UPLOAD_DATE_EVENT_ARG
+    REPLAY_UPLOAD_DATE_EVENT_ARG,
 )
 
 PK_DDB_KEY = "pk"
@@ -43,7 +43,9 @@ class DdbTeamsWriter:
         for team_info in team_list:
             pk_id = str(uuid.uuid4())
             date_field = DATE_FIELD_PREFIX + SK_DELIMITER + snapshot_date
-            lowercase_team_list = [pkmn.lower() for pkmn in team_info[PKMN_TEAM_EVENT_ARG]]
+            lowercase_team_list = [
+                pkmn.lower() for pkmn in team_info[PKMN_TEAM_EVENT_ARG]
+            ]
 
             # Write primary team item
             primary_team_item = {
@@ -54,7 +56,9 @@ class DdbTeamsWriter:
                 REPLAY_ID_DDB_KEY: {"S": team_info[ID_EVENT_ARG]},
                 PKMN_TEAM_DDB_KEY: {"SS": lowercase_team_list},
                 RATING_DDB_KEY: {"N": str(team_info[RATING_EVENT_ARG])},
-                REPLAY_UPLOAD_DATE_DDB_KEY: {"S": team_info[REPLAY_UPLOAD_DATE_EVENT_ARG]}
+                REPLAY_UPLOAD_DATE_DDB_KEY: {
+                    "S": team_info[REPLAY_UPLOAD_DATE_EVENT_ARG]
+                },
             }
             self.teams_ddb_client.put_item(primary_team_item)
 
@@ -63,7 +67,7 @@ class DdbTeamsWriter:
                 pkmn_field = PKMN_FIELD_PREFIX + SK_DELIMITER + pkmn
                 pkmn_team_item = {
                     PK_DDB_KEY: {"S": pk_id},
-                    SK_DDB_KEY: {"S": pkmn_field}
+                    SK_DDB_KEY: {"S": pkmn_field},
                 }
                 self.teams_ddb_client.put_item(pkmn_team_item)
 
