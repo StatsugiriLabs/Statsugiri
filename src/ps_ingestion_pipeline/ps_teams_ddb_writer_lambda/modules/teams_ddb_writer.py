@@ -25,6 +25,7 @@ DATE_FIELD_PREFIX = "date"
 PKMN_FIELD_PREFIX = "pkmn"
 SK_DELIMITER = "#"
 
+
 class DdbTeamsWriter:
     def __init__(self, teams_ddb_client: TeamsDdbClient):
         self.teams_ddb_client = teams_ddb_client
