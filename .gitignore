@@ -2,6 +2,7 @@
 .ps_replay_extraction_lambda
 .ps_replay_transform_lambda
 .ps_teams_ddb_writer_lambda
+.ps_teams_lambda
 .DS_Store
 .env
 __pycache__
