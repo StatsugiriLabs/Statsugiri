@@ -13,18 +13,13 @@ from utils.constants import (
 )
 from utils.errors import DdbTeamsWriteException
 
-PK_DDB_KEY = "pk"
-SK_DDB_KEY = "sk"
+TEAM_ID_DDB_KEY = "team_id"
 SNAPSHOT_DATE_DDB_KEY = "snapshot_date"
 FORMAT_ID_DDB_KEY = "format_id"
 PKMN_TEAM_DDB_KEY = "pkmn_team"
 REPLAY_ID_DDB_KEY = "replay_id"
 REPLAY_UPLOAD_DATE_DDB_KEY = "replay_upload_date"
 RATING_DDB_KEY = "rating"
-
-DATE_FIELD_PREFIX = "date"
-PKMN_FIELD_PREFIX = "pkmn"
-SK_DELIMITER = "#"
 
 
 class DdbTeamsWriter:
@@ -44,16 +39,14 @@ class DdbTeamsWriter:
 
         try:
             for team_info in team_list:
-                pk_id = str(uuid.uuid4())
-                date_field = DATE_FIELD_PREFIX + SK_DELIMITER + snapshot_date
+                team_id = str(uuid.uuid4())
+                snapshot_date = snapshot_date
                 lowercase_team_list = [
                     pkmn.lower() for pkmn in team_info[PKMN_TEAM_EVENT_ARG]
                 ]
 
-                # Write primary team item
-                primary_team_item = {
-                    PK_DDB_KEY: {"S": pk_id},
-                    SK_DDB_KEY: {"S": date_field},
+                team_item = {
+                    TEAM_ID_DDB_KEY: {"S": team_id},
                     SNAPSHOT_DATE_DDB_KEY: {"S": snapshot_date},
                     FORMAT_ID_DDB_KEY: {"S": format_id},
                     REPLAY_ID_DDB_KEY: {"S": team_info[ID_EVENT_ARG]},
@@ -63,17 +56,7 @@ class DdbTeamsWriter:
                         "S": team_info[REPLAY_UPLOAD_DATE_EVENT_ARG]
                     },
                 }
-                self.teams_ddb_client.put_item(primary_team_item)
-
-                # Write pkmn_team items for efficient look-up
-                for pkmn in lowercase_team_list:
-                    pkmn_field = PKMN_FIELD_PREFIX + SK_DELIMITER + pkmn
-                    pkmn_team_item = {
-                        PK_DDB_KEY: {"S": pk_id},
-                        SK_DDB_KEY: {"S": pkmn_field},
-                    }
-                    self.teams_ddb_client.put_item(pkmn_team_item)
-
+                self.teams_ddb_client.put_item(team_item)
             return True
         except Exception as e:
             raise DdbTeamsWriteException(
