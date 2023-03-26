@@ -1,12 +1,15 @@
-name: Statsugiri CI on Merge
+name: PS Ingestion CI on Merge
 
 on:
     pull_request:
         types:
             - closed
+    push:
+        paths:
+            - ./src/ps_ingestion_pipeline/*
 
 jobs:
-    push-ecr-images-dev:
+    push-ps-ingestion-ecr-images-dev:
         name: Push ECR Images
         if: github.event.pull_request.merged == true
         runs-on: ubuntu-latest
