@@ -60,5 +60,5 @@ class DdbTeamsWriter:
             return True
         except Exception as e:
             raise DdbTeamsWriteException(
-                "Error writing to table:{err}".format(err=str(e))
+                "Error writing to table: {err}".format(err=str(e))
             )
