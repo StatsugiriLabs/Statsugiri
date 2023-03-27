@@ -28,7 +28,7 @@ class DdbTeamsWriter:
 
     def write(self, team_snapshot_payload: dict) -> bool:
         """
-        Write team snapshot records to DynamoDB
+        Write team snapshot items to DynamoDB
 
         :param: teams_snapshot_payload
         :returns: success
