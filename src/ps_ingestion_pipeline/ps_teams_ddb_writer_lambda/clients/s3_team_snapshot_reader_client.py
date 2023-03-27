@@ -15,7 +15,7 @@ class S3TeamSnapshotReaderClient:
         Read team snapshot from S3 bucket
 
         :param: key
-        :returns: team snapshot dictionary
+        :returns: team snapshot
         """
         try:
             teams_bucket_res = self.s3_client.get_object(
