@@ -5,7 +5,7 @@ on:
         branches:
             - master
         paths:
-            - ./src/ps_ingestion_pipeline/*
+            - "./src/ps_ingestion_pipeline/**.py"
 
 jobs:
     push-ps-ingestion-ecr-images-dev:
