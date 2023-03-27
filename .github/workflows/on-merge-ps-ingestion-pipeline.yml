@@ -5,7 +5,7 @@ on:
         types:
             - closed
         paths:
-            - "./src/ps_ingestion_pipeline/**.py"
+            - "./src/ps_ingestion_pipeline/**/**.py"
 
 jobs:
     push-ps-ingestion-ecr-images-dev:
