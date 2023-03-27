@@ -3,8 +3,8 @@ name: PS Ingestion CI on Merge
 on:
     pull_request:
         types: [closed]
-        # paths:
-        # - "./src/ps_ingestion_pipeline/**/*.py"
+        paths:
+            - "./src/ps_ingestion_pipeline/**/*.py"
 
 jobs:
     push-ps-ingestion-ecr-images:
