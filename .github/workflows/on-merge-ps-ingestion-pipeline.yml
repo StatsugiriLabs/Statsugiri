@@ -1,15 +1,16 @@
 name: PS Ingestion CI on Merge
 
 on:
-    push:
-        branches:
-            - master
+    pull_request:
+        types:
+            - closed
         paths:
             - "./src/ps_ingestion_pipeline/**.py"
 
 jobs:
     push-ps-ingestion-ecr-images-dev:
         name: Push ECR Images
+        if: github.event.pull_request.merged == true
         runs-on: ubuntu-latest
         steps:
             - name: Checkout
