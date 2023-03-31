@@ -1,39 +1,32 @@
 from clients.teams_ddb_client import TeamsDdbClient
-from typing import List
-from utils.base_logger import logger
+from transformers.team_info_transformer import transform_get_team_by_id_to_response
 from utils.errors import DdbTeamsReadException
-
-PK_DDB_KEY = "pk"
-SK_DDB_KEY = "sk"
-SNAPSHOT_DATE_DDB_KEY = "snapshot_date"
-FORMAT_ID_DDB_KEY = "format_id"
-PKMN_TEAM_DDB_KEY = "pkmn_team"
-REPLAY_ID_DDB_KEY = "replay_id"
-REPLAY_UPLOAD_DATE_DDB_KEY = "replay_upload_date"
-RATING_DDB_KEY = "rating"
-
-DATE_FIELD_PREFIX = "date"
-PKMN_FIELD_PREFIX = "pkmn"
-SK_DELIMITER = "#"
+from utils.serdes_utils import to_dict
 
 
 class DdbTeamsReader:
     def __init__(self, teams_ddb_client: TeamsDdbClient):
         self.teams_ddb_client = teams_ddb_client
 
-    def get_team(self, team_id: str) -> bool:
+    def get_health_check(self) -> dict:
         """
-        Retrieve a team identified by ID
+        Return 200 status code
+        :returns: OK response
+        """
+        return {"statusCode": 200}
+
+    def get_team_by_id(self, team_id: str) -> dict:
+        """
+        Retrieve a team identified by team ID
 
         :param: team_id
-        :returns: success
+        :returns: serialized GetTeamsResponse
         """
         try:
-            # TODO: What does response obj look like?
-            self.teams_ddb_client.query_team_by_id(team_id)
-            # TODO: Transform to response
-            return True
+            query_response = self.teams_ddb_client.query_team_by_id(team_id)
+            get_team_response = transform_get_team_by_id_to_response(query_response)
+            return to_dict(get_team_response)
         except Exception as e:
             raise DdbTeamsReadException(
-                "Error reading from table:{err}".format(err=str(e))
+                "Error reading from table: {err}".format(err=str(e))
             )
