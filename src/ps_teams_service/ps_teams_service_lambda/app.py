@@ -1,13 +1,14 @@
 import boto3
 from lambda_typing.types import LambdaDict, LambdaContext
 from clients.teams_ddb_client import TeamsDdbClient
-from modules.teams_ddb_reader import DdbTeamsWriter
+from modules.ddb_teams_reader import DdbTeamsReader
 from utils.base_logger import logger
 
-# from utils.constants import (
-# )
 
-TABLE_NAME = "PsIngestionTeamsTable-Prod"
+TABLE_NAME = "PsIngestionTeamsTable-Beta"
+GET_OPERATION = "GET"
+GET_HEALTH_PATH = "/health"
+GET_TEAM_PATH = "/team"
 
 
 def lambda_handler(event: LambdaDict, context: LambdaContext) -> dict:
@@ -16,11 +17,13 @@ def lambda_handler(event: LambdaDict, context: LambdaContext) -> dict:
     :returns: success
     """
     team_snapshot_key = "TODO"
-    logger.info("Incoming request for '{key}".format(key=team_snapshot_key))
+    logger.info("Incoming request for '{key}'".format(key=team_snapshot_key))
 
-    # if event.routeKey == "GET /teams":
-    #     print("Receive request to get all teams")
-    # elif event.routeKey == "GET /teams/{id}":
-    #     print("Receive request to get team with ID: " + str(id))
+    if event.httpMethod == GET_OPERATION and event.path == GET_TEAM_PATH:
+        print("Receive request to get team")
+    elif event.httpMethod == GET_OPERATION and event.path == GET_HEALTH_PATH:
+        print("Received request for health check")
+    else:
+        print("Can't route...")
 
     return {"success": "true"}
