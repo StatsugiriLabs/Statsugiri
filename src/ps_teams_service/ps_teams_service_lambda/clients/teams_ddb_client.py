@@ -1,9 +1,8 @@
-from mypy_boto3_dynamodb import DynamoDBClient
 from utils.errors import DdbTeamsReadException
 
 
 class TeamsDdbClient:
-    def __init__(self, ddb_client: DynamoDBClient, table_name: str):
+    def __init__(self, ddb_client: any, table_name: str):
         self.ddb_client = ddb_client
         self.table_name = table_name
 
