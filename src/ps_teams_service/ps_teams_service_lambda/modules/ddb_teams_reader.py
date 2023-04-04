@@ -10,10 +10,10 @@ class DdbTeamsReader:
 
     def get_health_check(self) -> dict:
         """
-        Return 200 status code
-        :returns: OK response
+        Return healthy ping
+        :returns: health response
         """
-        return {"statusCode": 200}
+        return {"health": "alive"}
 
     def get_team_by_id(self, team_id: str) -> dict:
         """

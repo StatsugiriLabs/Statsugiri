@@ -78,3 +78,29 @@ jobs:
               working-directory: ./src/ps_ingestion_pipeline/ps_replay_transform_lambda
               run: |
                   pytest .
+
+    ps-teams-service-lambda--tests:
+        name: PS Teams Service Lambda Tests
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                python-version: ["3.9"]
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v2
+
+            # checks-out the repository under $GITHUB_WORKSPACE
+            - name: Set up Python ${{ matrix.python-version }}
+              uses: actions/setup-python@v2
+              with:
+                  python-version: ${{ matrix.python-version }}
+
+            - name: PS Teams Service Lambda environment setup
+              working-directory: ./src/ps_teams_service/ps_teams_service_lambda
+              run: |
+                  pip install -r requirements.txt
+
+            - name: Run PS Teams Service Lambda tests
+              working-directory: ./src/ps_teams_service/ps_teams_service_lambda
+              run: |
+                  pytest .
