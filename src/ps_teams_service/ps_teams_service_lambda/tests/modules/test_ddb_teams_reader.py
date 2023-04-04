@@ -10,7 +10,7 @@ TEST_TEAM_ID = "TEAM_ID"
 
 @pytest.fixture(name="mock_teams_ddb_client")
 def fixture_mock_teams_ddb_client():
-    return TeamsDdbClient(boto3.client("dynamodb"), TEST_TABLE_NAME)
+    return TeamsDdbClient(None, TEST_TABLE_NAME)
 
 
 @pytest.fixture(name="ddb_teams_reader_under_test")

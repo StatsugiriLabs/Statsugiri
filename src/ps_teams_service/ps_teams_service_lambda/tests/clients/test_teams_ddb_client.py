@@ -9,7 +9,7 @@ TEST_TEAM_ID = "TEAM_ID"
 
 @pytest.fixture(name="mock_ddb_client")
 def fixture_mock_ddb_client():
-    return boto3.client("dynamodb")
+    return boto3.client("dynamodb", region_name="us-east-1")
 
 
 @pytest.fixture(name="teams_ddb_client_under_test")
