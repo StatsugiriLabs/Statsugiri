@@ -14,12 +14,12 @@ from utils.constants import (
 from utils.errors import DdbTeamsWriteException
 
 TEAM_ID_DDB_KEY = "team_id"
-SNAPSHOT_DATE_DDB_KEY = "snapshot_date"
-FORMAT_ID_DDB_KEY = "format_id"
+FORMAT_SNAPSHOT_DATE_DDB_KEY = "format_snapshot_date_composite"
 PKMN_TEAM_DDB_KEY = "pkmn_team"
 REPLAY_ID_DDB_KEY = "replay_id"
 REPLAY_UPLOAD_DATE_DDB_KEY = "replay_upload_date"
 RATING_DDB_KEY = "rating"
+COMPOSITE_DELIMIT = "#"
 
 
 class DdbTeamsWriter:
@@ -47,8 +47,9 @@ class DdbTeamsWriter:
 
                 team_item = {
                     TEAM_ID_DDB_KEY: {"S": team_id},
-                    SNAPSHOT_DATE_DDB_KEY: {"S": snapshot_date},
-                    FORMAT_ID_DDB_KEY: {"S": format_id},
+                    FORMAT_SNAPSHOT_DATE_DDB_KEY: {
+                        "S": format_id + COMPOSITE_DELIMIT + snapshot_date
+                    },
                     REPLAY_ID_DDB_KEY: {"S": team_info[ID_EVENT_ARG]},
                     PKMN_TEAM_DDB_KEY: {"SS": lowercase_team_list},
                     RATING_DDB_KEY: {"N": str(team_info[RATING_EVENT_ARG])},

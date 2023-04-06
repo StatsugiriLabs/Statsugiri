@@ -54,3 +54,13 @@ def build_response(res_body: dict):
         },
         "body": json.dumps(res_body),
     }
+
+
+# def main():
+#     ddb_client = boto3.client("dynamodb")
+#     teams_ddb_client = TeamsDdbClient(ddb_client, TABLE_NAME)
+#     ddb_teams_reader = DdbTeamsReader(teams_ddb_client)
+#     # teams_ddb_client.scan_teams()
+#     teams_ddb_client.query_teams_by_format("gen9vgc2023series2")
+
+# main()
