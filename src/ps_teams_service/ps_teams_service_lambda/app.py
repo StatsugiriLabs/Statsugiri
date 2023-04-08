@@ -6,11 +6,15 @@ from modules.ddb_teams_reader import DdbTeamsReader
 from utils.base_logger import logger
 
 
+# TODO: Get table name from Env Var
 TABLE_NAME = "PsIngestionTeamsTable-Beta"
 GET_OPERATION = "GET"
 GET_HEALTH_RESOURCE = "/health"
-GET_TEAM_RESOURCE = "/teams/{team_id}"
+GET_TEAM_RESOURCE = "/team/{team_id}"
+GET_TEAMS_RESOURCE = "/teams/{format}/{date}"
 TEAM_ID_PARAM = "team_id"
+DATE_PARAM = "date"
+FORMAT_PARAM = "format"
 
 
 def lambda_handler(event: LambdaDict, context: LambdaContext) -> dict:
@@ -39,8 +43,15 @@ def lambda_handler(event: LambdaDict, context: LambdaContext) -> dict:
     ):
         team_id = event["pathParameters"][TEAM_ID_PARAM]
         res_body = ddb_teams_reader.get_team_by_id(team_id)
+    elif (
+        event["httpMethod"] == GET_OPERATION and event["resource"] == GET_TEAMS_RESOURCE
+    ):
+        format = event["pathParameters"][FORMAT_PARAM]
+        date = event["pathParameters"][DATE_PARAM]
+        res_body = ddb_teams_reader.get_teams_by_format_and_date(format, date)
     else:
         logger.warning("Route and HTTP method do not match...")
+        res_body = {"Error": "Routing and HTTP method is invalid"}
 
     return build_response(res_body)
 
@@ -54,13 +65,3 @@ def build_response(res_body: dict):
         },
         "body": json.dumps(res_body),
     }
-
-
-# def main():
-#     ddb_client = boto3.client("dynamodb")
-#     teams_ddb_client = TeamsDdbClient(ddb_client, TABLE_NAME)
-#     ddb_teams_reader = DdbTeamsReader(teams_ddb_client)
-#     # teams_ddb_client.scan_teams()
-#     teams_ddb_client.query_teams_by_format("gen9vgc2023series2")
-
-# main()

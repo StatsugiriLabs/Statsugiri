@@ -5,8 +5,6 @@ from typing import List
 @dataclass
 class TeamInfo:
     team_id: str
-    snapshot_date: str
-    format_id: str
     pkmn_team: List[str]
     rating: int
     replay_id: str
