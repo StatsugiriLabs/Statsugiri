@@ -12,6 +12,6 @@ BUCKET_NAME_FIELD = "bucket_name"
 NUM_USERS_TO_PULL = os.environ.get("NUM_USERS_TO_PULL", "100")
 MAX_USERS = 500
 REPLAY_BASE_URL = "https://replay.pokemonshowdown.com/"
-REQUEST_TIMEOUT = 2  # [seconds]
+REQUEST_TIMEOUT = 4  # [seconds]
 REPLAYS_BUCKET_NAME = os.environ.get("REPLAYS_BUCKET_NAME", "")
 KEY_DELIMITER = "#"

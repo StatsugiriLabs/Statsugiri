@@ -1,5 +1,5 @@
-from utils.errors import DdbTeamsReadException
-from utils.constants import PAGINATION_LIMIT
+from utils.constants import MAX_TEAMS, COMPOSITE_DELIMITER
+from utils.base_logger import logger
 
 
 class TeamsDdbClient:
@@ -22,49 +22,45 @@ class TeamsDdbClient:
             )
             return response
         except Exception as e:
-            raise DdbTeamsReadException(
+            logger.error(
                 "Unable to query team by ID from DDB table for {team_id}: {err}".format(
                     team_id=team_id, err=str(e)
                 )
             )
+            return {"error": "Internal error, please try again later"}
 
-    def scan_teams(self) -> dict:
-        # TODO: Implement query param flag for pkmn
-        # TODO: Implement pagination
-        try:
-            response = self.ddb_client.scan(
-                TableName=self.table_name, Limit=PAGINATION_LIMIT
-            )
-            print(response)
-            return response
-        except Exception as e:
-            raise DdbTeamsReadException(
-                "Unable to query team by ID from DDB table for scan: {err}".format(
-                    err=str(e)
-                )
-            )
+    def query_teams_by_format_and_date(self, format: str, date: str) -> dict:
+        """
+        Query teams by format and date via composite key
+        Number of results constrained by MAX_LIMIT
 
-    def query_teams_by_format(self, format: str) -> dict:
-        # TODO: Implement query param flag for pkmn
-        # TODO: Implement pagination
+        :param: format
+        :param: date
+        :returns: query response
+        """
+        composite_key = format + COMPOSITE_DELIMITER + date
         try:
             response = self.ddb_client.query(
                 TableName=self.table_name,
-                IndexName="formatIdIndex",
-                KeyConditionExpression="format_id = :format_id",
-                ExpressionAttributeValues={":format_id": {"S": format}},
-                Limit=PAGINATION_LIMIT,
+                IndexName="formatSnapshotDateCompositeIndex",
+                KeyConditionExpression="format_snapshot_date_composite = :format_snapshot_date_composite",
+                ExpressionAttributeValues={
+                    ":format_snapshot_date_composite": {"S": composite_key}
+                },
+                ScanIndexForward=False,
+                Limit=MAX_TEAMS,
             )
-            print(response)
+            if "LastEvaluatedKey" in response.values():
+                logger.warning(
+                    "Request exceeded team query limit of ${limit}".format(
+                        limit=MAX_TEAMS
+                    )
+                )
             return response
         except Exception as e:
-            raise DdbTeamsReadException(
+            logger.error(
                 "Unable to query team by '{format}' format from DDB table: {err}".format(
                     format=format, err=str(e)
                 )
             )
-
-    def query_teams_by_format_and_date(self, format: str, date: str) -> dict:
-        # TODO: Implement query param flag for pkmn
-        # TODO: Implement pagination
-        return {}
+            return {"error": "Internal error, please try again later"}

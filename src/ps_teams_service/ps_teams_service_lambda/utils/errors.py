@@ -1,2 +1,0 @@
-class DdbTeamsReadException(Exception):
-    pass

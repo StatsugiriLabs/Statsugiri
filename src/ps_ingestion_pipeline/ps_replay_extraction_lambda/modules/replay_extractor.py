@@ -22,7 +22,7 @@ class ReplayExtractor:
         self.ladder_retriever = ladder_retriever
         self.ingest_config = ps_ingest_config
 
-    def get_replay_snapshot(self) -> List[ReplayInfo]:
+    def get_replay_snapshot(self) -> ReplaySnapshot:
         """
         Retrieve replay snapshot for the date
 
