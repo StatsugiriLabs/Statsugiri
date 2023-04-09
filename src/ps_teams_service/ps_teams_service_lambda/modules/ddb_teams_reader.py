@@ -5,6 +5,7 @@ from transformers.team_info_transformers import (
 )
 from utils.serdes_utils import to_dict
 from utils.base_logger import logger
+from typing import List
 
 
 class DdbTeamsReader:
@@ -29,7 +30,9 @@ class DdbTeamsReader:
         get_team_response = transform_to_get_team_response(query_response)
         return to_dict(get_team_response)
 
-    def get_teams_by_format_and_date(self, format: str, date: str) -> dict:
+    def get_teams_by_format_and_date(
+        self, format: str, date: str, pkmn_to_filter: List[str]
+    ) -> dict:
         """
         Retrieve teams from a format and date
 
@@ -41,6 +44,6 @@ class DdbTeamsReader:
             format, date
         )
         get_teams_response = filter_and_transform_to_get_teams_response(
-            query_response, ["arcanine"]
+            query_response, pkmn_to_filter
         )
         return to_dict(get_teams_response)
