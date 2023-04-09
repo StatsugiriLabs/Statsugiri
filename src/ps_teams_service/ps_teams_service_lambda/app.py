@@ -73,6 +73,9 @@ def _build_response(res_body: dict):
 
 
 def _transform_query_param_to_filter(query_string_params: dict) -> List[str]:
+    if not query_string_params:
+        return []
+
     pkmn_to_filter = []
     pkmn_to_filter.extend(
         query_string_params["pkmn"] if "pkmn" not in query_string_params else []
