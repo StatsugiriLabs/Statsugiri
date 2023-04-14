@@ -6,7 +6,7 @@ from utils.errors import NoUserProvidedException
 
 ARTIFACTS = [
     "-*",
-    "-Four",  # Maushold-Four
+    "-Four",  # Maushold
     "-Curly",  # Tatsugiri
     "-Stretchy",
     "-Droopy",
