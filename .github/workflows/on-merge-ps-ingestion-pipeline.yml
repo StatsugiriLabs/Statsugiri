@@ -32,7 +32,8 @@ jobs:
               uses: tj-actions/changed-files@v35
               with:
                   files: |
-                      ./src/ps_ingestion_pipeline/ps_replay_extraction_lambda/**/*.py
+                      ./src/ps_ingestion_pipeline/ps_replay_extraction_lambda/**
+                  files_ignore: *.md
 
             - name: Build and push PS Replay Extraction Lambda image
               if: steps.changed-replay-extraction-files.outputs.any_changed == 'true'
