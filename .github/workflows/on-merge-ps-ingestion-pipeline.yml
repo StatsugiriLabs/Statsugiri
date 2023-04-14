@@ -32,7 +32,7 @@ jobs:
               uses: tj-actions/changed-files@v35
               with:
                   files: |
-                      ./src/ps_ingestion_pipeline/ps_replay_extraction_lambda
+                      ./src/ps_ingestion_pipeline/ps_replay_extraction_lambda/**/*.py
 
             - name: Build and push PS Replay Extraction Lambda image
               if: steps.changed-replay-extraction-files.outputs.any_changed == 'true'
@@ -44,7 +44,15 @@ jobs:
                   docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:${SHORT_SHA} .
                   docker push $ECR_REGISTRY/$ECR_REPOSITORY:${SHORT_SHA}
 
+            - name: Check if PS Replay Transform files have changed
+              id: changed-replay-transform-files
+              uses: tj-actions/changed-files@v35
+              with:
+                  files: |
+                      ./src/ps_ingestion_pipeline/ps_replay_transform_lambda/**/*.py
+
             - name: Build and push PS Replay Transform Lambda image
+              if: steps.changed-replay-transform-files.outputs.any_changed == 'true'
               working-directory: ./src/ps_ingestion_pipeline/ps_replay_transform_lambda
               env:
                   ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -53,7 +61,15 @@ jobs:
                   docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:${SHORT_SHA} .
                   docker push $ECR_REGISTRY/$ECR_REPOSITORY:${SHORT_SHA}
 
+            - name: Check if PS Teams DDB Writer files have changed
+              id: changed-teams-ddb-writer-files
+              uses: tj-actions/changed-files@v35
+              with:
+                  files: |
+                      ./src/ps_ingestion_pipeline/ps_teams_ddb_writer_lambda/**/*.py
+
             - name: Build and push PS Teams DDB Writer Lambda image
+              if: steps.changed-teams-ddb-writer-files.outputs.any_changed == 'true'
               working-directory: ./src/ps_ingestion_pipeline/ps_teams_ddb_writer_lambda
               env:
                   ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
