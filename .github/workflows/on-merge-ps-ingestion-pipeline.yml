@@ -27,7 +27,15 @@ jobs:
             - name: Add SHORT_SHA env property with commit short sha
               run: echo "SHORT_SHA=`echo ${GITHUB_SHA} | cut -c1-7`" >> $GITHUB_ENV
 
+            - name: Check if PS Replay Extraction files have changed
+              id: changed-replay-extraction-files
+              uses: tj-actions/changed-files@v35
+              with:
+                  files: |
+                      ./src/ps_ingestion_pipeline/ps_replay_extraction_lambda/**/*.py
+
             - name: Build and push PS Replay Extraction Lambda image
+              if: steps.changed-replay-extraction-files.outputs.any_changed == 'true'
               working-directory: ./src/ps_ingestion_pipeline/ps_replay_extraction_lambda
               env:
                   ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
