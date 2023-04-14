@@ -11,7 +11,7 @@ LADDER_BASE_URL = "https://pokemonshowdown.com/ladder"
 class LadderRetriever:
     def get_users(self, format_id: str) -> List[LadderUserInfo]:
         """
-        Retrieve top ladder users based on rating
+        Retrieve users from ladder based on format
 
         :returns: list of ladder users sorted by rating
         """
