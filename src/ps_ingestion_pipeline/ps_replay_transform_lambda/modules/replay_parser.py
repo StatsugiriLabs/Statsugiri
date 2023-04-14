@@ -7,7 +7,7 @@ from utils.errors import NoUserProvidedException
 ARTIFACTS = [
     "-*",
     "-Four",  # Maushold-Four functionally identical to Maushold default (ie. Maushold Family-of-Three)
-    "-Curly",  # Record Tatsugiri ignoring form
+    "-Curly",  # Tatsugiri forms ignored for rendering
     "-Stretchy",
     "-Droopy",
 ]
