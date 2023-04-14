@@ -27,7 +27,15 @@ jobs:
             - name: Add SHORT_SHA env property with commit short sha
               run: echo "SHORT_SHA=`echo ${GITHUB_SHA} | cut -c1-7`" >> $GITHUB_ENV
 
+            - name: Check if PS Teams Service files have changed
+              id: changed-ps-teams-service-files
+              uses: tj-actions/changed-files@v35
+              with:
+                  files: |
+                      ./src/ps_teams_service/ps_teams_service_lambda/**/*.py
+
             - name: Build and push PS Teams Service Lambda image
+              if: steps.changed-ps-teams-service-files.outputs.any_changed == 'true'
               working-directory: ./src/ps_teams_service/ps_teams_service_lambda
               env:
                   ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
