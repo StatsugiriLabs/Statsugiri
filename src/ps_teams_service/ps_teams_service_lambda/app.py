@@ -1,8 +1,10 @@
 import boto3
 import json
+import time
 from lambda_typing.types import LambdaDict, LambdaContext
 from clients.teams_ddb_client import TeamsDdbClient
 from modules.ddb_teams_reader import DdbTeamsReader
+from utils.time_utils import convert_unix_timestamp_to_str
 from utils.base_logger import logger
 from utils.constants import TABLE_NAME
 from typing import List
@@ -12,6 +14,7 @@ GET_OPERATION = "GET"
 GET_HEALTH_RESOURCE = "/health"
 GET_TEAM_RESOURCE = "/team/{team_id}"
 GET_TEAMS_RESOURCE = "/teams/{format}/{date}"
+GET_TEAM_TODAY_RESOURCE = "/teams/{format}/today"
 TEAM_ID_PARAM = "team_id"
 DATE_PARAM = "date"
 FORMAT_PARAM = "format"
@@ -49,6 +52,18 @@ def lambda_handler(event: LambdaDict, context: LambdaContext) -> dict:
         query_string_params = event["queryStringParameters"]
         format = event["pathParameters"][FORMAT_PARAM]
         date = event["pathParameters"][DATE_PARAM]
+        pkmn_to_filter = _transform_query_param_to_filter(query_string_params)
+
+        res_body = ddb_teams_reader.get_teams_by_format_and_date(
+            format, date, pkmn_to_filter
+        )
+    elif (
+        event["httpMethod"] == GET_OPERATION
+        and event["resource"] == GET_TEAM_TODAY_RESOURCE
+    ):
+        query_string_params = event["queryStringParameters"]
+        format = event["pathParameters"][FORMAT_PARAM]
+        date = convert_unix_timestamp_to_str(int(time.time()))
         pkmn_to_filter = _transform_query_param_to_filter(query_string_params)
 
         res_body = ddb_teams_reader.get_teams_by_format_and_date(
