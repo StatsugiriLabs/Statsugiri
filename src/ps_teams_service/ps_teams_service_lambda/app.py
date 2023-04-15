@@ -1,10 +1,12 @@
 import boto3
 import json
+import time
 from lambda_typing.types import LambdaDict, LambdaContext
 from clients.teams_ddb_client import TeamsDdbClient
 from modules.ddb_teams_reader import DdbTeamsReader
 from utils.base_logger import logger
 from utils.constants import TABLE_NAME
+from utils.time_utils import convert_unix_timestamp_to_str
 from typing import List
 
 
@@ -12,6 +14,7 @@ GET_OPERATION = "GET"
 GET_HEALTH_RESOURCE = "/health"
 GET_TEAM_RESOURCE = "/team/{team_id}"
 GET_TEAMS_RESOURCE = "/teams/{format}/{date}"
+GET_TEAMS_TODAY_RESOURCE = "/teams/{format}/today"
 TEAM_ID_PARAM = "team_id"
 DATE_PARAM = "date"
 FORMAT_PARAM = "format"
@@ -44,16 +47,22 @@ def lambda_handler(event: LambdaDict, context: LambdaContext) -> dict:
         team_id = event["pathParameters"][TEAM_ID_PARAM]
         res_body = ddb_teams_reader.get_team_by_id(team_id)
     elif (
-        event["httpMethod"] == GET_OPERATION and event["resource"] == GET_TEAMS_RESOURCE
+        event["httpMethod"] == GET_OPERATION
+        and event["resource"] == GET_TEAMS_TODAY_RESOURCE
     ):
         query_string_params = event["queryStringParameters"]
         format = event["pathParameters"][FORMAT_PARAM]
-        date = event["pathParameters"][DATE_PARAM]
+        # Get current date
+        date = convert_unix_timestamp_to_str(int(time.time()))
         pkmn_to_filter = _transform_query_param_to_filter(query_string_params)
 
         res_body = ddb_teams_reader.get_teams_by_format_and_date(
             format, date, pkmn_to_filter
         )
+    elif (
+        event["httpMethod"] == GET_OPERATION and event["resource"] == GET_TEAMS_RESOURCE
+    ):
+        print("wow")
     else:
         logger.warning("Route and HTTP method do not match...")
         res_body = {"Error": "Routing and HTTP method is invalid"}
