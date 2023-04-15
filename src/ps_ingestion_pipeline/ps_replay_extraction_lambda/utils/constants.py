@@ -15,3 +15,4 @@ REPLAY_BASE_URL = "https://replay.pokemonshowdown.com/"
 REQUEST_TIMEOUT = 4  # [seconds]
 REPLAYS_BUCKET_NAME = os.environ.get("REPLAYS_BUCKET_NAME", "")
 KEY_DELIMITER = "#"
+DAY_IN_SECONDS = 60 * 60 * 24
