@@ -14,6 +14,7 @@ from utils.constants import (
     BUCKET_KEY_FIELD,
     BUCKET_NAME_FIELD,
     REPLAYS_BUCKET_NAME,
+    DAY_IN_SECONDS,
 )
 from utils.time_utils import convert_unix_timestamp_to_str
 
@@ -42,7 +43,8 @@ def lambda_handler(event: LambdaDict, context: LambdaContext) -> dict:
         )
 
     ingest_config = PsIngestConfig(
-        convert_unix_timestamp_to_str(int(time.time())),
+        # Convert timestamp to next day for snapshot date
+        convert_unix_timestamp_to_str(int(time.time()) + DAY_IN_SECONDS),
         format_to_search,
         int(NUM_USERS_TO_PULL),
     )
