@@ -93,16 +93,16 @@ def _transform_query_param_to_filter(query_string_params: dict) -> List[str]:
 
     pkmn_to_filter = []
     if "pkmn" in query_string_params:
-        pkmn_to_filter.append(query_string_params["pkmn"])
+        pkmn_to_filter.append(query_string_params["pkmn"].lower())
     if "pkmn2" in query_string_params:
-        pkmn_to_filter.append(query_string_params["pkmn2"])
+        pkmn_to_filter.append(query_string_params["pkmn2"].lower())
     if "pkmn3" in query_string_params:
-        pkmn_to_filter.append(query_string_params["pkmn3"])
+        pkmn_to_filter.append(query_string_params["pkmn3"].lower())
     if "pkmn4" in query_string_params:
-        pkmn_to_filter.append(query_string_params["pkmn4"])
+        pkmn_to_filter.append(query_string_params["pkmn4"].lower())
     if "pkmn5" in query_string_params:
-        pkmn_to_filter.append(query_string_params["pkmn5"])
+        pkmn_to_filter.append(query_string_params["pkmn5"].lower())
     if "pkmn6" in query_string_params:
-        pkmn_to_filter.append(query_string_params["pkmn6"])
+        pkmn_to_filter.append(query_string_params["pkmn6"].lower())
 
     return pkmn_to_filter
