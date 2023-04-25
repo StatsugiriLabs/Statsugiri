@@ -20,7 +20,7 @@ class PsReplayTransformClient:
 
     def transform(self, replay_snapshot_dict: dict) -> TeamSnapshot:
         """
-        Transform incoming replay snapshot dict to team snapshot
+        Transform incoming replay snapshot to team snapshot
         :param: replay_snapshot_dict
         :returns: TeamSnapshot
         """
