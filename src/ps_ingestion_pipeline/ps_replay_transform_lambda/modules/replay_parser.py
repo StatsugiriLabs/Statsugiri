@@ -7,9 +7,12 @@ from utils.errors import NoUserProvidedException
 ARTIFACTS = [
     "-*",
     "-Four",  # Maushold
-    "-Curly",  # Tatsugiri
-    "-Stretchy",
-    "-Droopy",
+    "-Pa'u",  # Oricorio
+    "-Pom-Pom",
+    "-Sensu",
+    "-Blue",  # Squawkabilly
+    "-White",
+    "-Yellow",
 ]
 
 
