@@ -1,9 +1,9 @@
 import os
 
-CURR_VGC_FORMAT = "gen9vgc2023regulationc"
+CURR_VGC_FORMAT = "gen9vgc2023regulationd"
 VALID_FORMATS = [
     CURR_VGC_FORMAT,
-    "gen9ou",
+    "gen9vgc2023regulationc" "gen9ou",
 ]
 
 EVENT_FORMAT_KEY = "format"
