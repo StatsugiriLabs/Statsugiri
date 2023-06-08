@@ -1,7 +1,7 @@
 import Head from "next/head";
 import { GetStaticProps, NextPage } from "next";
 import { GetPsTeamsResults, PsTeam } from "../../types";
-import PsTeamList from "../components/PsTeamList";
+import PsTeamList from "@/components/ps_teams/PsTeamList";
 import { fetchPsTeams } from "@/api/fetchPsTeams";
 
 const Home: NextPage<{ psTeamsResults: GetPsTeamsResults }> = ({
