@@ -10,7 +10,7 @@ const Layout: FunctionComponent<Props> = (props) => {
         <>
             <Meta />
             <p>Nav</p>
-            <div className="container mx-auto flex items-center">
+            <div className="container mx-auto flex justify-center">
                 <main className={""}>
                     <p>Header</p>
                     {props.children}
