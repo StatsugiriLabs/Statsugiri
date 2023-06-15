@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from "react";
-import { PsTeam } from "../../types";
+import { PsTeam } from "@/../types";
 import PsTeamItem from "./PsTeamItem";
 
 type Props = {
@@ -8,7 +8,7 @@ type Props = {
 
 const PsTeamList: FunctionComponent<Props> = ({ teams }) => {
     return (
-        <div>
+        <div className="space-y-6">
             {teams.map((team, index) => {
                 return (
                     <PsTeamItem
