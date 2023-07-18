@@ -1,11 +1,11 @@
 import Head from "next/head";
 import { FunctionComponent } from "react";
 
-interface Props {
+type Props = {
     title?: string;
     keywords?: string;
     description?: string;
-}
+};
 
 const defaultProps: Props = {
     title: "Statsugiri",
