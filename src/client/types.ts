@@ -14,6 +14,6 @@ export interface PsTeam {
 }
 
 export enum Format {
-    Gen9Vgc2023RegulationC = "gen9vgc2023regulationc",
-    Gen9Ou = "gen9ou",
+    gen9vgc2023regulationd = "gen9vgc2023regulationd",
+    gen9ou = "gen9ou",
 }

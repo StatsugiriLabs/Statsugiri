@@ -1,3 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.replay-id-icon:hover {
+    transform: rotate(15deg);
+}

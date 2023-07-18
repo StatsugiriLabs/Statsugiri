@@ -1,13 +1,13 @@
 import { FunctionComponent, ReactNode } from "react";
 import Meta from "./Meta";
 
-interface Props {
+type Props = {
     children?: ReactNode;
-}
+};
 
 const Layout: FunctionComponent<Props> = (props) => {
     return (
-        <>
+        <div>
             <Meta />
             <p>Nav</p>
             <div className="container mx-auto flex justify-center">
@@ -16,7 +16,7 @@ const Layout: FunctionComponent<Props> = (props) => {
                     {props.children}
                 </main>
             </div>
-        </>
+        </div>
     );
 };
 
