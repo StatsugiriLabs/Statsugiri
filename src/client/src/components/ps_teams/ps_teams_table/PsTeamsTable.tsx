@@ -1,17 +1,20 @@
-import { FunctionComponent, useState } from "react";
-import Image from "next/image";
-import { PsTeam } from "../../../../types";
-import { convertToPkmnSpritePath } from "@/utils/pkmnStringUtils";
-import { prettifyPkmnName } from "@/utils/pkmnStringUtils";
+import {
+    convertToPkmnSpritePath,
+    prettifyPkmnName,
+} from "@/utils/pkmnStringUtils";
+import Paper from "@mui/material/Paper";
+import Router from "next/router";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
 import TablePagination from "@mui/material/TablePagination";
-import Paper from "@mui/material/Paper";
+import TableRow from "@mui/material/TableRow";
 import Tooltip from "@mui/material/Tooltip";
+import Image from "next/image";
+import { FunctionComponent, useState } from "react";
+import { PsTeam } from "../../../../types";
 
 type Props = {
     teams: readonly PsTeam[];
@@ -66,6 +69,7 @@ const renderCell = (team: PsTeam, column: PsTeamsTableColumn) => {
                             placement="top"
                             arrow
                         >
+                            {/* TODO: Attempt global state to push to pkmnSelected */}
                             <Image
                                 key={pkmn}
                                 src={`/sprites/${convertToPkmnSpritePath(
@@ -74,6 +78,16 @@ const renderCell = (team: PsTeam, column: PsTeamsTableColumn) => {
                                 width={PKMN_SPRITE_SIZE}
                                 height={PKMN_SPRITE_SIZE}
                                 alt={pkmn}
+                                onClick={() => {
+                                    const currPath =
+                                        Router.asPath.split("?")[0];
+                                    Router.push({
+                                        pathname: currPath,
+                                        query: {
+                                            pkmn: prettifyPkmnName(pkmn),
+                                        },
+                                    });
+                                }}
                             />
                         </Tooltip>
                     ))}

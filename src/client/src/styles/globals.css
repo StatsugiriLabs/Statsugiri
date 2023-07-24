@@ -3,5 +3,9 @@
 @tailwind utilities;
 
 .replay-id-icon:hover {
-    transform: rotate(15deg);
+    transform: rotate(20deg);
+}
+
+.clickable:hover {
+    cursor: pointer;
 }

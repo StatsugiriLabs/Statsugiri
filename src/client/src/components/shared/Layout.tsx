@@ -1,5 +1,6 @@
 import { FunctionComponent, ReactNode } from "react";
 import Meta from "./Meta";
+import Footer from "./Footer";
 
 type Props = {
     children?: ReactNode;
@@ -11,9 +12,9 @@ const Layout: FunctionComponent<Props> = (props) => {
             <Meta />
             <p>Nav</p>
             <div className="container mx-auto flex justify-center">
-                <main className={""}>
-                    <p>Header</p>
+                <main>
                     {props.children}
+                    <Footer />
                 </main>
             </div>
         </div>
