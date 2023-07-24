@@ -9,6 +9,7 @@ from data.ps_ingest_config import PsIngestConfig
 from utils.base_logger import logger
 from utils.constants import (
     EVENT_FORMAT_KEY,
+    SNAPSHOT_DATE_KEY,
     VALID_FORMATS,
     NUM_USERS_TO_PULL,
     BUCKET_KEY_FIELD,
@@ -25,6 +26,9 @@ def lambda_handler(event: LambdaDict, context: LambdaContext) -> dict:
     :returns: S3 replay bucket key for snapshot
     """
     format_to_search = event.get(EVENT_FORMAT_KEY) or ""
+    snapshot_date = event.get(SNAPSHOT_DATE_KEY) or convert_unix_timestamp_to_str(
+        int(time.time()) + DAY_IN_SECONDS
+    )
     logger.info("Incoming request for '{format}".format(format=format_to_search))
 
     # Request validation
@@ -44,7 +48,7 @@ def lambda_handler(event: LambdaDict, context: LambdaContext) -> dict:
 
     ingest_config = PsIngestConfig(
         # Convert timestamp to next day for snapshot date
-        convert_unix_timestamp_to_str(int(time.time()) + DAY_IN_SECONDS),
+        snapshot_date,
         format_to_search,
         int(NUM_USERS_TO_PULL),
     )

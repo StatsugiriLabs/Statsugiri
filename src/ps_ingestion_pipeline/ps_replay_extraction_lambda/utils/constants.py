@@ -8,6 +8,7 @@ VALID_FORMATS = [
 ]
 
 EVENT_FORMAT_KEY = "format"
+SNAPSHOT_DATE_KEY = "snapshot_date"
 BUCKET_KEY_FIELD = "bucket_key"
 BUCKET_NAME_FIELD = "bucket_name"
 NUM_USERS_TO_PULL = os.environ.get("NUM_USERS_TO_PULL", "100")
