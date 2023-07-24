@@ -1,16 +1,14 @@
-import Head from "next/head";
-import { GetServerSideProps, NextPage } from "next";
-import { GetPsTeamsResults } from "../../../types";
 import { fetchPsTeams } from "@/api/fetchPsTeams";
-import { Format } from "../../../types";
 import PsTeamsTableDiv from "@/components/ps_teams/ps_teams_table/PsTeamsTableDiv";
 import PsTeamsSearchMenuDiv from "@/components/ps_teams/ps_teams_table_filter/PsTeamsSearchMenuDiv";
+import { GetServerSideProps, NextPage } from "next";
+import Head from "next/head";
+import { Format, GetPsTeamsResults } from "../../../types";
 
-const DEFAULT_FORMAT = Format.gen9vgc2023regulationd;
-
-const Teams: NextPage<{ psTeamsResults: GetPsTeamsResults }> = ({
-    psTeamsResults,
-}) => {
+const Teams: NextPage<{
+    psTeamsResults: GetPsTeamsResults;
+    pkmnToFilter: string[];
+}> = ({ psTeamsResults, pkmnToFilter }) => {
     return (
         <div>
             <Head>
@@ -25,8 +23,10 @@ const Teams: NextPage<{ psTeamsResults: GetPsTeamsResults }> = ({
             >
                 <PsTeamsTableDiv psTeamsResults={psTeamsResults} />
                 <PsTeamsSearchMenuDiv
-                    teams={psTeamsResults.teams}
                     snapshotDate={psTeamsResults.snapshot_date.toString()}
+                    format={psTeamsResults.format_id}
+                    teams={psTeamsResults.teams}
+                    pkmnToFilter={pkmnToFilter}
                 />
             </div>
         </div>
@@ -36,22 +36,22 @@ const Teams: NextPage<{ psTeamsResults: GetPsTeamsResults }> = ({
 export const getServerSideProps: GetServerSideProps = async (context) => {
     // `/teams` provides DEFAULT_FORMAT
     let formatQueryParam: string = context.query.format as string;
-    let format =
+    let pkmnQueryParam: string = context.query.pkmn as string;
+
+    const formatToQuery =
         formatQueryParam === undefined
-            ? "gen9vgc2023regulationd"
+            ? Format.gen9vgc2023regulationd.toString()
             : formatQueryParam;
-    console.log("QUERY PARAM:" + formatQueryParam);
-    console.log("FORMAT:" + format);
-    // const formatQueryParam: string =
-    //     context.query.format === undefined
-    //         ? DEFAULT_FORMAT
-    //         : context.query.format;
-    // TODO: Add loading state
-    const psTeamsResults = await fetchPsTeams(format);
+    const pkmnToFilter =
+        pkmnQueryParam === undefined ? [] : pkmnQueryParam.split(",");
+    console.log(pkmnToFilter);
+
+    const psTeamsResults = await fetchPsTeams(formatToQuery, pkmnToFilter);
 
     return {
         props: {
             psTeamsResults,
+            pkmnToFilter,
         },
     };
 };

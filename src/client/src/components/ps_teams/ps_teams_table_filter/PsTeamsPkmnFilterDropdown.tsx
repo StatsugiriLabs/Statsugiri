@@ -1,17 +1,19 @@
-import { useRouter } from "next/router";
-import { useState, useEffect, FunctionComponent } from "react";
-import FormControl from "@mui/material/FormControl";
-import { SelectChangeEvent } from "@mui/material/Select";
-import TextField from "@mui/material/TextField";
-import Box from "@mui/material/Box";
-import Image from "next/image";
+import {
+    convertToPkmnSpritePath,
+    prettifyPkmnName,
+} from "@/utils/pkmnStringUtils";
 import Autocomplete from "@mui/material/Autocomplete";
+import Box from "@mui/material/Box";
+import FormControl from "@mui/material/FormControl";
+import TextField from "@mui/material/TextField";
+import Image from "next/image";
+import Router from "next/router";
+import { FunctionComponent, useEffect, useRef, useState } from "react";
 import { PsTeam } from "../../../../types";
-import { convertToPkmnSpritePath } from "@/utils/pkmnStringUtils";
-import { prettifyPkmnName } from "@/utils/pkmnStringUtils";
 
 type Props = {
     teams: PsTeam[];
+    pkmnToFilter: string[];
 };
 
 const PKMN_FILTER_SPRITE_SIZE = 40;
@@ -30,39 +32,41 @@ export function getPkmnFilterList(teams: PsTeam[]): string[] {
     return pkmnFilterSet.sort();
 }
 
-// TODO: Should take in selected Pkmn from query param
-const PsTeamsPkmnFilterDropdown: FunctionComponent<Props> = ({ teams }) => {
-    const [pkmnSelected, setPkmnSelected] = useState<Array<string>>([]);
-
-    // https://github.com/vercel/next.js/issues/18127#issuecomment-950907739
-    const router = useRouter();
+const PsTeamsPkmnFilterDropdown: FunctionComponent<Props> = ({
+    teams,
+    pkmnToFilter,
+}) => {
+    console.log("Children Pkmn to Filter:", pkmnToFilter);
+    const [pkmnSelected, setPkmnSelected] = useState<Array<string>>(
+        pkmnToFilter === undefined ? [] : pkmnToFilter
+    );
+    const firstUpdate = useRef(true);
 
     useEffect(() => {
+        if (firstUpdate.current) {
+            firstUpdate.current = false;
+            return;
+        }
         // Translate state to array string query params
         const pkmnSelectedParam = Array.isArray(pkmnSelected)
             ? pkmnSelected.map((pkmn: string) => pkmn).join(",")
             : "";
+        const currPath = Router.asPath.split("?")[0];
 
-        const currPath = router.asPath.split("?")[0];
-
+        // TODO: See if clean-up is possible
         if (pkmnSelected.length != 0) {
-            router.push({
+            Router.push({
                 pathname: currPath,
-                query: { pkmn: pkmnSelectedParam },
+                query: {
+                    pkmn: pkmnSelectedParam,
+                },
             });
         } else {
-            router.push({
+            Router.push({
                 pathname: currPath,
             });
         }
     }, [pkmnSelected]);
-
-    const handleChange = (event: SelectChangeEvent) => {
-        setPkmnSelected((prevPkmnSelected) => [
-            ...(prevPkmnSelected ?? []),
-            event.target.value,
-        ]);
-    };
 
     return (
         <div>
@@ -81,8 +85,10 @@ const PsTeamsPkmnFilterDropdown: FunctionComponent<Props> = ({ teams }) => {
                     isOptionEqualToValue={(option, pkmmSelected) =>
                         option.valueOf() == pkmmSelected.valueOf()
                     }
+                    onChange={(_, selectedOptions) =>
+                        setPkmnSelected(selectedOptions)
+                    }
                     options={getPkmnFilterList(teams)}
-                    onChange={handleChange}
                     renderOption={(props, pkmn) => (
                         <Box
                             component="li"
@@ -112,9 +118,6 @@ const PsTeamsPkmnFilterDropdown: FunctionComponent<Props> = ({ teams }) => {
                             }}
                         />
                     )}
-                    onChange={(_, selectedOptions) =>
-                        setPkmnSelected(selectedOptions)
-                    }
                     className="min-w-[300px] sm:min-w-[560px] md:min-w-[570px] xl:min-w-[340px]"
                 />
             </FormControl>

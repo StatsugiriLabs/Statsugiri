@@ -1,25 +1,28 @@
-import { useRouter } from "next/router";
-import { useState, useEffect } from "react";
 import FormControl from "@mui/material/FormControl";
-import Select, { SelectChangeEvent } from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
+import Select, { SelectChangeEvent } from "@mui/material/Select";
+import Router from "next/router";
+import { FunctionComponent, useEffect, useRef, useState } from "react";
 import { Format } from "../../../../types";
 
-const PsTeamsFormatDropdown = () => {
-    // const [format, setFormat] = useState(
-    //     Format.gen9vgc2023regulationd.toString()
-    // );
-    const [format, setFormat] = useState();
+type Props = {
+    format: string;
+};
 
-    const router = useRouter();
+const PsTeamsFormatDropdown: FunctionComponent<Props> = ({ format }) => {
+    const [selectedFormat, setSelectedFormat] = useState<String>(format);
+    const firstUpdate = useRef(true);
 
-    // https://github.com/vercel/next.js/issues/18127#issuecomment-950907739
-    // useEffect(() => {
-    //     router.push(`/teams/${format}`);
-    // }, [format]);
+    useEffect(() => {
+        if (firstUpdate.current) {
+            firstUpdate.current = false;
+            return;
+        }
+        Router.push({ pathname: `/teams/${selectedFormat}` });
+    }, [selectedFormat]);
 
     const handleChange = (event: SelectChangeEvent) => {
-        setFormat(event.target.value as string);
+        setSelectedFormat(event.target.value as string);
     };
 
     return (
@@ -30,19 +33,22 @@ const PsTeamsFormatDropdown = () => {
                 </label>
                 <Select
                     labelId="ps-teams-format-dropdown-label"
-                    value={format}
+                    value={
+                        selectedFormat.toString() ??
+                        Format.gen9vgc2023regulationd.toString()
+                    }
                     onChange={handleChange}
                     className="min-w-[300px] sm:min-w-[560px] md:min-w-[570px] xl:min-w-[340px] text-zinc-700"
                 >
                     {Object.keys(Format)
                         .filter((key) => isNaN(Number(key)))
-                        .map((format, index) => (
+                        .map((availableFormat, index) => (
                             <MenuItem
-                                value={format.toString()}
+                                value={availableFormat.toString()}
                                 key={index}
                                 className="text-zinc-700"
                             >
-                                <strong>{format.toString()}</strong>
+                                <strong>{availableFormat.toString()}</strong>
                             </MenuItem>
                         ))}
                 </Select>
