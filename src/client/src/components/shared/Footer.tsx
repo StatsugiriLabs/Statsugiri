@@ -1,8 +1,8 @@
+import { Favorite, GitHub, Twitter } from "@mui/icons-material";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
-import { Favorite, Twitter, GitHub } from "@mui/icons-material";
 
 const Footer = () => {
     return (
@@ -11,25 +11,29 @@ const Footer = () => {
                 <Grid container direction="column" alignItems="center">
                     <Grid item xs={12}>
                         <Typography className="text-sm text-zinc-500">
+                            <Favorite sx={{ fontSize: 15 }} />
                             <a
                                 href="https://ko-fi.com/statsugiri"
                                 target="_blank"
+                                className="mx-1 text-blue-500 hover:text-blue-800"
                             >
-                                <Favorite sx={{ fontSize: 15 }} /> Support Us
+                                Support Us
                             </a>{" "}
-                            |{" "}
+                            | <Twitter sx={{ fontSize: 15 }} />
                             <a
                                 href="https://twitter.com/Statsugiri"
                                 target="_blank"
+                                className="mx-1 text-blue-500 hover:text-blue-800"
                             >
-                                <Twitter sx={{ fontSize: 15 }} /> Follow Us
+                                Follow Us
                             </a>{" "}
-                            |{" "}
+                            | <GitHub sx={{ fontSize: 15 }} />
                             <a
                                 href="https://github.com/StatsugiriLabs/Statsugiri"
                                 target="_blank"
+                                className="mx-1 text-blue-500 hover:text-blue-800"
                             >
-                                <GitHub sx={{ fontSize: 15 }} /> Build with Us
+                                Build with Us
                             </a>
                         </Typography>
                     </Grid>

@@ -9,7 +9,6 @@ export async function fetchPsTeams(
     pkmnToFilter: string[]
 ): Promise<GetPsTeamsResults> {
     let fetchUrl = `${PS_TEAMS_URL}/${format}/today`;
-    console.log("Pokemon to Filter:", pkmnToFilter);
     // Add filtering parameters if provided (ie. ?pkmn=A&pkmn2=B&pkmn3=C)
     if (pkmnToFilter.length != 0) {
         pkmnToFilter.forEach((pkmn, index) => {

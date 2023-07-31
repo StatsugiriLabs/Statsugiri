@@ -44,7 +44,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
             : formatQueryParam;
     const pkmnToFilter =
         pkmnQueryParam === undefined ? [] : pkmnQueryParam.split(",");
-    console.log(pkmnToFilter);
 
     const psTeamsResults = await fetchPsTeams(formatToQuery, pkmnToFilter);
 
