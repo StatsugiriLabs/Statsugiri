@@ -36,7 +36,6 @@ const PsTeamsPkmnFilterDropdown: FunctionComponent<Props> = ({
     teams,
     pkmnToFilter,
 }) => {
-    console.log("Children Pkmn to Filter:", pkmnToFilter);
     const [pkmnSelected, setPkmnSelected] = useState<Array<string>>(
         pkmnToFilter === undefined ? [] : pkmnToFilter
     );
@@ -53,7 +52,6 @@ const PsTeamsPkmnFilterDropdown: FunctionComponent<Props> = ({
             : "";
         const currPath = Router.asPath.split("?")[0];
 
-        // TODO: See if clean-up is possible
         if (pkmnSelected.length != 0) {
             Router.push({
                 pathname: currPath,
@@ -99,7 +97,7 @@ const PsTeamsPkmnFilterDropdown: FunctionComponent<Props> = ({
                                 loading="lazy"
                                 width={PKMN_FILTER_SPRITE_SIZE}
                                 height={PKMN_FILTER_SPRITE_SIZE}
-                                src={`/sprites/${convertToPkmnSpritePath(
+                                src={`/assets/pkmn_sprites/${convertToPkmnSpritePath(
                                     pkmn
                                 )}.png`}
                                 alt={pkmn}

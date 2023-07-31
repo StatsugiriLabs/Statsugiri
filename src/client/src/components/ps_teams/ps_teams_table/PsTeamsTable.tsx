@@ -3,7 +3,6 @@ import {
     prettifyPkmnName,
 } from "@/utils/pkmnStringUtils";
 import Paper from "@mui/material/Paper";
-import Router from "next/router";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -26,8 +25,7 @@ const DEFAULT_PAGE_INDEX = 0;
 
 const PKMN_SPRITE_SIZE = 55;
 const REPLAY_SPRITE_SIZE = 30;
-// TODO: Move vs-recorder sprite path
-const REPLAY_SPRITE_PATH = "/vs-recorder.png";
+const REPLAY_SPRITE_PATH = "/assets/images/vs-recorder.png";
 const PAPER_ELEVATION = 2;
 
 interface PsTeamsTableColumn {
@@ -69,25 +67,14 @@ const renderCell = (team: PsTeam, column: PsTeamsTableColumn) => {
                             placement="top"
                             arrow
                         >
-                            {/* TODO: Attempt global state to push to pkmnSelected */}
                             <Image
                                 key={pkmn}
-                                src={`/sprites/${convertToPkmnSpritePath(
+                                src={`/assets/pkmn_sprites/${convertToPkmnSpritePath(
                                     pkmn
                                 )}.png`}
                                 width={PKMN_SPRITE_SIZE}
                                 height={PKMN_SPRITE_SIZE}
                                 alt={pkmn}
-                                onClick={() => {
-                                    const currPath =
-                                        Router.asPath.split("?")[0];
-                                    Router.push({
-                                        pathname: currPath,
-                                        query: {
-                                            pkmn: prettifyPkmnName(pkmn),
-                                        },
-                                    });
-                                }}
                             />
                         </Tooltip>
                     ))}
@@ -120,7 +107,7 @@ const renderCell = (team: PsTeam, column: PsTeamsTableColumn) => {
                     align={column.align}
                     className="text-sm text-zinc-700"
                 >
-                    {cellValue.toString()}
+                    {cellValue.toString().replaceAll("-", "/")}
                 </TableCell>
             );
     }
