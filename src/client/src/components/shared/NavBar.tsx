@@ -43,7 +43,9 @@ const NavBar = () => {
                                     display: { xs: "none", md: "flex" },
                                     mr: 0.75,
                                 }}
-                                src={"/assets/logos/statsugiri_logo_48px.png"}
+                                src={
+                                    "/assets/branding/logos/statsugiri_logo_48px.png"
+                                }
                             />
                             <Typography
                                 variant="h5"
@@ -94,36 +96,38 @@ const NavBar = () => {
                                 display: { xs: "block", md: "none" },
                             }}
                         >
-                            <MenuItem
-                                onClick={handleCloseNavMenu}
-                                href="/about"
-                            >
-                                <Typography
-                                    textAlign="center"
-                                    sx={{ color: "black" }}
-                                >
-                                    About
-                                </Typography>
+                            <MenuItem onClick={handleCloseNavMenu}>
+                                <Link href="/about">
+                                    <Typography
+                                        textAlign="center"
+                                        className="text-sm font-medium uppercase text-zinc-700"
+                                    >
+                                        About
+                                    </Typography>
+                                </Link>
                             </MenuItem>
-                            <MenuItem
-                                onClick={handleCloseNavMenu}
-                                href="/teams"
-                            >
-                                <Typography
-                                    textAlign="center"
-                                    sx={{ color: "black" }}
-                                >
-                                    PS Teams
-                                </Typography>
+                            <MenuItem onClick={handleCloseNavMenu}>
+                                <Link href="/teams">
+                                    <Typography
+                                        textAlign="center"
+                                        className="text-sm font-medium uppercase text-zinc-700"
+                                    >
+                                        PS Teams
+                                    </Typography>
+                                </Link>
                             </MenuItem>
                         </Menu>
                     </Box>
-                    <Box
-                        component="img"
-                        alt="logo"
-                        sx={{ display: { xs: "flex", md: "none" }, mr: 1 }}
-                        src={"/assets/logos/statsugiri_logo_48px.png"}
-                    />
+                    <Link href="/">
+                        <Box
+                            component="img"
+                            alt="logo"
+                            sx={{ display: { xs: "flex", md: "none" }, mr: 1 }}
+                            src={
+                                "/assets/branding/logos/statsugiri_logo_48px.png"
+                            }
+                        />
+                    </Link>
                     <Typography
                         variant="h5"
                         noWrap
@@ -136,7 +140,7 @@ const NavBar = () => {
                             color: "black",
                         }}
                     >
-                        Statsugiri
+                        {" "}
                     </Typography>
                     <Box
                         sx={{
@@ -145,36 +149,38 @@ const NavBar = () => {
                             display: { xs: "none", md: "flex" },
                         }}
                     >
-                        <Button
-                            className="block text-zinc-700"
-                            onClick={handleCloseNavMenu}
-                            sx={{
-                                my: 2,
-                                ":hover": {
-                                    bgcolor: "#e64a75",
-                                    color: "white",
-                                },
-                            }}
-                            size="large"
-                            href="/about"
-                        >
-                            About
-                        </Button>
-                        <Button
-                            className="block text-zinc-700"
-                            onClick={handleCloseNavMenu}
-                            sx={{
-                                my: 2,
-                                ":hover": {
-                                    bgcolor: "#e64a75",
-                                    color: "white",
-                                },
-                            }}
-                            size="large"
-                            href="/teams"
-                        >
-                            PS Teams
-                        </Button>
+                        <Link href="/about">
+                            <Button
+                                className="block text-zinc-700"
+                                onClick={handleCloseNavMenu}
+                                sx={{
+                                    my: 2,
+                                    ":hover": {
+                                        bgcolor: "#e64a75",
+                                        color: "white",
+                                    },
+                                }}
+                                size="large"
+                            >
+                                About
+                            </Button>
+                        </Link>
+                        <Link href="/teams">
+                            <Button
+                                className="block text-zinc-700"
+                                onClick={handleCloseNavMenu}
+                                sx={{
+                                    my: 2,
+                                    ":hover": {
+                                        bgcolor: "#e64a75",
+                                        color: "white",
+                                    },
+                                }}
+                                size="large"
+                            >
+                                PS Teams
+                            </Button>
+                        </Link>
                     </Box>
                 </Toolbar>
             </Container>

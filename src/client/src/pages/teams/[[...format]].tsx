@@ -12,7 +12,7 @@ const Teams: NextPage<{
     return (
         <div>
             <Head>
-                <title>Statsugiri</title>
+                <title>Statsugiri | PS Teams</title>
             </Head>
             <div
                 className="flex flex-col m-auto max-w-[350px] space-y-8 mt-6 lg:mt-12
