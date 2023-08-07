@@ -94,9 +94,9 @@ const About = () => {
                 <p>
                     Statsugiri is powered primarily by AWS. The data pipeline
                     runs on Step Functions, Lambda, and S3. The back-end is
-                    hosted on Lambda and API Gateway with a Next.js front-end
-                    serving the data. The infrastructure is provisioned via
-                    Cloud Development Kit (CDK) with CI/CD hosted with Github
+                    hosted on Lambda and API Gateway. The front-end uses Next.js
+                    to serve the data. The infrastructure is provisioned via
+                    Cloud Development Kit (CDK) with CI/CD hosted on Github
                     Actions. Detailed write-ups are available on our engineering
                     blog.
                 </p>
@@ -143,7 +143,7 @@ const About = () => {
                         Github Sponsors
                     </a>
                     . Your support enables our team to work on new features and
-                    take care of operational costs.
+                    take care of operational costs without running ads.
                 </p>
             </div>
             <div className="my-4">
