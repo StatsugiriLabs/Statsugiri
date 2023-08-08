@@ -94,12 +94,11 @@ const PsTeamsPkmnFilterDropdown: FunctionComponent<Props> = ({
                             {...props}
                         >
                             <Image
-                                loading="lazy"
-                                width={PKMN_FILTER_SPRITE_SIZE}
-                                height={PKMN_FILTER_SPRITE_SIZE}
                                 src={`/assets/pkmn_sprites/${convertToPkmnSpritePath(
                                     pkmn
                                 )}.png`}
+                                width={PKMN_FILTER_SPRITE_SIZE}
+                                height={PKMN_FILTER_SPRITE_SIZE}
                                 alt={pkmn}
                             />
                             <div className="text-base text-zinc-700">
