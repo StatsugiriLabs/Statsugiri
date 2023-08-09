@@ -95,7 +95,7 @@ const About = () => {
                     Statsugiri is powered primarily by AWS. The data pipeline
                     runs on Step Functions, Lambda, and S3. The back-end is
                     hosted on Lambda and API Gateway. The front-end uses Next.js
-                    hosted on DigitalOcean&aposs App Platform. The
+                    hosted on DigitalOcean&apos;s App Platform. The
                     infrastructure is provisioned via Cloud Development Kit
                     (CDK) with CI/CD hosted on Github Actions. Detailed
                     write-ups are available on our engineering blog.
@@ -160,6 +160,7 @@ const About = () => {
                         Tatsugiri
                     </a>
                     , the False Dragon Titan introduced in the Paldea region.
+                    The logo is a silhouette of Tatsugiri&apos;s tail.
                 </p>
             </div>
             <h2 className="text-4xl font-medium pt-8 pb-4">Contact Us</h2>
