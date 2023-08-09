@@ -13,5 +13,5 @@ export function prettifyPkmnName(pkmn: string): string {
 export function convertToPkmnSpritePath(pkmn: string): string {
     // Source: https://play.pokemonshowdown.com/sprites/gen5/
     let sanitizedPkmn = pkmn.replace(/\s/g, "");
-    return sanitizedPkmn;
+    return sanitizedPkmn.toLowerCase();
 }
