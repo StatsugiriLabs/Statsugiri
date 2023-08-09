@@ -95,10 +95,10 @@ const About = () => {
                     Statsugiri is powered primarily by AWS. The data pipeline
                     runs on Step Functions, Lambda, and S3. The back-end is
                     hosted on Lambda and API Gateway. The front-end uses Next.js
-                    to serve the data. The infrastructure is provisioned via
-                    Cloud Development Kit (CDK) with CI/CD hosted on Github
-                    Actions. Detailed write-ups are available on our engineering
-                    blog.
+                    hosted on DigitalOcean&aposs App Platform. The
+                    infrastructure is provisioned via Cloud Development Kit
+                    (CDK) with CI/CD hosted on Github Actions. Detailed
+                    write-ups are available on our engineering blog.
                 </p>
             </div>
             <div className="my-4">
@@ -172,9 +172,9 @@ const About = () => {
                 >
                     @Statsugiri
                 </a>
-                . We can also be reached by email via{" "}
-                <i>&lt;website&gt;@gmail.com</i>. Feel free to use either for
-                feature requests or bug reports.
+                . We can also be reached by email via &apos;
+                <i>&lt;website&gt;@gmail.com</i>&apos;. Feel free to use either
+                for feature requests or bug reports.
             </p>
         </div>
     );
