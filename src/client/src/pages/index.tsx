@@ -49,8 +49,8 @@ const Home: NextPage = () => {
                 />
             </div>
             <div
-                className="flex flex-col p-2 sm:mx-12 md:mx-0 md:p-0 max-w-[864px] xs:max-w-[400px] sm:max-w-[620px] 
-                xl:max-w-[1050px] xl:m-auto"
+                className="flex flex-col p-2 sm:mx-12 md:mx-0 md:p-0 max-w-[350px] xs:max-w-[400px] sm:max-w-[620px] 
+                xl:max-w-[1050px] xl:m-auto 2xl:max-w-[1100px]"
             >
                 <h2 className="text-4xl pb-6">Meet our tools</h2>
                 <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
