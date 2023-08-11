@@ -66,9 +66,8 @@ const About = () => {
             </p>
             <br />
             <p>
-                Statsugiri is an open-source project and will always strive to
-                be. If you are interested in contributing or learning more,
-                please visit our{" "}
+                Statsugiri is an open-source project. If you are interested in
+                contributing or learning more, please visit our{" "}
                 <a
                     href="https://github.com/StatsugiriLabs/Statsugiri"
                     target="_blank"
@@ -84,7 +83,8 @@ const About = () => {
                 >
                     engineering blog
                 </a>{" "}
-                for more details.
+                for more details. We also strive to be ads-free to provide the
+                best experience for our users.
             </p>
             <h2 className="text-4xl font-medium pt-8 pb-4">FAQ</h2>
             <div className="mb-4">
