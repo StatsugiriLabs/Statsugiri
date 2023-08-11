@@ -40,6 +40,23 @@ const Home: NextPage = () => {
                             Get Started
                         </Button>
                     </Link>
+                    <a target="_blank" href="https://ko-fi.com/statsugiri">
+                        <Button
+                            variant="outlined"
+                            color="secondary"
+                            size="large"
+                            sx={{
+                                my: 2,
+                                ml: 2,
+                                ":hover": {
+                                    bgcolor: "#ab43ba",
+                                    color: "white",
+                                },
+                            }}
+                        >
+                            Support Us
+                        </Button>
+                    </a>
                 </div>
                 <Box
                     className="max-w-0  xl:max-w-[630px] mr-1"
