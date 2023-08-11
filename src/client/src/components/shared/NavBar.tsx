@@ -97,6 +97,16 @@ const NavBar = () => {
                             }}
                         >
                             <MenuItem onClick={handleCloseNavMenu}>
+                                <Link href="/">
+                                    <Typography
+                                        textAlign="center"
+                                        className="text-sm font-medium uppercase text-zinc-700"
+                                    >
+                                        Home
+                                    </Typography>
+                                </Link>
+                            </MenuItem>
+                            <MenuItem onClick={handleCloseNavMenu}>
                                 <Link href="/about">
                                     <Typography
                                         textAlign="center"
