@@ -1,7 +1,8 @@
 import re
 from typing import List
-from utils.constants import TEAM_SIZE
+
 from utils.base_logger import logger
+from utils.constants import TEAM_SIZE
 from utils.errors import NoUserProvidedException
 
 ARTIFACTS = [
@@ -13,6 +14,7 @@ ARTIFACTS = [
     "-Blue",  # Squawkabilly
     "-White",
     "-Yellow",
+    "-East",  # Gastrodon
 ]
 
 
