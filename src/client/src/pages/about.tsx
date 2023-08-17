@@ -66,8 +66,8 @@ const About = () => {
             </p>
             <br />
             <p>
-                Statsugiri is an open-source project. If you are interested in
-                contributing or learning more, please visit our{" "}
+                Statsugiri is an ads-free, open-source project. If you are
+                interested in contributing or learning more, please visit our{" "}
                 <a
                     href="https://github.com/StatsugiriLabs/Statsugiri"
                     target="_blank"
@@ -83,8 +83,7 @@ const About = () => {
                 >
                     engineering blog
                 </a>{" "}
-                for more details. We also strive to be ads-free to provide the
-                best experience for our users.
+                for more details.
             </p>
             <h2 className="text-4xl font-medium pt-8 pb-4">FAQ</h2>
             <div className="mb-4">
@@ -143,7 +142,7 @@ const About = () => {
                         Github Sponsors
                     </a>
                     . Your support enables our team to work on new features and
-                    take care of operational costs without running ads.
+                    take care of operational costs.
                 </p>
             </div>
             <div className="my-4">
@@ -161,6 +160,25 @@ const About = () => {
                     </a>
                     , the False Dragon Titan introduced in the Paldea region.
                     The logo is a silhouette of Tatsugiri&apos;s tail.
+                </p>
+            </div>
+            <div className="my-4">
+                <h4 className="text-xl font-medium my-2">
+                    Does Statsugiri collect user information?
+                </h4>
+                <p>
+                    Statsugiri does not run ads to provide a clean user
+                    experience. We also do not use cookies to collect user
+                    information as Google Analytics would. Instead, we leverage
+                    privacy-first web analytics from{" "}
+                    <a
+                        href="https://blog.cloudflare.com/privacy-first-web-analytics/"
+                        target="_blank"
+                        className="text-blue-500 hover:text-blue-800"
+                    >
+                        CloudFlare
+                    </a>{" "}
+                    as a security-conscious alternative.
                 </p>
             </div>
             <h2 className="text-4xl font-medium pt-8 pb-4">Contact Us</h2>
