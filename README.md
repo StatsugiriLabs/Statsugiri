@@ -2,9 +2,9 @@
 
 ![Statsugiri CI](https://github.com/StatsugiriGG/Statsugiri/actions/workflows/on-push.yml/badge.svg)
 
-Statsugiri is a data platform focused on accessible and interpretable competitive Pokémon analytics. See [StatsugiriInfra](https://github.com/Statsugiri/StatsugiriInfra) for infrastructure deployment.
+Statsugiri is a data platform focused on accessible and interpretable competitive Pokémon analytics. See [StatsugiriInfra](https://github.com/Statsugiri/StatsugiriInfra) for infrastructure deployment. Please follow the [@Statsugiri](https://twitter.com/Statsugiri) for updates.
 
-Currently, it is under maintenance. Please follow the [@Statsugiri](https://twitter.com/Statsugiri) for updates.
+![PS Teams Service](./docs/images/png/ReadmePsTeams.png)
 
 ### Contribute to Statsugiri
 
