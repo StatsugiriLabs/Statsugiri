@@ -10,7 +10,6 @@ type Props = {
 };
 
 const PsTeamsSearchMenuDiv: FunctionComponent<Props> = ({
-    snapshotDate,
     format,
     teams,
     pkmnToFilter,
@@ -20,7 +19,6 @@ const PsTeamsSearchMenuDiv: FunctionComponent<Props> = ({
             <h2 className="text-3xl font-medium mb-4">Filters</h2>
             <PsTeamsSearchMenu
                 teams={teams}
-                snapshotDate={snapshotDate}
                 format={format}
                 pkmnToFilter={pkmnToFilter}
             />

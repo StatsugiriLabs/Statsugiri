@@ -129,7 +129,7 @@ const PsTeamsTable: FunctionComponent<Props> = ({ teams }) => {
     };
     return (
         <Paper elevation={PAPER_ELEVATION}>
-            <TableContainer className="h-auto w-full flex-1 max-h-[800px]">
+            <TableContainer className="h-auto w-full flex-1">
                 <Table size="small" aria-label="PS Teams Service Table">
                     <TableHead>
                         <TableRow>
