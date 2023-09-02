@@ -181,6 +181,7 @@ def main():
     )
     with open(output_path, "w") as fp:
         json.dump(pkmn_spds_dict, fp)
+        fp.write("\n")
 
     logger.info(
         "🔵 Speed tier export processed in {time} seconds. Exported to '{output_path}'.".format(
