@@ -84,6 +84,21 @@ const Home: NextPage = () => {
                         </p>
                     </Link>
                     <a
+                        href="https://tinyurl.com/PsReplayDownloader"
+                        target="_blank"
+                        className="flex flex-col p-6 py-4 rounded-lg gap-2 border-2"
+                    >
+                        <p className="text-lg font-normal">
+                            PS Replay Downloader
+                        </p>
+                        <p className="text-sm font-light leading-relaxed font-body mb-3">
+                            Download batches of Pokémon Showdown replays with
+                            one-click. Export your replay history for archiving
+                            or analysis. Extension available for Google Chrome
+                            browsers.
+                        </p>
+                    </a>
+                    <a
                         href="https://twitter.com/Statsugiri"
                         target="_blank"
                         className="flex flex-col p-6 py-4 rounded-lg gap-2 border-2"
