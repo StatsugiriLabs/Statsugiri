@@ -1,8 +1,10 @@
 import os
 
-CURR_VGC_FORMAT = "gen9vgc2023regulationd"
+CURR_VGC_FORMAT = "gen9vgc2023regulatione"
+CURR_VGC_FORMAT_BO3 = "gen9vgc2023regulationebo3"
 VALID_FORMATS = [
     CURR_VGC_FORMAT,
+    CURR_VGC_FORMAT_BO3,
     "gen9ou",
 ]
 
