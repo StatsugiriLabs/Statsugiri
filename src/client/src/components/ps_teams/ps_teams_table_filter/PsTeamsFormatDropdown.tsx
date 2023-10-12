@@ -35,7 +35,7 @@ const PsTeamsFormatDropdown: FunctionComponent<Props> = ({ format }) => {
                     labelId="ps-teams-format-dropdown-label"
                     value={
                         selectedFormat.toString() ??
-                        Format.gen9vgc2023regulationd.toString()
+                        Format.gen9vgc2023regulatione.toString()
                     }
                     onChange={handleChange}
                     className="min-w-[300px] sm:min-w-[560px] md:min-w-[570px] xl:min-w-[340px] text-zinc-700"

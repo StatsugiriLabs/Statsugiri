@@ -40,7 +40,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
     const formatToQuery =
         formatQueryParam === undefined
-            ? Format.gen9vgc2023regulationd.toString()
+            ? Format.gen9vgc2023regulatione.toString()
             : formatQueryParam;
     const pkmnToFilter =
         pkmnQueryParam === undefined ? [] : pkmnQueryParam.split(",");
