@@ -2,8 +2,8 @@ import requests
 from bs4 import BeautifulSoup
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
-from utils.constants import REQUEST_TIMEOUT
 from utils.base_logger import logger
+from utils.constants import REQUEST_TIMEOUT
 
 
 def requests_retry_session(

@@ -1,14 +1,15 @@
 from typing import List
-from utils.base_logger import logger
-from data.replay_info import ReplayInfo
-from data.ps_ingest_config import PsIngestConfig
+
 from data.ladder_user_info import LadderUserInfo
+from data.ps_ingest_config import PsIngestConfig
+from data.replay_info import ReplayInfo
 from data.replay_snapshot import ReplaySnapshot
 from modules.ladder_retriever import LadderRetriever
-from utils.request_utils import get_soup_from_url, get_response_from_url
-from utils.time_utils import convert_unix_timestamp_to_str
+from utils.base_logger import logger
 from utils.constants import REPLAY_BASE_URL
 from utils.errors import LadderNotFoundException
+from utils.request_utils import get_response_from_url, get_soup_from_url
+from utils.time_utils import convert_unix_timestamp_to_str
 
 REPLAY_SEARCH_BASE_URL = (
     "https://replay.pokemonshowdown.com/search/?output=html&page=1&user="
@@ -59,7 +60,8 @@ class ReplayExtractor:
                 replay.get("href")[1:]
                 for replay in replay_search_soup.find_all(
                     lambda predicate: predicate.name == "a"
-                    and self.ingest_config.format_id in predicate.get("href")
+                    # Parse and match format from replay ID
+                    and self.ingest_config.format_id == predicate.get("href").split("-")[0]
                 )
             ]
             return replay_id[0] if replay_id else ""
